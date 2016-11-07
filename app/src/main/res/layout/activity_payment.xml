@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:paddingBottom="40dp"
+        android:paddingTop="40dp">
+
+        <TableLayout
+            android:id="@+id/tabla_cuerpo"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TableRow
+                android:id="@+id/tableRow1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="2dp">
+
+                <TextView
+                    android:text="Total:"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/labelTotal"
+                    android:textSize="18sp"
+                    android:background="@drawable/cell_shape"
+                    android:padding="10dp"
+                    android:layout_weight="1"
+                    android:gravity="right" />
+
+                <TextView
+                    android:text="0.00"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/textViewTotal"
+                    android:textSize="18sp"
+                    android:gravity="right"
+                    android:padding="10dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/cell_shape"
+                    android:layout_marginStart="4dp" />
+
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/tableRow2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="2dp">
+
+                <TextView
+                    android:text="Paid Amt:"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/labelPaidAmt"
+                    android:textSize="18sp"
+                    android:padding="10dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/cell_shape"
+                    android:gravity="right" />
+
+                <TextView
+                    android:text="0.00"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/textViewPaidAmt"
+                    android:textSize="18sp"
+                    android:gravity="right"
+                    android:padding="10dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/cell_shape"
+                    android:autoText="false"
+                    android:layout_marginStart="4dp" />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/tableRow3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="2dp">
+
+                <TextView
+                    android:text="Payment:"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/labelPayment"
+                    android:textSize="18sp"
+                    android:padding="10dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/cell_shape"
+                    android:gravity="right" />
+
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal"
+                    android:id="@+id/editTextPayment"
+                    android:textSize="18sp"
+                    android:gravity="right|center_vertical"
+                    android:padding="10dp"
+                    android:layout_weight="1" />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/tableRow2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="2dp">
+
+                <TextView
+                    android:text="Change:"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/labelChange"
+                    android:textSize="12sp"
+                    android:padding="10dp"
+                    android:layout_weight="1"
+                    android:gravity="right" />
+
+                <TextView
+                    android:text="0.00"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/textViewChange"
+                    android:textSize="12sp"
+                    android:gravity="right"
+                    android:padding="10dp"
+                    android:layout_weight="1"
+                    android:autoText="false"
+                    android:layout_marginStart="4dp" />
+            </TableRow>
+
+        </TableLayout>
+
+        <RadioGroup
+            android:id="@+id/radioGroupPaymentMethod"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp">
+
+            <RadioButton
+                android:text="Cash"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/radioButtonCash"
+                android:checked="true"
+                android:layout_weight="1"
+                android:textSize="18sp"
+                android:padding="10dp" />
+
+            <RadioButton
+                android:text="Credit Card"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/radioButtonCreditCard"
+                android:layout_weight="1"
+                android:textSize="18sp"
+                android:padding="10dp" />
+        </RadioGroup>
+
+        <Button
+            android:text="Hold Order"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/buttonHoldOrder"
+            android:onClick="onHoldOrder"
+            android:layout_weight="1"
+            android:layout_marginTop="10dp" />
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp">
+
+            <Button
+                android:text="Confirm"
+                android:onClick="onConfirm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/buttonSaveSettings"
+                android:layout_weight="1.5" />
+
+            <Button
+                android:text="Back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/buttonBack"
+                android:layout_weight="1"
+                android:onClick="onBackClick"
+                />
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>
+

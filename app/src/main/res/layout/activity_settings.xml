@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="40dp"
+        android:paddingRight="40dp"
+        android:paddingBottom="40dp"
+        android:paddingTop="40dp">
+
+        <TextView
+            android:text="Default Price:"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView2"
+            android:hint="Server database" />
+
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/spinnerDefaultPrice"
+            android:layout_marginBottom="10dp"
+            android:padding="10dp"
+            android:background="@color/highlightgray"
+            />
+
+        <TextView
+            android:text="Server Connection:"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:ems="10"
+            android:id="@+id/textServerConnection"
+            android:padding="10dp"
+            android:hint="Server database"
+            android:background="@color/highlightgray" />
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="25dp">
+
+            <Button
+                android:text="Save"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/buttonSaveSettings"
+                android:onClick="onSaveClick"
+                android:layout_weight="1" />
+
+            <Button
+                android:text="Cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/buttonCancelSettings"
+                android:layout_weight="1"
+                android:onClick="onCancelClick"
+                />
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>
+

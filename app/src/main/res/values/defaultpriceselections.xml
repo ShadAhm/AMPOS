@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="prices_array">
+        <item>Price 1</item>
+        <item>Price 2</item>
+        <item>Price 3</item>
+        <item>Price 4</item>
+        <item>Price 5</item>
+        <item>Price 6</item>
+        <item>Price 7</item>
+        <item>Price 8</item>
+        <item>Price 9</item>
+        <item>Price 10</item>
+    </string-array>
+</resources>

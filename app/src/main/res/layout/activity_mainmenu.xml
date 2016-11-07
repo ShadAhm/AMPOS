@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <Button
+        android:text="Order"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/buttonOrder"
+        android:layout_weight="1"
+        android:onClick="onOrderButtonClick"/>
+
+    <Button
+        android:text="Dayend"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/buttonDayend"
+        android:layout_weight="1" />
+
+    <Button
+        android:text="Download Data"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/buttonDownloadData"
+        android:onClick="onDownloadDataClick"
+        android:layout_weight="1" />
+
+    <Button
+        android:text="Upload Data"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/buttonUploadData"
+        android:layout_weight="1" />
+
+    <Button
+        android:text="Logout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/buttonLogout"
+        android:layout_weight="1"
+        android:onClick="onLogoutClick"
+        />
+
+    <Button
+        android:text="Settings"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/buttonSettings"
+        android:onClick="onSettingsClick"
+        android:layout_weight="1" />
+
+</LinearLayout>
