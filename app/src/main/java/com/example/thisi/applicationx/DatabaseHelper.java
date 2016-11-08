@@ -500,6 +500,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return result > -1;
     }
 
+    public boolean insertprice_group(SQLiteDatabase db, price_group pric) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("PRICE_GRP_CODE", pric.PRICE_GRP_CODE);
+        contentValues.put("PRICE_GRP_NAME", pric.PRICE_GRP_NAME);
+        contentValues.put("PROD_CODE", pric.PROD_CODE);
+        contentValues.put("PRICE", pric.PRICE.doubleValue());
+        long result = db.insertOrThrow("price_group", null, contentValues);
+        return result > -1
+    }
+
     public void insertSampleData(SQLiteDatabase db) {
         insertAdminUser(db);
 

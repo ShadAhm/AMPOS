@@ -40,6 +40,7 @@ public class DownloadDataService extends Service1 {
                     o = DownloadEmployees(db);
                     DownloadCustomers(db);
                     DownloadProduct_Master(db);
+                    DownloadPrice_Group(db);
 
                     db.setTransactionSuccessful();
                 } catch (Exception e) {
@@ -69,7 +70,6 @@ public class DownloadDataService extends Service1 {
 
         if(returned != null) {
             Customer[] custs = RetrieveCustomersFromSoap(returned);
-
 
             for (int i = 0; i < custs.length; i++) {
                 dataHelper.insertCustomer(db, custs[i]);
@@ -104,6 +104,20 @@ public class DownloadDataService extends Service1 {
         }
     }
 
+    private void DownloadPrice_Group(SQLiteDatabase db) {
+        SoapObject returned = super.SQLResultReturn(
+                "SELECT PRICE_GRP_CODE, PRICE_GRP_NAME, PROD_CODE, PRICE FROM price_group", null
+        );
+
+        if(returned != null) {
+            Customer[] pgroups = RetrievePrice_GroupFromSoap(returned);
+
+            for (int i = 0; i < pgroups.length; i++) {
+                dataHelper.insertprice_group(db, pgroups[i]);
+            }
+        }
+    }
+
     private Product_Master[] RetrieveProduct_MasterFromSoap(SoapObject soap) {
         try {
             Product_Master[] productMasters = new Product_Master[soap.getPropertyCount()];
@@ -116,7 +130,7 @@ public class DownloadDataService extends Service1 {
                 prod.PROD_NAME = pii.getProperty(2).toString();
                 prod.PROD_TYPE_CODE = pii.getProperty(3).toString();
                 prod.BARCODE = pii.getProperty(4).toString();
-                 prod.PROD_GRP_01 = pii.getProperty(5).toString();
+                prod.PROD_GRP_01 = pii.getProperty(5).toString();
                 prod.PROD_GRP_02 = pii.getProperty(6).toString();
                 prod.PROD_GRP_03 = pii.getProperty(7).toString();
                 prod.PROD_GRP_04 = pii.getProperty(8).toString();
@@ -252,6 +266,25 @@ public class DownloadDataService extends Service1 {
                 customers[i] = customer;
             }
             return customers;
+        } catch (IndexOutOfBoundsException ex) {
+            throw ex;
+        }
+    }
+
+    public static Price_Group[] RetrievePrice_GroupFromSoap(SoapObject soap) {
+        try {
+            Price_Group[] priceGroups = new Price_Group[soap.getPropertyCount()];
+            for (int i = 0; i < priceGroups.length; i++) {
+                SoapObject pii = (SoapObject) soap.getProperty(i);
+                Price_Group priceGroup = new Price_Group();
+                priceGroup.PRICE_GRP_CODE = pii.getProperty(0).toString();
+                priceGroup.PRICE_GRP_NAME = pii.getProperty(1).toString();
+                priceGroup.PROD_CODE = pii.getProperty(2).toString();
+                priceGroup.PRICE = new BigDecimal(pii.getProperty(3).toString());
+
+                priceGroups[i] = priceGroup;
+            }
+            return priceGroups;
         } catch (IndexOutOfBoundsException ex) {
             throw ex;
         }
