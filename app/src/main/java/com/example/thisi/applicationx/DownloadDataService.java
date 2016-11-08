@@ -110,11 +110,88 @@ public class DownloadDataService extends Service1 {
         );
 
         if(returned != null) {
-            Customer[] pgroups = RetrievePrice_GroupFromSoap(returned);
+            Price_Group[] pgroups = RetrievePrice_GroupFromSoap(returned);
 
             for (int i = 0; i < pgroups.length; i++) {
                 dataHelper.insertprice_group(db, pgroups[i]);
             }
+        }
+    }
+
+    private void DownloadSuspend(SQLiteDatabase db) {
+        SoapObject returned = super.SQLResultReturn(
+                "SELECT COALESCE(COMPANY_CODE, '') AS COMPANY_CODE,COALESCE(OUTLET_CODE, '') AS OUTLET_CODE,COALESCE(POS_NO, '') AS POS_NO,COALESCE(SHIFT_NO, '') AS SHIFT_NO,COALESCE(RCP_NO, '') AS RCP_NO,COALESCE(TRANS_TYPE, '') AS TRANS_TYPE,COALESCE(TRANS_TIME, '') AS TRANS_TIME,COALESCE(ROW_NUMBER, 0) AS ROW_NUMBER,COALESCE(PROD_CODE, '') AS PROD_CODE,COALESCE(BARCODE, '') AS BARCODE,COALESCE(PROD_NAME, '') AS PROD_NAME,COALESCE(PROD_SHORT_NAME, '') AS PROD_SHORT_NAME,COALESCE(PROD_TYPE_CODE, '') AS PROD_TYPE_CODE,COALESCE(USAGE_UOM, '') AS USAGE_UOM,COALESCE(UOM_CONV, '0.0') AS UOM_CONV,COALESCE(QUANTITY, '0.0') AS QUANTITY,COALESCE(PRICE_LVL_CODE, '') AS PRICE_LVL_CODE,COALESCE(UNIT_PRICE, '0.0') AS UNIT_PRICE,COALESCE(TOTAL_PRICE, '0.0') AS TOTAL_PRICE,COALESCE(BOM_PARENT, '') AS BOM_PARENT,COALESCE(TAX_01, '0.0') AS TAX_01,COALESCE(TAX_02, '0.0') AS TAX_02,COALESCE(TAX_03, '0.0') AS TAX_03,COALESCE(TAX_04, '0.0') AS TAX_04,COALESCE(TAX_05, '0.0') AS TAX_05,COALESCE(ALLOW_DISC, 0) AS ALLOW_DISC,COALESCE(MULTIPLE_DISC, 0) AS MULTIPLE_DISC,COALESCE(DISCOUNT_CODE, '') AS DISCOUNT_CODE,COALESCE(ITEM_DISCOUNT_AMOUNT, '0.0') AS ITEM_DISCOUNT_AMOUNT,COALESCE(TOTAL_DICOUNT_CODE, '') AS TOTAL_DICOUNT_CODE,COALESCE(TOTAL_DISCOUNT_AMOUNT, '0.0') AS TOTAL_DISCOUNT_AMOUNT,COALESCE(TICKET_SURCHARGE, '0.0') AS TICKET_SURCHARGE,COALESCE(STAFF_DISCOUNT_CODE, '') AS STAFF_DISCOUNT_CODE,COALESCE(STAFF_DISCOUNT, '0.0') AS STAFF_DISCOUNT,COALESCE(SUSPEND_NUMBER, '') AS SUSPEND_NUMBER,COALESCE(IsRECALL, 0) AS IsRECALL,COALESCE(IS_UPSALES, 0) AS IS_UPSALES,COALESCE(UPSALES_CONV, '0.0') AS UPSALES_CONV,COALESCE(IS_MULTIPLEUOM, 0) AS IS_MULTIPLEUOM,COALESCE(RECALL_BY, '') AS RECALL_BY,COALESCE(APPROVE_BY, '') AS APPROVE_BY,COALESCE(MODIFIED_ID, '') AS MODIFIED_ID,COALESCE(CUSTOMER_CODE, '') AS CUSTOMER_CODE,COALESCE(TAXCODE, '') AS TAXCODE,COALESCE(COST, '0.0') AS COST,COALESCE(PRICE_GRP_CODE, '') AS PRICE_GRP_CODE,COALESCE(TABLE_NO, '') AS TABLE_NO,COALESCE(PROMOSOURCECODE, '') AS PROMOSOURCECODE,COALESCE(PROMOCHANGEPRICE, '0.0') AS PROMOCHANGEPRICE FROM Suspend", null
+        );
+
+        if(returned != null) {
+            Suspend[] suspends = RetrieveSuspendFromSoap(returned);
+
+            for (int i = 0; i < suspends.length; i++) {
+                dataHelper.insertSuspend(db, suspends[i]);
+            }
+        }
+    }
+
+    public static Suspend[] RetrieveSuspendFromSoap(SoapObject soap) {
+        try {
+            Suspend[] suspends = new Suspend[soap.getPropertyCount()];
+            for (int i = 0; i < suspends.length; i++) {
+                SoapObject pii = (SoapObject)soap.getProperty(i);
+                Suspend suspend = new Suspend();
+                suspend.COMPANY_CODE = pii.getProperty(0).toString();
+                suspend.OUTLET_CODE = pii.getProperty(1).toString();
+                suspend.POS_NO = pii.getProperty(2).toString();
+                suspend.SHIFT_NO = pii.getProperty(3).toString();
+                suspend.RCP_NO = pii.getProperty(4).toString();
+                suspend.TRANS_TYPE = pii.getProperty(5).toString();
+                suspend.TRANS_TIME = pii.getProperty(6).toString();
+                suspend.ROW_NUMBER = Integer.parseInt(pii.getProperty(7).toString());
+                suspend.PROD_CODE = pii.getProperty(8).toString();
+                suspend.BARCODE = pii.getProperty(9).toString();
+                suspend.PROD_NAME = pii.getProperty(10).toString();
+                suspend.PROD_SHORT_NAME = pii.getProperty(11).toString();
+                suspend.PROD_TYPE_CODE = pii.getProperty(12).toString();
+                suspend.USAGE_UOM = pii.getProperty(13).toString();
+                suspend.UOM_CONV = new BigDecimal(pii.getProperty(14).toString());
+                suspend.QUANTITY = new BigDecimal(pii.getProperty(15).toString());
+                suspend.PRICE_LVL_CODE = pii.getProperty(16).toString();
+                suspend.UNIT_PRICE = new BigDecimal(pii.getProperty(17).toString());
+                suspend.TOTAL_PRICE = new BigDecimal(pii.getProperty(18).toString());
+                suspend.BOM_PARENT = pii.getProperty(19).toString();
+                suspend.TAX_01 = new BigDecimal(pii.getProperty(20).toString());
+                suspend.TAX_02 = new BigDecimal(pii.getProperty(21).toString());
+                suspend.TAX_03 = new BigDecimal(pii.getProperty(22).toString());
+                suspend.TAX_04 = new BigDecimal(pii.getProperty(23).toString());
+                suspend.TAX_05 = new BigDecimal(pii.getProperty(24).toString());
+                suspend.ALLOW_DISC = Boolean.getBoolean(pii.getProperty(25).toString());
+                suspend.MULTIPLE_DISC = Boolean.getBoolean(pii.getProperty(26).toString());
+                suspend.DISCOUNT_CODE = pii.getProperty(27).toString();
+                suspend.ITEM_DISCOUNT_AMOUNT = new BigDecimal(pii.getProperty(28).toString());
+                suspend.TOTAL_DICOUNT_CODE = pii.getProperty(29).toString();
+                suspend.TOTAL_DISCOUNT_AMOUNT = new BigDecimal(pii.getProperty(30).toString());
+                suspend.TICKET_SURCHARGE = new BigDecimal(pii.getProperty(31).toString());
+                suspend.STAFF_DISCOUNT_CODE = pii.getProperty(32).toString();
+                suspend.STAFF_DISCOUNT = new BigDecimal(pii.getProperty(33).toString());
+                suspend.SUSPEND_NUMBER = pii.getProperty(34).toString();
+                suspend.IsRECALL = Boolean.getBoolean(pii.getProperty(35).toString());
+                suspend.IS_UPSALES = Boolean.getBoolean(pii.getProperty(36).toString());
+                suspend.UPSALES_CONV = new BigDecimal(pii.getProperty(37).toString());
+                suspend.IS_MULTIPLEUOM = Boolean.getBoolean(pii.getProperty(38).toString());
+                suspend.RECALL_BY = pii.getProperty(39).toString();
+                suspend.APPROVE_BY = pii.getProperty(40).toString();
+                suspend.MODIFIED_ID = pii.getProperty(41).toString();
+                suspend.CUSTOMER_CODE = pii.getProperty(42).toString();
+                suspend.TAXCODE = pii.getProperty(43).toString();
+                suspend.COST = new BigDecimal(pii.getProperty(44).toString());
+                suspend.PRICE_GRP_CODE = pii.getProperty(45).toString();
+                suspend.TABLE_NO = pii.getProperty(46).toString();
+                suspend.PROMOSOURCECODE = pii.getProperty(47).toString();
+                suspend.PROMOCHANGEPRICE = new BigDecimal(pii.getProperty(48).toString());
+                suspends[i] = suspend;
+            }
+            return suspends;
+        } catch (IndexOutOfBoundsException ex) {
+            throw ex;
         }
     }
 

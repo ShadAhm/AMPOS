@@ -500,14 +500,69 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return result > -1;
     }
 
-    public boolean insertprice_group(SQLiteDatabase db, price_group pric) {
+    public boolean insertprice_group(SQLiteDatabase db, Price_Group pric) {
         ContentValues contentValues = new ContentValues();
         contentValues.put("PRICE_GRP_CODE", pric.PRICE_GRP_CODE);
         contentValues.put("PRICE_GRP_NAME", pric.PRICE_GRP_NAME);
         contentValues.put("PROD_CODE", pric.PROD_CODE);
         contentValues.put("PRICE", pric.PRICE.doubleValue());
         long result = db.insertOrThrow("price_group", null, contentValues);
-        return result > -1
+        return result > -1;
+    }
+
+    public boolean insertSuspend(SQLiteDatabase db, Suspend Susp) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("COMPANY_CODE", Susp.COMPANY_CODE);
+        contentValues.put("OUTLET_CODE", Susp.OUTLET_CODE);
+        contentValues.put("POS_NO", Susp.POS_NO);
+        contentValues.put("SHIFT_NO", Susp.SHIFT_NO);
+        contentValues.put("RCP_NO", Susp.RCP_NO);
+        contentValues.put("TRANS_TYPE", Susp.TRANS_TYPE);
+        contentValues.put("TRANS_TIME", Susp.TRANS_TIME);
+        contentValues.put("ROW_NUMBER", Susp.ROW_NUMBER);
+        contentValues.put("PROD_CODE", Susp.PROD_CODE);
+        contentValues.put("BARCODE", Susp.BARCODE);
+        contentValues.put("PROD_NAME", Susp.PROD_NAME);
+        contentValues.put("PROD_SHORT_NAME", Susp.PROD_SHORT_NAME);
+        contentValues.put("PROD_TYPE_CODE", Susp.PROD_TYPE_CODE);
+        contentValues.put("USAGE_UOM", Susp.USAGE_UOM);
+        contentValues.put("UOM_CONV", Susp.UOM_CONV.doubleValue());
+        contentValues.put("QUANTITY", Susp.QUANTITY.doubleValue());
+        contentValues.put("PRICE_LVL_CODE", Susp.PRICE_LVL_CODE);
+        contentValues.put("UNIT_PRICE", Susp.UNIT_PRICE.doubleValue());
+        contentValues.put("TOTAL_PRICE", Susp.TOTAL_PRICE.doubleValue());
+        contentValues.put("BOM_PARENT", Susp.BOM_PARENT);
+        contentValues.put("TAX_01", Susp.TAX_01.doubleValue());
+        contentValues.put("TAX_02", Susp.TAX_02.doubleValue());
+        contentValues.put("TAX_03", Susp.TAX_03.doubleValue());
+        contentValues.put("TAX_04", Susp.TAX_04.doubleValue());
+        contentValues.put("TAX_05", Susp.TAX_05.doubleValue());
+        contentValues.put("ALLOW_DISC", Susp.ALLOW_DISC);
+        contentValues.put("MULTIPLE_DISC", Susp.MULTIPLE_DISC);
+        contentValues.put("DISCOUNT_CODE", Susp.DISCOUNT_CODE);
+        contentValues.put("ITEM_DISCOUNT_AMOUNT", Susp.ITEM_DISCOUNT_AMOUNT.doubleValue());
+        contentValues.put("TOTAL_DICOUNT_CODE", Susp.TOTAL_DICOUNT_CODE);
+        contentValues.put("TOTAL_DISCOUNT_AMOUNT", Susp.TOTAL_DISCOUNT_AMOUNT.doubleValue());
+        contentValues.put("TICKET_SURCHARGE", Susp.TICKET_SURCHARGE.doubleValue());
+        contentValues.put("STAFF_DISCOUNT_CODE", Susp.STAFF_DISCOUNT_CODE);
+        contentValues.put("STAFF_DISCOUNT", Susp.STAFF_DISCOUNT.doubleValue());
+        contentValues.put("SUSPEND_NUMBER", Susp.SUSPEND_NUMBER);
+        contentValues.put("IsRECALL", Susp.IsRECALL);
+        contentValues.put("IS_UPSALES", Susp.IS_UPSALES);
+        contentValues.put("UPSALES_CONV", Susp.UPSALES_CONV.doubleValue());
+        contentValues.put("IS_MULTIPLEUOM", Susp.IS_MULTIPLEUOM);
+        contentValues.put("RECALL_BY", Susp.RECALL_BY);
+        contentValues.put("APPROVE_BY", Susp.APPROVE_BY);
+        contentValues.put("MODIFIED_ID", Susp.MODIFIED_ID);
+        contentValues.put("CUSTOMER_CODE", Susp.CUSTOMER_CODE);
+        contentValues.put("TAXCODE", Susp.TAXCODE);
+        contentValues.put("COST", Susp.COST.doubleValue());
+        contentValues.put("PRICE_GRP_CODE", Susp.PRICE_GRP_CODE);
+        contentValues.put("TABLE_NO", Susp.TABLE_NO);
+        contentValues.put("PROMOSOURCECODE", Susp.PROMOSOURCECODE);
+        contentValues.put("PROMOCHANGEPRICE", Susp.PROMOCHANGEPRICE.doubleValue());
+        long result = db.insertOrThrow("Suspend", null, contentValues);
+        return result > -1;
     }
 
     public void insertSampleData(SQLiteDatabase db) {
