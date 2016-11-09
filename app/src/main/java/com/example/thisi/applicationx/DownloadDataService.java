@@ -46,6 +46,7 @@ public class DownloadDataService extends Service1 {
                     DownloadPayment(db);
 
                     db.setTransactionSuccessful();
+                    o = "success";
                 } catch (Exception e) {
                     e.printStackTrace();
                 } finally {
@@ -67,7 +68,7 @@ public class DownloadDataService extends Service1 {
     }
 
     private void DeleteExistingData(SQLiteDatabase db) {
-        dataHelper.clearOldData(); 
+        dataHelper.clearOldData(db);
     }
 
     private void DownloadEmployees(SQLiteDatabase db) {

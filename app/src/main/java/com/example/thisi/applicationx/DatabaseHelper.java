@@ -291,8 +291,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             "IsNewInDevice int" +
             ");";
 
-    public static final String paymENT_TABLE_NAME = "payment";
-    public static final String paymENT_TABLE_CREATE = "CREATE TABLE " + paymENT_TABLE_NAME + " ( " +
+    public static final String PAYMENT_TABLE_NAME = "payment";
+    public static final String PAYMENT_TABLE_CREATE = "CREATE TABLE " + PAYMENT_TABLE_NAME + " ( " +
             "COMPANY_CODE nvarchar(20)," +
             "OUTLET_CODE nvarchar(20)," +
             "EMP_CODE nvarchar(20)," +
@@ -360,7 +360,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXIST " + SUSPEND_TABLE_NAME);
         db.execSQL("DROP TABLE IF EXIST " + HEADER_TABLE_NAME);
         db.execSQL("DROP TABLE IF EXIST " + DETAIL_TABLE_NAME);
-        db.execSQL("DROP TABLE IF EXIST " + paymENT_TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXIST " + PAYMENT_TABLE_NAME);
 
         onCreate(db);
     }
@@ -700,10 +700,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return false;
     }
 
-    public boolean clearOldData(SQLiteDatabase db) {
+    public void clearOldData(SQLiteDatabase db) {
         db.execSQL("DELETE FROM employee");
         db.execSQL("DELETE FROM product_master");
-        db.execSQL("DELETE FROM price_group"); 
+        db.execSQL("DELETE FROM price_group");
         db.execSQL("DELETE FROM suspend WHERE IsNewInDevice <> 1");
         db.execSQL("DELETE FROM header WHERE IsNewInDevice <> 1");
         db.execSQL("DELETE FROM detail WHERE IsNewInDevice <> 1");

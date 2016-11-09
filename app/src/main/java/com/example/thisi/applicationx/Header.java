@@ -3,6 +3,7 @@ package com.example.thisi.applicationx;
 import org.ksoap2.serialization.KvmSerializable;
 import org.ksoap2.serialization.PropertyInfo;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Hashtable;
 
@@ -18,8 +19,8 @@ public class Header {
     public String SHIFT_NO;
     public String RCP_NO;
     public String TRANS_TYPE;
-    public date BUS_DATE;
-    public date TRANS_DATE;
+    public Date BUS_DATE;
+    public Date TRANS_DATE;
     public String TRANS_TIME;
     public BigDecimal SALES_AMOUNT;
     public BigDecimal TOTAL_TAX;
@@ -31,10 +32,10 @@ public class Header {
     public BigDecimal CUSTOMER_POINT;
     public String REFUND_VOUCHER_CODE;
     public BigDecimal REFUND_VOUCHER_AMOUNT;
-    public date REFUND_VOUCHER_EXPIRE_DATE;
+    public Date REFUND_VOUCHER_EXPIRE_DATE;
     public String DRAWER_DECLARE_ID;
     public String BOTRANS_NO;
-    public date MODIFIED_DATE;
+    public Date MODIFIED_DATE;
     public String MODIFIED_ID;
     public int ITEM_VOID_COUNT;
     public int REPRINT_COUNT;
@@ -44,10 +45,10 @@ public class Header {
     public String REFUND_POS_NO;
     public String REFUND_RCP_NO;
     public String REFUND_REMARK;
-    public date REFUND_RCP_BUS_DATE;
-    public booelan IsFORCE_REFUND;
+    public Date REFUND_RCP_BUS_DATE;
+    public boolean IsFORCE_REFUND;
     public int REPRINTCOUNT;
-    public booelan ToSAP;
+    public boolean ToSAP;
     public String MEMBER_IC;
     public String PROTRANS_NO;
 }

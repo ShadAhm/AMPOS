@@ -3,6 +3,7 @@ package com.example.thisi.applicationx;
 import org.ksoap2.serialization.KvmSerializable;
 import org.ksoap2.serialization.PropertyInfo;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Hashtable;
 
@@ -14,8 +15,8 @@ public class Payment {
     public String SHIFT_NO;
     public String RCP_NO;
     public String TRANS_TYPE;
-    public date BUS_DATE;
-    public date TRANS_DATE;
+    public Date BUS_DATE;
+    public Date TRANS_DATE;
     public String TRANS_TIME;
     public int ROW_NUMBER;
     public String PAYMENT_CODE;
@@ -31,7 +32,7 @@ public class Payment {
     public BigDecimal TENDER_AMOUNT;
     public String PAYMT_REMARK;
     public String DRAWER_DECLARE_ID;
-    public date MODIFIED_DATE;
+    public Date MODIFIED_DATE;
     public String MODIFIED_ID;
     public boolean ToSAP;
 }

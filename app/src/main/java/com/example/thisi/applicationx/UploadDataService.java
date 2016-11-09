@@ -26,7 +26,7 @@ public class UploadDataService extends Service1 {
 
             @Override
             protected Object doInBackground(Void... params) {
-                
+                return null;
             }
 
             @Override
