@@ -858,19 +858,12 @@ public class PaymentActivity extends Activity {
             return this.paymentType;
         }
 
-        public void setPaymentType(int paymentType) {
-            this.paymentType = paymentType;
-        }
-
         private BigDecimal price;
 
         public BigDecimal getPrice() {
             return this.price;
         }
 
-        public void setPrice(BigDecimal price) {
-            this.price = price;
-        }
     }
 }
 

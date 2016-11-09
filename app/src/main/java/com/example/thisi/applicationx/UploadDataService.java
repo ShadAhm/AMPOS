@@ -1,6 +1,7 @@
 package com.example.thisi.applicationx;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 
@@ -31,7 +32,7 @@ public class UploadDataService extends Service1 {
                 db.beginTransaction();
 
                 try {
-                    UploadSuspend(db);
+                    UploadHeader(db);
 
                     db.setTransactionSuccessful();
                     o = "success";
@@ -55,9 +56,27 @@ public class UploadDataService extends Service1 {
         }.execute();
     }
 
-    private void UploadSuspend(SQLiteDatabase db) {
+    private void UploadHeader(SQLiteDatabase db) {
+        String selectQuery = "SELECT * FROM header;";
 
+        Cursor cursor = db.rawQuery(selectQuery, null);
 
+        int rowCount = cursor.getCount();
+
+        if (rowCount > 0) {
+            while (cursor.moveToNext()) {
+                String nameColumnValue = cursor.getString(cursor.getColumnIndex("PROD_NAME"));
+                String rmColumnValue = cursor.getString(cursor.getColumnIndex("PRICE"));
+
+                if(rmColumnValue == null)
+                    rmColumnValue = "0.0";
+
+                BigDecimal bigDecimalRMColumnValue = new BigDecimal(rmColumnValue);
+
+            }
+
+            cursor.close();
+        }
     }
 }
 

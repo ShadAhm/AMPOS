@@ -347,6 +347,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(HEADER_TABLE_CREATE);
         db.execSQL(DETAIL_TABLE_CREATE);
         db.execSQL(PAYMENT_TABLE_CREATE);
+
+        insertAdminUser(db);
     }
 
     @Override
