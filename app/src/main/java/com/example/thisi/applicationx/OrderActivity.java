@@ -154,8 +154,6 @@ public class OrderActivity extends Activity {
                 latest_row_after_suspend_inserts = i;
             }
 
-//                addFillerRows(20, rowCount);
-
             db.setTransactionSuccessful();
 
 
@@ -342,38 +340,6 @@ public class OrderActivity extends Activity {
         if(newProductsCodes != null && newProductsCodes != "") {
             addNewProductMastersToView();
         }
-    }
-
-
-    private void addFillerRows(int i, int startColourIndicator) {
-        TableLayout tableLayout = (TableLayout) findViewById(R.id.tablelayout);
-        for (int j = 0; j < i; j++) {
-            TableRow row = new TableRow(this);
-
-            startColourIndicator++;
-
-            if (startColourIndicator % 2 == 0) {
-                row.setBackgroundColor(Color.parseColor(evenRowColor));
-            } else {
-                row.setBackgroundColor(Color.parseColor(oddRowColor));
-            }
-            row.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT,
-                    TableLayout.LayoutParams.WRAP_CONTENT));
-            String[] colText = {" ", " ", " ", " "};
-
-            for (String text : colText) {
-                TextView tv = new TextView(this);
-                tv.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT,
-                        TableRow.LayoutParams.WRAP_CONTENT));
-                tv.setGravity(Gravity.LEFT);
-                tv.setTextSize(11);
-                tv.setPadding(5, 5, 5, 5);
-                tv.setText(text);
-                row.addView(tv);
-            }
-            tableLayout.addView(row);
-        }
-
     }
 
     private TableRow createHeaderRow() {

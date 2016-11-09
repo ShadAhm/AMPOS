@@ -138,4 +138,46 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents{
                 true
         );
     }
+
+    @Override
+    public void UploadDataStartedRequest() {
+        enableButtons(
+                false,
+                false,
+                false,
+                false,
+                false,
+                false
+        );
+
+        progress = new ProgressDialog(this);
+        progress.setTitle("Uploading data...");
+        progress.setMessage("Do not close this application");
+        progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
+        progress.show();
+    }
+
+    @Override
+    public void UploadDataFinished(String methodName, Object Data) {
+        showMessage("Success", "Data has been synced to the server");
+    }
+
+    @Override
+    public void UploadDataFinishedWithException(Exception ex) {
+        showMessage("Exception", ex.getMessage());
+    }
+
+    @Override
+    public void UploadDataEndedRequest() {
+        progress.dismiss();
+
+        enableButtons(
+                true,
+                true,
+                true,
+                true,
+                true,
+                true
+        );
+    }
 }

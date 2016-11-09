@@ -1,10 +1,13 @@
 package com.example.thisi.applicationx;
 
 public interface IWsdl2CodeEvents {
-    public void Wsdl2CodeStartedRequest();
-    public void Wsdl2CodeFinished(String methodName, Object Data);
-    public void Wsdl2CodeFinishedWithException(Exception ex);
-    public void Wsdl2CodeEndedRequest();
+    void Wsdl2CodeStartedRequest();
+    void Wsdl2CodeFinished(String methodName, Object Data);
+    void Wsdl2CodeFinishedWithException(Exception ex);
+    void Wsdl2CodeEndedRequest();
 
-    
+    void UploadDataStartedRequest();
+    void UploadDataFinished(String methodName, Object Data);
+    void UploadDataFinishedWithException(Exception ex);
+    void UploadDataEndedRequest();
 }

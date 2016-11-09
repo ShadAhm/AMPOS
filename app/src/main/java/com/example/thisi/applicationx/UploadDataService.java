@@ -21,22 +21,43 @@ public class UploadDataService extends Service1 {
         new AsyncTask<Void, Void, Object>() {
             @Override
             protected void onPreExecute() {
-                eventHandler.Wsdl2CodeStartedRequest();
+                eventHandler.UploadDataStartedRequest();
             }
 
             @Override
             protected Object doInBackground(Void... params) {
-                return null;
+                Object o = null;
+                SQLiteDatabase db = dataHelper.getReadableDatabase();
+                db.beginTransaction();
+
+                try {
+                    UploadSuspend(db);
+
+                    db.setTransactionSuccessful();
+                    o = "success";
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    db.endTransaction();
+                    db.close();
+                }
+
+                return o;
             }
 
             @Override
             protected void onPostExecute(Object result) {
-                eventHandler.Wsdl2CodeEndedRequest();
+                eventHandler.UploadDataEndedRequest();
                 if (result != null) {
-                    eventHandler.Wsdl2CodeFinished("SQLResult", result);
+                    eventHandler.UploadDataFinished("SQLResult", result);
                 }
             }
         }.execute();
+    }
+
+    private void UploadSuspend(SQLiteDatabase db) {
+
+
     }
 }
 
