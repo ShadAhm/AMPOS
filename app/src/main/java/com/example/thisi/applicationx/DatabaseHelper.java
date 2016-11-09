@@ -202,10 +202,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             "PRICE_GRP_CODE	nvarchar(20)," +
             "TABLE_NO nvarchar(20)," +
             "PROMOSOURCECODE nvarchar(20)," +
-            "PROMOCHANGEPRICE numeric(18, 2)" +
+            "PROMOCHANGEPRICE numeric(18, 2)," +
+            "IsNewInDevice int" +
             ");";
 
-    public static final String HEADER_TABLE_NAME = "header";
+    public static final String HEADER_TABLE_NAME = "Header";
     public static final String HEADER_TABLE_CREATE = "CREATE TABLE " + HEADER_TABLE_NAME + " ( " +
             "COMPANY_CODE nvarchar(20)," +
             "OUTLET_CODE nvarchar(20)," +
@@ -245,7 +246,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             "REPRINTCOUNT int," +
             "ToSAP	bit," +
             "MEMBER_IC nvarchar(20)," +
-            "PROTRANS_NO nvarchar(20)" +
+            "PROTRANS_NO nvarchar(20)," +
+            "IsNewInDevice int" +
             ");";
 
     public static final String DETAIL_TABLE_NAME = "detail";
@@ -285,11 +287,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             "BARCODE nvarchar(130)," +
             "TAXCODE nvarchar(6)," +
             "COST numeric(18, 2)," +
-            "ToSAP bit" +
+            "ToSAP bit," +
+            "IsNewInDevice int" +
             ");";
 
-    public static final String PAYMENT_TABLE_NAME = "payment";
-    public static final String PAYMENT_TABLE_CREATE = "CREATE TABLE " + PAYMENT_TABLE_NAME + " ( " +
+    public static final String paymENT_TABLE_NAME = "payment";
+    public static final String paymENT_TABLE_CREATE = "CREATE TABLE " + paymENT_TABLE_NAME + " ( " +
             "COMPANY_CODE nvarchar(20)," +
             "OUTLET_CODE nvarchar(20)," +
             "EMP_CODE nvarchar(20)," +
@@ -316,7 +319,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             "DRAWER_DECLARE_ID nvarchar(100)," +
             "MODIFIED_DATE datetime," +
             "MODIFIED_ID nvarchar(20)," +
-            "ToSAP bit" +
+            "ToSAP bit," +
+            "IsNewInDevice int" +
             ");";
 
     public DatabaseHelper(Context context, int version) {
@@ -356,7 +360,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXIST " + SUSPEND_TABLE_NAME);
         db.execSQL("DROP TABLE IF EXIST " + HEADER_TABLE_NAME);
         db.execSQL("DROP TABLE IF EXIST " + DETAIL_TABLE_NAME);
-        db.execSQL("DROP TABLE IF EXIST " + PAYMENT_TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXIST " + paymENT_TABLE_NAME);
 
         onCreate(db);
     }
@@ -565,6 +569,186 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return result > -1;
     }
 
+    public boolean insertHeader(SQLiteDatabase db, Header heada) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("COMPANY_CODE", heada.COMPANY_CODE);
+        contentValues.put("OUTLET_CODE", heada.OUTLET_CODE);
+        contentValues.put("EMP_CODE", heada.EMP_CODE);
+        contentValues.put("POS_NO", heada.POS_NO);
+        contentValues.put("SHIFT_NO", heada.SHIFT_NO);
+        contentValues.put("RCP_NO", heada.RCP_NO);
+        contentValues.put("TRANS_TYPE", heada.TRANS_TYPE);
+        contentValues.put("TRANS_TIME", heada.TRANS_TIME);
+        contentValues.put("SALES_AMOUNT", heada.SALES_AMOUNT.doubleValue());
+        contentValues.put("TOTAL_TAX", heada.TOTAL_TAX.doubleValue());
+        contentValues.put("TOTAL_DISCOUNT", heada.TOTAL_DISCOUNT.doubleValue());
+        contentValues.put("ROUNDING", heada.ROUNDING.doubleValue());
+        contentValues.put("ROUNDING_ADJ", heada.ROUNDING_ADJ.doubleValue());
+        contentValues.put("APPROVAL_ID", heada.APPROVAL_ID);
+        contentValues.put("CUSTOMER_CODE", heada.CUSTOMER_CODE);
+        contentValues.put("CUSTOMER_POINT", heada.CUSTOMER_POINT.doubleValue());
+        contentValues.put("REFUND_VOUCHER_CODE", heada.REFUND_VOUCHER_CODE);
+        contentValues.put("REFUND_VOUCHER_AMOUNT", heada.REFUND_VOUCHER_AMOUNT.doubleValue());
+        contentValues.put("DRAWER_DECLARE_ID", heada.DRAWER_DECLARE_ID);
+        contentValues.put("BOTRANS_NO", heada.BOTRANS_NO);
+        contentValues.put("MODIFIED_ID", heada.MODIFIED_ID);
+        contentValues.put("ITEM_VOID_COUNT", heada.ITEM_VOID_COUNT);
+        contentValues.put("REPRINT_COUNT", heada.REPRINT_COUNT);
+        contentValues.put("ITEM_VOID_AMOUNT", heada.ITEM_VOID_AMOUNT.doubleValue());
+        contentValues.put("REPRINT_AMOUNT", heada.REPRINT_AMOUNT.doubleValue());
+        contentValues.put("PRICE_LEVEL", heada.PRICE_LEVEL);
+        contentValues.put("REFUND_POS_NO", heada.REFUND_POS_NO);
+        contentValues.put("REFUND_RCP_NO", heada.REFUND_RCP_NO);
+        contentValues.put("REFUND_REMARK", heada.REFUND_REMARK);
+        contentValues.put("IsFORCE_REFUND", heada.IsFORCE_REFUND);
+        contentValues.put("REPRINTCOUNT", heada.REPRINTCOUNT);
+        contentValues.put("ToSAP", heada.ToSAP);
+        contentValues.put("MEMBER_IC", heada.MEMBER_IC);
+        contentValues.put("PROTRANS_NO", heada.PROTRANS_NO);
+        long result = db.insertOrThrow("Header", null, contentValues);
+        return result > -1;
+    }
+
+    public boolean insertDetail(SQLiteDatabase db, Detail deta) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("COMPANY_CODE", deta.COMPANY_CODE);
+        contentValues.put("OUTLET_CODE", deta.OUTLET_CODE);
+        contentValues.put("EMP_CODE", deta.EMP_CODE);
+        contentValues.put("POS_NO", deta.POS_NO);
+        contentValues.put("SHIFT_NO", deta.SHIFT_NO);
+        contentValues.put("RCP_NO", deta.RCP_NO);
+        contentValues.put("TRANS_TYPE", deta.TRANS_TYPE);
+        contentValues.put("TRANS_TIME", deta.TRANS_TIME);
+        contentValues.put("ROW_NUMBER", deta.ROW_NUMBER);
+        contentValues.put("PROD_CODE", deta.PROD_CODE);
+        contentValues.put("PROD_NAME", deta.PROD_NAME);
+        contentValues.put("PROD_TYPE_CODE", deta.PROD_TYPE_CODE);
+        contentValues.put("USAGE_UOM", deta.USAGE_UOM);
+        contentValues.put("QUANTITY", deta.QUANTITY.doubleValue());
+        contentValues.put("UOM_CONV", deta.UOM_CONV.doubleValue());
+        contentValues.put("PRICE_LVL_CODE", deta.PRICE_LVL_CODE);
+        contentValues.put("UNIT_PRICE", deta.UNIT_PRICE.doubleValue());
+        contentValues.put("TOTAL_PRICE", deta.TOTAL_PRICE.doubleValue());
+        contentValues.put("TAX_01", deta.TAX_01.doubleValue());
+        contentValues.put("TAX_02", deta.TAX_02.doubleValue());
+        contentValues.put("TAX_03", deta.TAX_03.doubleValue());
+        contentValues.put("TAX_04", deta.TAX_04.doubleValue());
+        contentValues.put("TAX_05", deta.TAX_05.doubleValue());
+        contentValues.put("DISCOUNT_CODE", deta.DISCOUNT_CODE);
+        contentValues.put("ITEM_DISCOUNT_AMOUNT", deta.ITEM_DISCOUNT_AMOUNT.doubleValue());
+        contentValues.put("TOTAL_DISCOUNT_CODE", deta.TOTAL_DISCOUNT_CODE);
+        contentValues.put("TOTAL_DISCOUNT_AMOUNT", deta.TOTAL_DISCOUNT_AMOUNT.doubleValue());
+        contentValues.put("TICKET_SURCHARGE", deta.TICKET_SURCHARGE.doubleValue());
+        contentValues.put("STAFF_DISCOUNT_CODE", deta.STAFF_DISCOUNT_CODE);
+        contentValues.put("STAFF_DISCOUNT", deta.STAFF_DISCOUNT.doubleValue());
+        contentValues.put("BARCODE", deta.BARCODE);
+        contentValues.put("TAXCODE", deta.TAXCODE);
+        contentValues.put("COST", deta.COST.doubleValue());
+        contentValues.put("ToSAP", deta.ToSAP);
+        long result = db.insertOrThrow("Detail", null, contentValues);
+        return result > -1;
+    }
+
+
+    public boolean insertPayment(SQLiteDatabase db, Payment paym) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("COMPANY_CODE", paym.COMPANY_CODE);
+        contentValues.put("OUTLET_CODE", paym.OUTLET_CODE);
+        contentValues.put("EMP_CODE", paym.EMP_CODE);
+        contentValues.put("POS_NO", paym.POS_NO);
+        contentValues.put("SHIFT_NO", paym.SHIFT_NO);
+        contentValues.put("RCP_NO", paym.RCP_NO);
+        contentValues.put("TRANS_TYPE", paym.TRANS_TYPE);
+        contentValues.put("TRANS_TIME", paym.TRANS_TIME);
+        contentValues.put("ROW_NUMBER", paym.ROW_NUMBER);
+        contentValues.put("PAYMENT_CODE", paym.PAYMENT_CODE);
+        contentValues.put("PAYMENT_NAME", paym.PAYMENT_NAME);
+        contentValues.put("PAYMENT_TYPE", paym.PAYMENT_TYPE);
+        contentValues.put("FOREX_CODE", paym.FOREX_CODE);
+        contentValues.put("FOREX_AMOUNT", paym.FOREX_AMOUNT.doubleValue());
+        contentValues.put("CARD_NO", paym.CARD_NO);
+        contentValues.put("CARD_TYPE", paym.CARD_TYPE);
+        contentValues.put("BANK_CODE", paym.BANK_CODE);
+        contentValues.put("PAYMENT_AMOUNT", paym.PAYMENT_AMOUNT.doubleValue());
+        contentValues.put("CHANGE_AMOUNT", paym.CHANGE_AMOUNT.doubleValue());
+        contentValues.put("TENDER_AMOUNT", paym.TENDER_AMOUNT.doubleValue());
+        contentValues.put("PAYMT_REMARK", paym.PAYMT_REMARK);
+        contentValues.put("DRAWER_DECLARE_ID", paym.DRAWER_DECLARE_ID);
+        contentValues.put("MODIFIED_ID", paym.MODIFIED_ID);
+        contentValues.put("ToSAP", paym.ToSAP);
+        long result = db.insertOrThrow("Payment", null, contentValues);
+        return result > -1;
+    }
+
+    public boolean loginEmployee(String username, String password) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        db.beginTransaction();
+        try {
+            Cursor res = db.rawQuery("SELECT * FROM " + EMPLOYEE_TABLE_NAME + " WHERE EMP_CODE = '" + username + "' AND EMP_PASSWORD = '" + password + "';", null);
+
+            db.setTransactionSuccessful();
+
+            return res.getCount() > 0;
+        } catch (SQLiteException e) {
+            e.printStackTrace();
+        } finally {
+            db.endTransaction();
+            db.close();
+        }
+
+        return false;
+    }
+
+    public boolean clearOldData(SQLiteDatabase db) {
+        db.execSQL("DELETE FROM employee");
+        db.execSQL("DELETE FROM product_master");
+        db.execSQL("DELETE FROM price_group"); 
+        db.execSQL("DELETE FROM suspend WHERE IsNewInDevice <> 1");
+        db.execSQL("DELETE FROM header WHERE IsNewInDevice <> 1");
+        db.execSQL("DELETE FROM detail WHERE IsNewInDevice <> 1");
+        db.execSQL("DELETE FROM payment WHERE IsNewInDevice <> 1");
+    }
+
+    //
+    //    //
+    //    //
+    //    //
+    //
+
+    //
+    //    //
+    //    //
+    //    //
+    //
+
+    //
+    //    //
+    //    //
+    //    //
+    //
+
+    //
+    //    //
+    //    //
+    //    //
+    //
+
+    //
+    //    //
+    //    //
+    //    //
+    //
+
+    //
+    //    //
+    //    //
+    //    //
+    //
+    // INSERT SAMPLE DATA
+    //
+    //
+    //
     public void insertSampleData(SQLiteDatabase db) {
         insertAdminUser(db);
 
@@ -668,25 +852,5 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues11.put("PRICE_04", "4");
 
         db.insertOrThrow("product_master", null, contentValues11);
-    }
-
-    public boolean loginEmployee(String username, String password) {
-        SQLiteDatabase db = this.getReadableDatabase();
-
-        db.beginTransaction();
-        try {
-            Cursor res = db.rawQuery("SELECT * FROM " + EMPLOYEE_TABLE_NAME + " WHERE EMP_CODE = '" + username + "' AND EMP_PASSWORD = '" + password + "';", null);
-
-            db.setTransactionSuccessful();
-
-            return res.getCount() > 0;
-        } catch (SQLiteException e) {
-            e.printStackTrace();
-        } finally {
-            db.endTransaction();
-            db.close();
-        }
-
-        return false;
     }
 }

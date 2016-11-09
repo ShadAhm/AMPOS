@@ -257,7 +257,8 @@ public class PaymentActivity extends Activity {
                         "PRICE_GRP_CODE, " +
                         "TABLE_NO, " +
                         "PROMOSOURCECODE, " +
-                        "PROMOCHANGEPRICE " +
+                        "PROMOCHANGEPRICE, " +
+                        "IsNewInDevice " +
                         ") " +
                         "SELECT  " +
                         "'BECON', " +
@@ -311,7 +312,8 @@ public class PaymentActivity extends Activity {
                         "?, " +
                         "null, " +
                         "null, " +
-                        "null " +
+                        "null, " +
+                        "1 " +
                         "FROM product_master " +
                         "WHERE PROD_CODE IN (" + sb.toString() + "); ";
 
@@ -344,7 +346,6 @@ public class PaymentActivity extends Activity {
     }
 
     public void onConfirm(View view) {
-
         if (!isPaymentComplete) {
             RadioGroup rg = (RadioGroup) findViewById(R.id.radioGroupPaymentMethod);
 
@@ -491,7 +492,8 @@ public class PaymentActivity extends Activity {
                     "BARCODE, " +
                     "TAXCODE, " +
                     "COST, " +
-                    "ToSAP " +
+                    "ToSAP, " +
+                    "IsNewInDevice" +
                     ") " +
                     "SELECT  " +
                     "'BECON', " +
@@ -528,7 +530,8 @@ public class PaymentActivity extends Activity {
                     "product_master.BARCODE, " +
                     "product_master.TAXCODE, " +
                     "product_master.COST, " +
-                    "0 " +
+                    "0," +
+                    "1 " +
                     "FROM product_master  " +
                     "LEFT JOIN price_group ON price_group.prod_code = product_master.prod_code  " +
                     "LEFT JOIN customer ON customer.price_grp_code = price_group.price_grp_code  " +
@@ -588,7 +591,8 @@ public class PaymentActivity extends Activity {
                     "DRAWER_DECLARE_ID, " +
                     "MODIFIED_DATE, " +
                     "MODIFIED_ID, " +
-                    "ToSAP " +
+                    "ToSAP, " +
+                    "IsNewInDevice " +
                     ") " +
                     "VALUES " +
                     "('BECON', " +
@@ -617,7 +621,8 @@ public class PaymentActivity extends Activity {
                     "null, " +
                     "null, " +
                     "null, " +
-                    "0); ";
+                    "0, " +
+                    "1); ";
 
             db.execSQL(ssql);
         }
@@ -660,7 +665,8 @@ public class PaymentActivity extends Activity {
                 "BARCODE, " +
                 "TAXCODE, " +
                 "COST, " +
-                "ToSAP " +
+                "ToSAP, " +
+                "IsNewInDevice " +
                 ") " +
                 "SELECT  " +
                 "suspend.COMPANY_CODE, " +
@@ -698,7 +704,8 @@ public class PaymentActivity extends Activity {
                 "suspend.BARCODE, " +
                 "suspend.TAXCODE, " +
                 "suspend.COST, " +
-                "0 " +
+                "0, " +
+                "1 " +
                 "FROM suspend " +
                 "LEFT JOIN price_group ON suspend.price_grp_code = price_group.price_grp_code " +
                 "AND suspend.prod_code = price_group.prod_code  " +
@@ -768,7 +775,8 @@ public class PaymentActivity extends Activity {
                 "REPRINTCOUNT, " +
                 "ToSAP, " +
                 "MEMBER_IC, " +
-                "PROTRANS_NO " +
+                "PROTRANS_NO, " +
+                "IsNewInDevice" +
                 ") " +
                 "VALUES (" +
                 "'BECON', " +
@@ -809,8 +817,8 @@ public class PaymentActivity extends Activity {
                 "null, " +
                 "0, " +
                 "null, " +
-                "null " +
-                "); ";
+                "null, " +
+                "1); ";
 
         String[] objs = new String[]{uuid, total.toString(), customer_code};
         db.execSQL(ssql, objs);

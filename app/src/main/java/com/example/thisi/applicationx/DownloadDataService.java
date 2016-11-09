@@ -30,17 +30,20 @@ public class DownloadDataService extends Service1 {
 
             @Override
             protected Object doInBackground(Void... params) {
-                android.os.Debug.waitForDebugger();
-
                 Object o = null;
                 SQLiteDatabase db = dataHelper.getReadableDatabase();
                 db.beginTransaction();
 
                 try {
-                    o = DownloadEmployees(db);
+                    DeleteExistingData(db);
+
+                    DownloadEmployees(db);
                     DownloadCustomers(db);
                     DownloadProduct_Master(db);
                     DownloadPrice_Group(db);
+                    DownloadHeaders(db); 
+                    DownloadDetail(db);
+                    DownloadPayment(db);
 
                     db.setTransactionSuccessful();
                 } catch (Exception e) {
@@ -63,9 +66,29 @@ public class DownloadDataService extends Service1 {
         }.execute();
     }
 
+    private void DeleteExistingData(SQLiteDatabase db) {
+        dataHelper.clearOldData(); 
+    }
+
+    private void DownloadEmployees(SQLiteDatabase db) {
+        SoapObject returned = super.SQLResultReturn(
+                "SELECT COALESCE(EMP_CODE, 0) AS EMP_CODE,COALESCE(EMP_NAME, '') AS EMP_NAME,COALESCE(EMP_PASSWORD, '') AS EMP_PASSWORD,COALESCE(EMP_LVL, 0) AS EMP_LVL,COALESCE(POS_ALLOW, 0) AS POS_ALLOW,COALESCE(VIEW_COST_ALLOW, 0) AS VIEW_COST_ALLOW,COALESCE(EMP_GROUP_CODE, '') AS EMP_GROUP_CODE,COALESCE(EMP_GROUP_NAME, '') AS EMP_GROUP_NAME,COALESCE(IsActive, 0) AS IsActive FROM Employee"
+                , null
+        );
+
+        if(returned != null) {
+            Employee[] emps = RetrieveEmployeesFromSoap(returned);
+
+            for (int i = 0; i < emps.length; i++) {
+                dataHelper.insertEmployee(db, emps[i]);
+            }
+        }
+    }
+
     private void DownloadCustomers(SQLiteDatabase db) {
         SoapObject returned = super.SQLResultReturn(
-                "SELECT CUSTOMER_CODE, CUSTOMER_NAME, CUSTOMER_GRP_CODE, IC_NO, ADDRESS1, ADDRESS2, POS_CODE, COUNTY, STATE, COUNTRY, CONTACT, MOBILE, FAX, EMAIL, IsWHOLESALES, IsActive, IsMember, BYSMS, BYEMAIL, MODIFIED_ID, TEMP_CUSTOMER_CODE, GST_REG_NO, IsEMPLOYEE, PRICE_GRP_CODE, Outlet_Code FROM customer", null
+                "SELECT COALESCE(CUSTOMER_CODE, '') AS CUSTOMER_CODE,COALESCE(CUSTOMER_NAME, '') AS CUSTOMER_NAME,COALESCE(CUSTOMER_GRP_CODE, '') AS CUSTOMER_GRP_CODE,COALESCE(IC_NO, '') AS IC_NO,COALESCE(ADDRESS1, '') AS ADDRESS1,COALESCE(ADDRESS2, '') AS ADDRESS2,COALESCE(POS_CODE, '') AS POS_CODE,COALESCE(COUNTY, '') AS COUNTY,COALESCE(STATE, '') AS STATE,COALESCE(COUNTRY, '') AS COUNTRY,COALESCE(CONTACT, '') AS CONTACT,COALESCE(MOBILE, '') AS MOBILE,COALESCE(FAX, '') AS FAX,COALESCE(EMAIL, '') AS EMAIL,COALESCE(IsWHOLESALES, 0) AS IsWHOLESALES,COALESCE(IsActive, 0) AS IsActive,COALESCE(IsMember, 0) AS IsMember,COALESCE(POINT_VALUE, 0) AS POINT_VALUE,COALESCE(BYSMS, 0) AS BYSMS,COALESCE(BYEMAIL, 0) AS BYEMAIL,COALESCE(MODIFIED_ID, '') AS MODIFIED_ID,COALESCE(TEMP_CUSTOMER_CODE, '') AS TEMP_CUSTOMER_CODE,COALESCE(GST_REG_NO, '') AS GST_REG_NO,COALESCE(IsEMPLOYEE, 0) AS IsEMPLOYEE,COALESCE(PRICE_GRP_CODE, '') AS PRICE_GRP_CODE,COALESCE(Outlet_Code, '') AS Outlet_Code FROM Customer"
+                , null
         );
 
         if(returned != null) {
@@ -77,23 +100,10 @@ public class DownloadDataService extends Service1 {
         }
     }
 
-    private SoapObject DownloadEmployees(SQLiteDatabase db) {
-        SoapObject returned = super.SQLResultReturn(
-                "SELECT emp_code, emp_name, emp_password, emp_lvl, pos_allow, view_cost_allow, emp_group_code, emp_group_name, isactive FROM employee", null
-        );
-
-        if(returned != null) {
-            Employee[] emps = RetrieveEmployeesFromSoap(returned);
-
-            for (int i = 0; i < emps.length; i++) {
-                dataHelper.insertEmployee(db, emps[i]);
-            }
-        }
-        return returned;
-    }
-
     private void DownloadProduct_Master(SQLiteDatabase db) {
-        SoapObject returned = super.SQLResultReturn("SELECT PROD_CODE, PRODUCT_SHORT_NAME, PROD_NAME, PROD_TYPE_CODE, BARCODE, PROD_GRP_01, PROD_GRP_02, PROD_GRP_03, PROD_GRP_04, PROD_GRP_05, PROD_DISC_GRP, TAX_01, TAX_02, TAX_03, TAX_04, TAX_05, PRICE_01, PRICE_02, PRICE_03, PRICE_04, PRICE_05, PRICE_06, PRICE_07, PRICE_08, PRICE_09, PRICE_10, COST, AVERAGE_COST, DISPLAY_ORDER, POS_DISPLAY, ALLOW_ZERO_PRICE, IsActive, ACTIVE_PERIOD, STOCK_UOM, PURCH_UOM, USAGE_UOM, PURCH_CONV, USAGE_CONV, IsBOM, IsSERIAL, ALLOW_DISC, MULTIPLE_DISC, MULTIPLE_UOM, TICKET_TYPE, STAFF_DISCOUNT_CODE, SUPPLIER_CODE, BARCODE_01, BARCODE_02, BARCODE_03, BARCODE_04, BARCODE_05, BARCODE_06, BARCODE_07, BARCODE_08, BARCODE_09, BARCODE_10, PRICE_PERCENTAGE_01, PRICE_PERCENTAGE_02, PRICE_PERCENTAGE_03, PRICE_PERCENTAGE_04, PRICE_PERCENTAGE_05, PRICE_PERCENTAGE_06, PRICE_PERCENTAGE_07, PRICE_PERCENTAGE_08, PRICE_PERCENTAGE_09, PRICE_PERCENTAGE_10, STOCK_TAKE_INTERIM, MODIFIED_ID, IMG_PATH, TAXCODE FROM product_master", null);
+        SoapObject returned = super.SQLResultReturn(
+            "SELECT COALESCE(PROD_CODE, '') AS PROD_CODE,COALESCE(PRODUCT_SHORT_NAME, '') AS PRODUCT_SHORT_NAME,COALESCE(PROD_NAME, '') AS PROD_NAME,COALESCE(PROD_TYPE_CODE, '') AS PROD_TYPE_CODE,COALESCE(BARCODE, '') AS BARCODE,COALESCE(PROD_GRP_01, '') AS PROD_GRP_01,COALESCE(PROD_GRP_02, '') AS PROD_GRP_02,COALESCE(PROD_GRP_03, '') AS PROD_GRP_03,COALESCE(PROD_GRP_04, '') AS PROD_GRP_04,COALESCE(PROD_GRP_05, '') AS PROD_GRP_05,COALESCE(PROD_DISC_GRP, '') AS PROD_DISC_GRP,COALESCE(TAX_01, 0) AS TAX_01,COALESCE(TAX_02, 0) AS TAX_02,COALESCE(TAX_03, 0) AS TAX_03,COALESCE(TAX_04, 0) AS TAX_04,COALESCE(TAX_05, 0) AS TAX_05,COALESCE(PRICE_01, '0.0') AS PRICE_01,COALESCE(PRICE_02, '0.0') AS PRICE_02,COALESCE(PRICE_03, '0.0') AS PRICE_03,COALESCE(PRICE_04, '0.0') AS PRICE_04,COALESCE(PRICE_05, '0.0') AS PRICE_05,COALESCE(PRICE_06, '0.0') AS PRICE_06,COALESCE(PRICE_07, '0.0') AS PRICE_07,COALESCE(PRICE_08, '0.0') AS PRICE_08,COALESCE(PRICE_09, '0.0') AS PRICE_09,COALESCE(PRICE_10, '0.0') AS PRICE_10,COALESCE(COST, '0.0') AS COST,COALESCE(AVERAGE_COST, '0.0') AS AVERAGE_COST,COALESCE(DISPLAY_ORDER, 0) AS DISPLAY_ORDER,COALESCE(POS_DISPLAY, 0) AS POS_DISPLAY,COALESCE(ALLOW_ZERO_PRICE, 0) AS ALLOW_ZERO_PRICE,COALESCE(IsActive, 0) AS IsActive,COALESCE(ACTIVE_PERIOD, 0) AS ACTIVE_PERIOD,COALESCE(STOCK_UOM, '') AS STOCK_UOM,COALESCE(PURCH_UOM, '') AS PURCH_UOM,COALESCE(USAGE_UOM, '') AS USAGE_UOM,COALESCE(PURCH_CONV, 0) AS PURCH_CONV,COALESCE(USAGE_CONV, 0) AS USAGE_CONV,COALESCE(IsBOM, 0) AS IsBOM,COALESCE(IsSERIAL, 0) AS IsSERIAL,COALESCE(ALLOW_DISC, 0) AS ALLOW_DISC,COALESCE(MULTIPLE_DISC, 0) AS MULTIPLE_DISC,COALESCE(MULTIPLE_UOM, 0) AS MULTIPLE_UOM,COALESCE(TICKET_TYPE, '') AS TICKET_TYPE,COALESCE(STAFF_DISCOUNT_CODE, '') AS STAFF_DISCOUNT_CODE,COALESCE(SUPPLIER_CODE, '') AS SUPPLIER_CODE,COALESCE(BARCODE_01, '') AS BARCODE_01,COALESCE(BARCODE_02, '') AS BARCODE_02,COALESCE(BARCODE_03, '') AS BARCODE_03,COALESCE(BARCODE_04, '') AS BARCODE_04,COALESCE(BARCODE_05, '') AS BARCODE_05,COALESCE(BARCODE_06, '') AS BARCODE_06,COALESCE(BARCODE_07, '') AS BARCODE_07,COALESCE(BARCODE_08, '') AS BARCODE_08,COALESCE(BARCODE_09, '') AS BARCODE_09,COALESCE(BARCODE_10, '') AS BARCODE_10,COALESCE(PRICE_PERCENTAGE_01, 0) AS PRICE_PERCENTAGE_01,COALESCE(PRICE_PERCENTAGE_02, 0) AS PRICE_PERCENTAGE_02,COALESCE(PRICE_PERCENTAGE_03, 0) AS PRICE_PERCENTAGE_03,COALESCE(PRICE_PERCENTAGE_04, 0) AS PRICE_PERCENTAGE_04,COALESCE(PRICE_PERCENTAGE_05, 0) AS PRICE_PERCENTAGE_05,COALESCE(PRICE_PERCENTAGE_06, 0) AS PRICE_PERCENTAGE_06,COALESCE(PRICE_PERCENTAGE_07, 0) AS PRICE_PERCENTAGE_07,COALESCE(PRICE_PERCENTAGE_08, 0) AS PRICE_PERCENTAGE_08,COALESCE(PRICE_PERCENTAGE_09, 0) AS PRICE_PERCENTAGE_09,COALESCE(PRICE_PERCENTAGE_10, 0) AS PRICE_PERCENTAGE_10,COALESCE(STOCK_TAKE_INTERIM, '') AS STOCK_TAKE_INTERIM,COALESCE(MODIFIED_ID, '') AS MODIFIED_ID,COALESCE(IMG_PATH, '') AS IMG_PATH,COALESCE(TAXCODE, '') AS TAXCODE FROM product_master"
+        , null);
 
         if(returned != null) {
             Product_Master[] prods = RetrieveProduct_MasterFromSoap(returned);
@@ -106,7 +116,8 @@ public class DownloadDataService extends Service1 {
 
     private void DownloadPrice_Group(SQLiteDatabase db) {
         SoapObject returned = super.SQLResultReturn(
-                "SELECT PRICE_GRP_CODE, PRICE_GRP_NAME, PROD_CODE, PRICE FROM price_group", null
+                "SELECT COALESCE(PRICE_GRP_CODE, '') AS PRICE_GRP_CODE,COALESCE(PRICE_GRP_NAME, '') AS PRICE_GRP_NAME,COALESCE(PROD_CODE, '') AS PROD_CODE,COALESCE(PRICE, '0.0') AS PRICE FROM price_group"
+                , null
         );
 
         if(returned != null) {
@@ -128,6 +139,51 @@ public class DownloadDataService extends Service1 {
 
             for (int i = 0; i < suspends.length; i++) {
                 dataHelper.insertSuspend(db, suspends[i]);
+            }
+        }
+    }
+
+    private void DownloadHeaders(SQLiteDatabase db) {
+        SoapObject returned = super.SQLResultReturn(
+                "SELECT COALESCE(COMPANY_CODE, '') AS COMPANY_CODE,COALESCE(OUTLET_CODE, '') AS OUTLET_CODE,COALESCE(EMP_CODE, '') AS EMP_CODE,COALESCE(POS_NO, '') AS POS_NO,COALESCE(SHIFT_NO, '') AS SHIFT_NO,COALESCE(RCP_NO, '') AS RCP_NO,COALESCE(TRANS_TYPE, '') AS TRANS_TYPE,COALESCE(TRANS_TIME, '') AS TRANS_TIME,COALESCE(SALES_AMOUNT, '0.0') AS SALES_AMOUNT,COALESCE(TOTAL_TAX, '0.0') AS TOTAL_TAX,COALESCE(TOTAL_DISCOUNT, '0.0') AS TOTAL_DISCOUNT,COALESCE(ROUNDING, '0.0') AS ROUNDING,COALESCE(ROUNDING_ADJ, '0.0') AS ROUNDING_ADJ,COALESCE(APPROVAL_ID, '') AS APPROVAL_ID,COALESCE(CUSTOMER_CODE, '') AS CUSTOMER_CODE,COALESCE(CUSTOMER_POINT, '0.0') AS CUSTOMER_POINT,COALESCE(REFUND_VOUCHER_CODE, '') AS REFUND_VOUCHER_CODE,COALESCE(REFUND_VOUCHER_AMOUNT, '0.0') AS REFUND_VOUCHER_AMOUNT,COALESCE(DRAWER_DECLARE_ID, '') AS DRAWER_DECLARE_ID,COALESCE(BOTRANS_NO, '') AS BOTRANS_NO,COALESCE(MODIFIED_ID, '') AS MODIFIED_ID,COALESCE(ITEM_VOID_COUNT, 0) AS ITEM_VOID_COUNT,COALESCE(REPRINT_COUNT, 0) AS REPRINT_COUNT,COALESCE(ITEM_VOID_AMOUNT, '0.0') AS ITEM_VOID_AMOUNT,COALESCE(REPRINT_AMOUNT, '0.0') AS REPRINT_AMOUNT,COALESCE(PRICE_LEVEL, '') AS PRICE_LEVEL,COALESCE(REFUND_POS_NO, '') AS REFUND_POS_NO,COALESCE(REFUND_RCP_NO, '') AS REFUND_RCP_NO,COALESCE(REFUND_REMARK, '') AS REFUND_REMARK,COALESCE(IsFORCE_REFUND, 0) AS IsFORCE_REFUND,COALESCE(REPRINTCOUNT, 0) AS REPRINTCOUNT,COALESCE(ToSAP, 0) AS ToSAP,COALESCE(MEMBER_IC, '') AS MEMBER_IC,COALESCE(PROTRANS_NO, '') AS PROTRANS_NO FROM header"
+                , null
+        );
+
+        if(returned != null) {
+            Header[] headers = RetrieveHeaderFromSoap(returned);
+
+            for (int i = 0; i < headers.length; i++) {
+                dataHelper.insertHeader(db, headers[i]);
+            }
+        }
+    }
+
+    private void DownloadDetail(SQLiteDatabase db) {
+        SoapObject returned = super.SQLResultReturn(
+                "SELECT COALESCE(COMPANY_CODE, '') AS COMPANY_CODE,COALESCE(OUTLET_CODE, '') AS OUTLET_CODE,COALESCE(EMP_CODE, '') AS EMP_CODE,COALESCE(POS_NO, '') AS POS_NO,COALESCE(SHIFT_NO, '') AS SHIFT_NO,COALESCE(RCP_NO, '') AS RCP_NO,COALESCE(TRANS_TYPE, '') AS TRANS_TYPE,COALESCE(TRANS_TIME, '') AS TRANS_TIME,COALESCE(ROW_NUMBER, 0) AS ROW_NUMBER,COALESCE(PROD_CODE, '') AS PROD_CODE,COALESCE(PROD_NAME, '') AS PROD_NAME,COALESCE(PROD_TYPE_CODE, '') AS PROD_TYPE_CODE,COALESCE(USAGE_UOM, '') AS USAGE_UOM,COALESCE(QUANTITY, 0) AS QUANTITY,COALESCE(UOM_CONV, 0) AS UOM_CONV,COALESCE(PRICE_LVL_CODE, '') AS PRICE_LVL_CODE,COALESCE(UNIT_PRICE, 0) AS UNIT_PRICE,COALESCE(TOTAL_PRICE, 0) AS TOTAL_PRICE,COALESCE(TAX_01, 0) AS TAX_01,COALESCE(TAX_02, 0) AS TAX_02,COALESCE(TAX_03, 0) AS TAX_03,COALESCE(TAX_04, 0) AS TAX_04,COALESCE(TAX_05, 0) AS TAX_05,COALESCE(DISCOUNT_CODE, '') AS DISCOUNT_CODE,COALESCE(ITEM_DISCOUNT_AMOUNT, 0) AS ITEM_DISCOUNT_AMOUNT,COALESCE(TOTAL_DISCOUNT_CODE, '') AS TOTAL_DISCOUNT_CODE,COALESCE(TOTAL_DISCOUNT_AMOUNT, 0) AS TOTAL_DISCOUNT_AMOUNT,COALESCE(TICKET_SURCHARGE, 0) AS TICKET_SURCHARGE,COALESCE(STAFF_DISCOUNT_CODE, '') AS STAFF_DISCOUNT_CODE,COALESCE(STAFF_DISCOUNT, 0) AS STAFF_DISCOUNT,COALESCE(BARCODE, '') AS BARCODE,COALESCE(TAXCODE, '') AS TAXCODE,COALESCE(COST, 0) AS COST,COALESCE(ToSAP, 0) AS ToSAP FROM detail"
+                , null
+        );
+
+        if(returned != null) {
+            Detail[] details = RetrieveDetailFromSoap(returned);
+
+            for (int i = 0; i < details.length; i++) {
+                dataHelper.insertDetail(db, details[i]);
+            }
+        }
+    }
+    
+    private void DownloadPayment(SQLiteDatabase db) {
+        SoapObject returned = super.SQLResultReturn(
+                "SELECT COALESCE(COMPANY_CODE, '') AS COMPANY_CODE,COALESCE(OUTLET_CODE, '') AS OUTLET_CODE,COALESCE(EMP_CODE, '') AS EMP_CODE,COALESCE(POS_NO, '') AS POS_NO,COALESCE(SHIFT_NO, '') AS SHIFT_NO,COALESCE(RCP_NO, '') AS RCP_NO,COALESCE(TRANS_TYPE, '') AS TRANS_TYPE,COALESCE(TRANS_TIME, '') AS TRANS_TIME,COALESCE(ROW_NUMBER, 0) AS ROW_NUMBER,COALESCE(PAYMENT_CODE, '') AS PAYMENT_CODE,COALESCE(PAYMENT_NAME, '') AS PAYMENT_NAME,COALESCE(PAYMENT_TYPE, '') AS PAYMENT_TYPE,COALESCE(FOREX_CODE, '') AS FOREX_CODE,COALESCE(FOREX_AMOUNT, '0.0') AS FOREX_AMOUNT,COALESCE(CARD_NO, '') AS CARD_NO,COALESCE(CARD_TYPE, '') AS CARD_TYPE,COALESCE(BANK_CODE, '') AS BANK_CODE,COALESCE(PAYMENT_AMOUNT, '0.0') AS PAYMENT_AMOUNT,COALESCE(CHANGE_AMOUNT, '0.0') AS CHANGE_AMOUNT,COALESCE(TENDER_AMOUNT, '0.0') AS TENDER_AMOUNT,COALESCE(PAYMT_REMARK, '') AS PAYMT_REMARK,COALESCE(DRAWER_DECLARE_ID, '') AS DRAWER_DECLARE_ID,COALESCE(MODIFIED_ID, '') AS MODIFIED_ID,COALESCE(ToSAP, 0) AS ToSAP FROM payment"
+                , null
+        );
+
+        if(returned != null) {
+            Payment[] payments = RetrievePaymentFromSoap(returned);
+
+            for (int i = 0; i < payments.length; i++) {
+                dataHelper.insertPayment(db, payments[i]);
             }
         }
     }
@@ -281,7 +337,6 @@ public class DownloadDataService extends Service1 {
         }
     }
 
-
     public static Employee[] RetrieveEmployeesFromSoap(SoapObject soap) {
         try {
             Employee[] employees = new Employee[soap.getPropertyCount()];
@@ -364,6 +419,140 @@ public class DownloadDataService extends Service1 {
             return priceGroups;
         } catch (IndexOutOfBoundsException ex) {
             throw ex;
+        }
+    }
+
+    public static Payment[] RetrievePaymentFromSoap(SoapObject soap) {
+        try {
+            Payment[] payments = new Payment[soap.getPropertyCount()];
+            for (int i = 0; i < payments.length; i++) {
+                SoapObject pii = (SoapObject)soap.getProperty(i);
+                Payment payment = new Payment();
+                payment.COMPANY_CODE = pii.getProperty(0).toString();
+                payment.OUTLET_CODE = pii.getProperty(1).toString();
+                payment.EMP_CODE = pii.getProperty(2).toString();
+                payment.POS_NO = pii.getProperty(3).toString();
+                payment.SHIFT_NO = pii.getProperty(4).toString();
+                payment.RCP_NO = pii.getProperty(5).toString();
+                payment.TRANS_TYPE = pii.getProperty(6).toString();
+                payment.TRANS_TIME = pii.getProperty(7).toString();
+                payment.ROW_NUMBER = Integer.parseInt(pii.getProperty(8).toString());
+                payment.PAYMENT_CODE = pii.getProperty(9).toString();
+                payment.PAYMENT_NAME = pii.getProperty(10).toString();
+                payment.PAYMENT_TYPE = pii.getProperty(11).toString();
+                payment.FOREX_CODE = pii.getProperty(12).toString();
+                payment.FOREX_AMOUNT = new BigDecimal(pii.getProperty(13).toString());
+                payment.CARD_NO = pii.getProperty(14).toString();
+                payment.CARD_TYPE = pii.getProperty(15).toString();
+                payment.BANK_CODE = pii.getProperty(16).toString();
+                payment.PAYMENT_AMOUNT = new BigDecimal(pii.getProperty(17).toString());
+                payment.CHANGE_AMOUNT = new BigDecimal(pii.getProperty(18).toString());
+                payment.TENDER_AMOUNT = new BigDecimal(pii.getProperty(19).toString());
+                payment.PAYMT_REMARK = pii.getProperty(20).toString();
+                payment.DRAWER_DECLARE_ID = pii.getProperty(21).toString();
+                payment.MODIFIED_ID = pii.getProperty(22).toString();
+                payment.ToSAP = Boolean.getBoolean(pii.getProperty(23).toString());
+                payments[i] = payment;
+            }
+            return payments;
+        } catch (IndexOutOfBoundsException ex) {
+            throw ex;
+        }
+    }
+
+public static Header[] RetrieveHeaderFromSoap(SoapObject soap) {
+    try {
+        Header[] headers = new Header[soap.getPropertyCount()];
+        for (int i = 0; i < headers.length; i++) {
+            SoapObject pii = (SoapObject)soap.getProperty(i);
+            Header header = new Header();
+            header.COMPANY_CODE = pii.getProperty(0).toString();
+            header.OUTLET_CODE = pii.getProperty(1).toString();
+            header.EMP_CODE = pii.getProperty(2).toString();
+            header.POS_NO = pii.getProperty(3).toString();
+            header.SHIFT_NO = pii.getProperty(4).toString();
+            header.RCP_NO = pii.getProperty(5).toString();
+            header.TRANS_TYPE = pii.getProperty(6).toString();
+            header.TRANS_TIME = pii.getProperty(7).toString();
+            header.SALES_AMOUNT = new BigDecimal(pii.getProperty(8).toString());
+            header.TOTAL_TAX = new BigDecimal(pii.getProperty(9).toString());
+            header.TOTAL_DISCOUNT = new BigDecimal(pii.getProperty(10).toString());
+            header.ROUNDING = new BigDecimal(pii.getProperty(11).toString());
+            header.ROUNDING_ADJ = new BigDecimal(pii.getProperty(12).toString());
+            header.APPROVAL_ID = pii.getProperty(13).toString();
+            header.CUSTOMER_CODE = pii.getProperty(14).toString();
+            header.CUSTOMER_POINT = new BigDecimal(pii.getProperty(15).toString());
+            header.REFUND_VOUCHER_CODE = pii.getProperty(16).toString();
+            header.REFUND_VOUCHER_AMOUNT = new BigDecimal(pii.getProperty(17).toString());
+            header.DRAWER_DECLARE_ID = pii.getProperty(18).toString();
+            header.BOTRANS_NO = pii.getProperty(19).toString();
+            header.MODIFIED_ID = pii.getProperty(20).toString();
+            header.ITEM_VOID_COUNT = Integer.parseInt(pii.getProperty(21).toString());
+            header.REPRINT_COUNT = Integer.parseInt(pii.getProperty(22).toString());
+            header.ITEM_VOID_AMOUNT = new BigDecimal(pii.getProperty(23).toString());
+            header.REPRINT_AMOUNT = new BigDecimal(pii.getProperty(24).toString());
+            header.PRICE_LEVEL = pii.getProperty(25).toString();
+            header.REFUND_POS_NO = pii.getProperty(26).toString();
+            header.REFUND_RCP_NO = pii.getProperty(27).toString();
+            header.REFUND_REMARK = pii.getProperty(28).toString();
+            header.IsFORCE_REFUND = Boolean.getBoolean(pii.getProperty(29).toString());
+            header.REPRINTCOUNT = Integer.parseInt(pii.getProperty(30).toString());
+            header.ToSAP = Boolean.getBoolean(pii.getProperty(31).toString());
+            header.MEMBER_IC = pii.getProperty(32).toString();
+            header.PROTRANS_NO = pii.getProperty(33).toString();
+            headers[i] = header;
+        }
+        return headers;
+        } catch (IndexOutOfBoundsException ex) {
+            throw ex;
+        }
+    }
+
+    public static Detail[] RetrieveDetailFromSoap(SoapObject soap) {
+        try {
+            Detail[] details = new Detail[soap.getPropertyCount()];
+            for (int i = 0; i < details.length; i++) {
+                SoapObject pii = (SoapObject)soap.getProperty(i);
+                Detail detail = new Detail();
+                detail.COMPANY_CODE = pii.getProperty(0).toString();
+                detail.OUTLET_CODE = pii.getProperty(1).toString();
+                detail.EMP_CODE = pii.getProperty(2).toString();
+                detail.POS_NO = pii.getProperty(3).toString();
+                detail.SHIFT_NO = pii.getProperty(4).toString();
+                detail.RCP_NO = pii.getProperty(5).toString();
+                detail.TRANS_TYPE = pii.getProperty(6).toString();
+                detail.TRANS_TIME = pii.getProperty(7).toString();
+                detail.ROW_NUMBER = Integer.parseInt(pii.getProperty(8).toString());
+                detail.PROD_CODE = pii.getProperty(9).toString();
+                detail.PROD_NAME = pii.getProperty(10).toString();
+                detail.PROD_TYPE_CODE = pii.getProperty(11).toString();
+                detail.USAGE_UOM = pii.getProperty(12).toString();
+                detail.QUANTITY = new BigDecimal(pii.getProperty(13).toString());
+                detail.UOM_CONV = new BigDecimal(pii.getProperty(14).toString());
+                detail.PRICE_LVL_CODE = pii.getProperty(15).toString();
+                detail.UNIT_PRICE = new BigDecimal(pii.getProperty(16).toString());
+                detail.TOTAL_PRICE = new BigDecimal(pii.getProperty(17).toString());
+                detail.TAX_01 = new BigDecimal(pii.getProperty(18).toString());
+                detail.TAX_02 = new BigDecimal(pii.getProperty(19).toString());
+                detail.TAX_03 = new BigDecimal(pii.getProperty(20).toString());
+                detail.TAX_04 = new BigDecimal(pii.getProperty(21).toString());
+                detail.TAX_05 = new BigDecimal(pii.getProperty(22).toString());
+                detail.DISCOUNT_CODE = pii.getProperty(23).toString();
+                detail.ITEM_DISCOUNT_AMOUNT = new BigDecimal(pii.getProperty(24).toString());
+                detail.TOTAL_DISCOUNT_CODE = pii.getProperty(25).toString();
+                detail.TOTAL_DISCOUNT_AMOUNT = new BigDecimal(pii.getProperty(26).toString());
+                detail.TICKET_SURCHARGE = new BigDecimal(pii.getProperty(27).toString());
+                detail.STAFF_DISCOUNT_CODE = pii.getProperty(28).toString();
+                detail.STAFF_DISCOUNT = new BigDecimal(pii.getProperty(29).toString());
+                detail.BARCODE = pii.getProperty(30).toString();
+                detail.TAXCODE = pii.getProperty(31).toString();
+                detail.COST = new BigDecimal(pii.getProperty(32).toString());
+                detail.ToSAP = Boolean.getBoolean(pii.getProperty(33).toString());
+                details[i] = detail;    
+            }
+            return details;
+        } catch (IndexOutOfBoundsException ex) {
+        throw ex;
         }
     }
 }
