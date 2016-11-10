@@ -25,7 +25,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             "EMP_GROUP_CODE nvarchar(20)," +
             "EMP_GROUP_NAME nvarchar(100)," +
             "IsActive boolean," +
-            "MODIFIED_DATE datetime," +
+            "MODIFIED_DATE TEXT," +
             "MODIFIED_ID nvarchar(20)" +
             ");";
 
@@ -47,13 +47,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             "EMAIL nvarchar(100)," +
             "IsWHOLESALES boolean," +
             "IsActive boolean, " +
-            "JOIN_DATE datetime," +
-            "EXPIRE_DATE datetime," +
+            "JOIN_DATE TEXT," +
+            "EXPIRE_DATE TEXT," +
             "IsMember boolean, " +
             "POINT_VALUE numeric(18, 2)," +
             "BYSMS boolean," +
             "BYEMAIL boolean," +
-            "MODIFIED_DATE datetime," +
+            "MODIFIED_DATE TEXT," +
             "MODIFIED_ID nvarchar(20)," +
             "TEMP_CUSTOMER_CODE	nvarchar(20)," +
             "GST_REG_NO	nvarchar(20)," +
@@ -97,8 +97,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             "ALLOW_ZERO_PRICE boolean," +
             "IsActive boolean," +
             "ACTIVE_PERIOD boolean," +
-            "ACTIVE_DATE datetime," +
-            "EXPIRE_DATE datetime," +
+            "ACTIVE_DATE TEXT," +
+            "EXPIRE_DATE TEXT," +
             "STOCK_UOM nvarchar(50)," +
             "PURCH_UOM nvarchar(50)," +
             "USAGE_UOM nvarchar(50)," +
@@ -133,7 +133,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             "PRICE_PERCENTAGE_09 numeric(18, 2)," +
             "PRICE_PERCENTAGE_10 numeric(18, 2)," +
             "STOCK_TAKE_INTERIM	nvarchar(50)," +
-            "MODIFIED_DATE datetime," +
+            "MODIFIED_DATE TEXT," +
             "MODIFIED_ID nvarchar(20)," +
             "IMG_PATH nvarchar(4000)," +
             "TAXCODE nvarchar(6)" +
@@ -145,7 +145,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             "PRICE_GRP_NAME	nvarchar(500)," +
             "PROD_CODE nvarchar(20)," +
             "PRICE numeric(18, 2)," +
-            "MODIFIED_DATE datetime," +
+            "MODIFIED_DATE TEXT," +
             "MODIFIED_ID nvarchar(20)" +
             "); ";
 
@@ -157,8 +157,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             "SHIFT_NO nvarchar(10)," +
             "RCP_NO	nvarchar(10)," +
             "TRANS_TYPE	nvarchar(2)," +
-            "BUS_DATE datetime," +
-            "TRANS_DATE	datetime," +
+            "BUS_DATE TEXT," +
+            "TRANS_DATE	TEXT," +
             "TRANS_TIME	nvarchar(5)," +
             "ROW_NUMBER	int," +
             "PROD_CODE nvarchar(20)," +
@@ -194,7 +194,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             "IS_MULTIPLEUOM	boolean," +
             "RECALL_BY nvarchar(20)," +
             "APPROVE_BY	nvarchar(20)," +
-            "MODIFIED_DATE datetime," +
+            "MODIFIED_DATE TEXT," +
             "MODIFIED_ID nvarchar(20)," +
             "CUSTOMER_CODE nvarchar(20)," +
             "TAXCODE nvarchar(6)," +
@@ -215,8 +215,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             "SHIFT_NO nvarchar(10)," +
             "RCP_NO	nvarchar(10)," +
             "TRANS_TYPE	nvarchar(2)," +
-            "BUS_DATE datetime," +
-            "TRANS_DATE	datetime," +
+            "BUS_DATE TEXT," +
+            "TRANS_DATE	TEXT," +
             "TRANS_TIME	nvarchar(5)," +
             "SALES_AMOUNT numeric(18, 2)," +
             "TOTAL_TAX numeric(18, 2)," +
@@ -228,10 +228,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             "CUSTOMER_POINT	numeric(18, 2)," +
             "REFUND_VOUCHER_CODE nvarchar(100)," +
             "REFUND_VOUCHER_AMOUNT numeric(18, 2)," +
-            "REFUND_VOUCHER_EXPIRE_DATE	datetime," +
+            "REFUND_VOUCHER_EXPIRE_DATE	TEXT," +
             "DRAWER_DECLARE_ID nvarchar(100)," +
             "BOTRANS_NO	nvarchar(20)," +
-            "MODIFIED_DATE datetime," +
+            "MODIFIED_DATE TEXT," +
             "MODIFIED_ID nvarchar(20)," +
             "ITEM_VOID_COUNT int," +
             "REPRINT_COUNT int," +
@@ -241,7 +241,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             "REFUND_POS_NO nvarchar(10)," +
             "REFUND_RCP_NO nvarchar(10)," +
             "REFUND_REMARK nvarchar(4000)," +
-            "REFUND_RCP_BUS_DATE datetime," +
+            "REFUND_RCP_BUS_DATE TEXT," +
             "IsFORCE_REFUND	bit," +
             "REPRINTCOUNT int," +
             "ToSAP	bit," +
@@ -259,8 +259,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             "SHIFT_NO nvarchar(10)," +
             "RCP_NO	nvarchar(10)," +
             "TRANS_TYPE	nvarchar(2)," +
-            "BUS_DATE datetime," +
-            "TRANS_DATE	datetime," +
+            "BUS_DATE TEXT," +
+            "TRANS_DATE	TEXT," +
             "TRANS_TIME	nvarchar(5)," +
             "ROW_NUMBER	int," +
             "PROD_CODE nvarchar(20)," +
@@ -300,8 +300,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             "SHIFT_NO nvarchar(10)," +
             "RCP_NO	nvarchar(10)," +
             "TRANS_TYPE	nvarchar(2)," +
-            "BUS_DATE datetime," +
-            "TRANS_DATE	datetime," +
+            "BUS_DATE TEXT," +
+            "TRANS_DATE	TEXT," +
             "TRANS_TIME	nvarchar(5)," +
             "ROW_NUMBER	int," +
             "PAYMENT_CODE nvarchar(20)," +
@@ -317,7 +317,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             "TENDER_AMOUNT numeric(18, 2)," +
             "PAYMT_REMARK nvarchar(4000)," +
             "DRAWER_DECLARE_ID nvarchar(100)," +
-            "MODIFIED_DATE datetime," +
+            "MODIFIED_DATE TEXT," +
             "MODIFIED_ID nvarchar(20)," +
             "ToSAP bit," +
             "IsNewInDevice int" +
