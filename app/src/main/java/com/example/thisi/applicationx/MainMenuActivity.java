@@ -142,19 +142,20 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents{
     @Override
     public void UploadDataStartedRequest() {
         enableButtons(
-                false,
-                false,
-                false,
-                false,
-                false,
-                false
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
         );
-
+        
         progress = new ProgressDialog(this);
         progress.setTitle("Uploading data...");
         progress.setMessage("Do not close this application");
         progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
         progress.show();
+        }
     }
 
     @Override
@@ -179,5 +180,9 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents{
                 true,
                 true
         );
+    }
+
+    public boolean thereExistSuspends() {
+
     }
 }
