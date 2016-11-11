@@ -85,14 +85,31 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents{
     }
 
     public void onDownloadDataClick(View view) {
-        DownloadDataService fhh = new DownloadDataService(this, "http://175.136.237.81:8030/Service1.svc", this.getApplicationContext());
+        DownloadDataService dds = new DownloadDataService(this, "http://175.136.237.81:8030/Service1.svc", this.getApplicationContext());
 
         try {
-            fhh.DownloadDataAsync();
+            dds.DownloadDataAsync();
         }
         catch(Exception e)
         {
             showMessage("Error", e.getMessage());
+        }
+    }
+
+    public void onUploadDataClick(View view) {
+        UploadDataService uds = new UploadDataService(this, "http://175.136.237.81:8030/Service1.svc", this.getApplicationContext());
+
+        if(!thereExistSuspends()) {
+            try {
+                uds.UploadDataService();
+            }
+            catch(Exception e)
+            {
+                showMessage("Error", e.getMessage());
+            }
+        }
+        else {
+            showMessage("Error", "There are still orders on-hold");
         }
     }
 
@@ -183,6 +200,8 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents{
     }
 
     public boolean thereExistSuspends() {
-
+        SQLiteStatement s = mDb.compileStatement( "select count(*) from suspend;" );
+        long count = s.simpleQueryForLong();
+        return count > 0; 
     }
 }

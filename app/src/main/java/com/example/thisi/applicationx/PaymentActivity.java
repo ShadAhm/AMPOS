@@ -205,6 +205,8 @@ public class PaymentActivity extends Activity {
                     }
                 }
 
+                String todaysDateInString = new SimpleDateFormat("yyyyMMdd").format(new Date());
+                String todaysTimeInString = new SimpleDateFormat("HHmm").format(new Date());  
                 ssql = "INSERT INTO suspend ( " +
                         "COMPANY_CODE, " +
                         "OUTLET_CODE, " +
@@ -266,10 +268,10 @@ public class PaymentActivity extends Activity {
                         "'011', " +
                         "'1', " +
                         "null, " +
-                        "null, " +
-                        "null, " +
-                        "null,  " +
-                        "null, " +
+                        "'S', " +
+                        "'" + todaysDateInString + "', " + // bus date
+                        "'" + todaysDateInString + "', " + // trans date
+                        "'" + todaysTimeInString + "', " + // trans time
                         "null, " +
                         "PROD_CODE, " +
                         "BARCODE, " +
@@ -304,7 +306,7 @@ public class PaymentActivity extends Activity {
                         "null, " +
                         "null, " +
                         "null, " +
-                        "null, " +
+                        "'" + todaysDateInString + "', " + // modified date
                         "null, " +
                         "?, " +
                         "TAXCODE, " +
@@ -456,6 +458,8 @@ public class PaymentActivity extends Activity {
                 }
             }
 
+            String todaysDateInString = new SimpleDateFormat("yyyyMMdd").format(new Date());
+            String todaysTimeInString = new SimpleDateFormat("HHmm").format(new Date());  
             String ssql = "INSERT INTO detail ( " +
                     "COMPANY_CODE, " +
                     "OUTLET_CODE, " +
@@ -503,9 +507,9 @@ public class PaymentActivity extends Activity {
                     "'1', " +
                     "RCP_NO, " +
                     "'S', " +
-                    "DateTime('now'), " +
-                    "DateTime('now'), " +
-                    "null, " +
+                    "'" + todaysDateInString + "', " + // bus date
+                    "'" + todaysDateInString + "', " + // trans date
+                    "'" + todaysTimeInString + "', " + // trans time
                     "null, " +
                     "product_master.PROD_CODE, " +
                     "product_master.PROD_NAME, " +
@@ -543,6 +547,9 @@ public class PaymentActivity extends Activity {
 
     private void insertPayment(SQLiteDatabase db, String rcp_id) {
         String ssql = "";
+
+        String todaysDateInString = new SimpleDateFormat("yyyyMMdd").format(new Date());
+        String todaysTimeInString = new SimpleDateFormat("HHmm").format(new Date());        
 
         for (int i = 0; i < paymentsMade.size(); i++) {
 
@@ -602,9 +609,9 @@ public class PaymentActivity extends Activity {
                     "'1', " +
                     "'" + rcp_id + "', " +
                     "'S', " +
-                    "DateTime('now'), " +
-                    "DateTime('now'), " +
-                    "null, " +
+                    "'" + todaysDateInString + "', " + // bus date
+                    "'" + todaysDateInString + "', " + // trans dates
+                    "'" + todaysTimeInString + "', " + // trans time
                     "null, " +
                     "'" + paymentCode + "', " +
                     "'" + paymentName + "', " +
@@ -619,7 +626,7 @@ public class PaymentActivity extends Activity {
                     "" + paymentsMade.get(i).getPrice().toString() + ", " +
                     "'', " +
                     "null, " +
-                    "null, " +
+                    "'" + todaysDateInString + "', " + // bus date
                     "null, " +
                     "0, " +
                     "1); ";
@@ -736,6 +743,8 @@ public class PaymentActivity extends Activity {
             }
         }
 
+        String todaysDateInString = new SimpleDateFormat("yyyyMMdd").format(new Date());
+        String todaysTimeInString = new SimpleDateFormat("HHmm").format(new Date());  
         String ssql = "INSERT INTO header ( " +
                 " COMPANY_CODE, " +
                 "OUTLET_CODE, " +
@@ -786,9 +795,9 @@ public class PaymentActivity extends Activity {
                 "'1', " +
                 "?, " +
                 "'S', " +
-                "DateTime('now'), " +
-                "DateTime('now'), " +
-                "null, " +
+                "'" + todaysDateInString + "', " + // bus date
+                "'" + todaysDateInString + "', " + // trans dates
+                "'" + todaysTimeInString + "', " + // trans time
                 "?, " +
                 "0, " +
                 "0, " +
@@ -802,7 +811,7 @@ public class PaymentActivity extends Activity {
                 "null, " +
                 "null, " +
                 "null, " +
-                "DateTime('now'), " +
+                "'" + todaysDateInString + "', " + // modified date
                 "'999', " +
                 "0, " +
                 "0, " +
