@@ -16,35 +16,35 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public static final String EMPLOYEE_TABLE_NAME = "employee";
     public static final String EMPLOYEE_TABLE_CREATE = "CREATE TABLE " + EMPLOYEE_TABLE_NAME + " (" +
-            "EMP_CODE nvarchar(20) primary key, " +
-            "EMP_NAME nvarchar(100)," +
-            "EMP_PASSWORD nvarchar(100)," +
+            "EMP_CODE TEXT primary key, " +
+            "EMP_NAME TEXT," +
+            "EMP_PASSWORD TEXT," +
             "EMP_LVL boolean," +
             "POS_ALLOW boolean," +
             "VIEW_COST_ALLOW boolean," +
-            "EMP_GROUP_CODE nvarchar(20)," +
-            "EMP_GROUP_NAME nvarchar(100)," +
+            "EMP_GROUP_CODE TEXT," +
+            "EMP_GROUP_NAME TEXT," +
             "IsActive boolean," +
             "MODIFIED_DATE TEXT," +
-            "MODIFIED_ID nvarchar(20)" +
+            "MODIFIED_ID TEXT" +
             ");";
 
     public static final String CUSTOMER_TABLE_NAME = "customer";
     public static final String CUSTOMER_TABLE_CREATE = "CREATE TABLE " + CUSTOMER_TABLE_NAME + " ( " +
-            "CUSTOMER_CODE nvarchar(20) primary key, " +
-            "CUSTOMER_NAME nvarchar(100)," +
-            "CUSTOMER_GRP_CODE nvarchar(20)," +
-            "IC_NO nvarchar(50)," +
-            "ADDRESS1 nvarchar(100)," +
-            "ADDRESS2 nvarchar(100)," +
-            "POS_CODE nvarchar(50)," +
-            "COUNTY	nvarchar(100)," +
-            "STATE nvarchar(100)," +
-            "COUNTRY nvarchar(100)," +
-            "CONTACT nvarchar(50)," +
-            "MOBILE	nvarchar(50)," +
-            "FAX nvarchar(50)," +
-            "EMAIL nvarchar(100)," +
+            "CUSTOMER_CODE TEXT primary key, " +
+            "CUSTOMER_NAME TEXT," +
+            "CUSTOMER_GRP_CODE TEXT," +
+            "IC_NO TEXT," +
+            "ADDRESS1 TEXT," +
+            "ADDRESS2 TEXT," +
+            "POS_CODE TEXT," +
+            "COUNTY	TEXT," +
+            "STATE TEXT," +
+            "COUNTRY TEXT," +
+            "CONTACT TEXT," +
+            "MOBILE	TEXT," +
+            "FAX TEXT," +
+            "EMAIL TEXT," +
             "IsWHOLESALES boolean," +
             "IsActive boolean, " +
             "JOIN_DATE TEXT," +
@@ -54,27 +54,27 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             "BYSMS boolean," +
             "BYEMAIL boolean," +
             "MODIFIED_DATE TEXT," +
-            "MODIFIED_ID nvarchar(20)," +
-            "TEMP_CUSTOMER_CODE	nvarchar(20)," +
-            "GST_REG_NO	nvarchar(20)," +
+            "MODIFIED_ID TEXT," +
+            "TEMP_CUSTOMER_CODE	TEXT," +
+            "GST_REG_NO	TEXT," +
             "IsEMPLOYEE	boolean," +
-            "PRICE_GRP_CODE	nvarchar(20)," +
-            "Outlet_Code nvarchar(20)" +
+            "PRICE_GRP_CODE	TEXT," +
+            "Outlet_Code TEXT" +
             ");";
 
     public static final String PRODUCT_MASTER_TABLE_NAME = "product_master";
     public static final String PRODUCT_MASTER_TABLE_CREATE = "CREATE TABLE " + PRODUCT_MASTER_TABLE_NAME + " ( " +
-            "PROD_CODE nvarchar(20) primary key," +
-            "PRODUCT_SHORT_NAME	nvarchar(100)," +
-            "PROD_NAME nvarchar(500)," +
-            "PROD_TYPE_CODE	nvarchar(20)," +
-            "BARCODE nvarchar(130)," +
-            "PROD_GRP_01 nvarchar(20)," +
-            "PROD_GRP_02 nvarchar(20)," +
-            "PROD_GRP_03 nvarchar(20)," +
-            "PROD_GRP_04 nvarchar(20)," +
-            "PROD_GRP_05 nvarchar(20)," +
-            "PROD_DISC_GRP nvarchar(20)," +
+            "PROD_CODE TEXT primary key," +
+            "PRODUCT_SHORT_NAME	TEXT," +
+            "PROD_NAME TEXT," +
+            "PROD_TYPE_CODE	TEXT," +
+            "BARCODE TEXT," +
+            "PROD_GRP_01 TEXT," +
+            "PROD_GRP_02 TEXT," +
+            "PROD_GRP_03 TEXT," +
+            "PROD_GRP_04 TEXT," +
+            "PROD_GRP_05 TEXT," +
+            "PROD_DISC_GRP TEXT," +
             "TAX_01	boolean," +
             "TAX_02	boolean," +
             "TAX_03	boolean," +
@@ -99,9 +99,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             "ACTIVE_PERIOD boolean," +
             "ACTIVE_DATE TEXT," +
             "EXPIRE_DATE TEXT," +
-            "STOCK_UOM nvarchar(50)," +
-            "PURCH_UOM nvarchar(50)," +
-            "USAGE_UOM nvarchar(50)," +
+            "STOCK_UOM TEXT," +
+            "PURCH_UOM TEXT," +
+            "USAGE_UOM TEXT," +
             "PURCH_CONV	numeric(18, 4)," +
             "USAGE_CONV	numeric(18, 4)," +
             "IsBOM boolean," +
@@ -109,19 +109,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             "ALLOW_DISC	boolean," +
             "MULTIPLE_DISC boolean," +
             "MULTIPLE_UOM boolean," +
-            "TICKET_TYPE nvarchar(2)," +
-            "STAFF_DISCOUNT_CODE nvarchar(20)," +
-            "SUPPLIER_CODE nvarchar(20)," +
-            "BARCODE_01	nvarchar(130)," +
-            "BARCODE_02	nvarchar(130)," +
-            "BARCODE_03	nvarchar(130)," +
-            "BARCODE_04	nvarchar(130)," +
-            "BARCODE_05	nvarchar(130)," +
-            "BARCODE_06	nvarchar(130)," +
-            "BARCODE_07	nvarchar(130)," +
-            "BARCODE_08	nvarchar(130)," +
-            "BARCODE_09	nvarchar(130)," +
-            "BARCODE_10	nvarchar(130)," +
+            "TICKET_TYPE TEXT," +
+            "STAFF_DISCOUNT_CODE TEXT," +
+            "SUPPLIER_CODE TEXT," +
+            "BARCODE_01	TEXT," +
+            "BARCODE_02	TEXT," +
+            "BARCODE_03	TEXT," +
+            "BARCODE_04	TEXT," +
+            "BARCODE_05	TEXT," +
+            "BARCODE_06	TEXT," +
+            "BARCODE_07	TEXT," +
+            "BARCODE_08	TEXT," +
+            "BARCODE_09	TEXT," +
+            "BARCODE_10	TEXT," +
             "PRICE_PERCENTAGE_01 numeric(18, 2)," +
             "PRICE_PERCENTAGE_02 numeric(18, 2)," +
             "PRICE_PERCENTAGE_03 numeric(18, 2)," +
@@ -132,47 +132,47 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             "PRICE_PERCENTAGE_08 numeric(18, 2)," +
             "PRICE_PERCENTAGE_09 numeric(18, 2)," +
             "PRICE_PERCENTAGE_10 numeric(18, 2)," +
-            "STOCK_TAKE_INTERIM	nvarchar(50)," +
+            "STOCK_TAKE_INTERIM	TEXT," +
             "MODIFIED_DATE TEXT," +
-            "MODIFIED_ID nvarchar(20)," +
-            "IMG_PATH nvarchar(4000)," +
-            "TAXCODE nvarchar(6)" +
+            "MODIFIED_ID TEXT," +
+            "IMG_PATH TEXT," +
+            "TAXCODE TEXT" +
             ");";
 
     public static final String PRICE_GROUP_TABLE_NAME = "price_group";
     public static final String PRICE_GROUP_TABLE_CREATE = "CREATE TABLE " + PRICE_GROUP_TABLE_NAME + " ( " +
-            "PRICE_GRP_CODE	nvarchar(20)," +
-            "PRICE_GRP_NAME	nvarchar(500)," +
-            "PROD_CODE nvarchar(20)," +
+            "PRICE_GRP_CODE	TEXT," +
+            "PRICE_GRP_NAME	TEXT," +
+            "PROD_CODE TEXT," +
             "PRICE numeric(18, 2)," +
             "MODIFIED_DATE TEXT," +
-            "MODIFIED_ID nvarchar(20)" +
+            "MODIFIED_ID TEXT" +
             "); ";
 
     public static final String SUSPEND_TABLE_NAME = "suspend";
     public static final String SUSPEND_TABLE_CREATE = "CREATE TABLE " + SUSPEND_TABLE_NAME + " ( " +
-            "COMPANY_CODE nvarchar(20)," +
-            "OUTLET_CODE nvarchar(20)," +
-            "POS_NO	nvarchar(10)," +
-            "SHIFT_NO nvarchar(10)," +
-            "RCP_NO	nvarchar(10)," +
-            "TRANS_TYPE	nvarchar(2)," +
+            "COMPANY_CODE TEXT," +
+            "OUTLET_CODE TEXT," +
+            "POS_NO	TEXT," +
+            "SHIFT_NO TEXT," +
+            "RCP_NO	TEXT," +
+            "TRANS_TYPE	TEXT," +
             "BUS_DATE TEXT," +
             "TRANS_DATE	TEXT," +
-            "TRANS_TIME	nvarchar(5)," +
+            "TRANS_TIME	TEXT," +
             "ROW_NUMBER	int," +
-            "PROD_CODE nvarchar(20)," +
-            "BARCODE nvarchar(130)," +
-            "PROD_NAME nvarchar(500)," +
-            "PROD_SHORT_NAME nvarchar(30)," +
-            "PROD_TYPE_CODE	nvarchar(20)," +
-            "USAGE_UOM nvarchar(50)," +
+            "PROD_CODE TEXT," +
+            "BARCODE TEXT," +
+            "PROD_NAME TEXT," +
+            "PROD_SHORT_NAME TEXT," +
+            "PROD_TYPE_CODE	TEXT," +
+            "USAGE_UOM TEXT," +
             "UOM_CONV numeric(18, 2)," +
             "QUANTITY numeric(18, 4)," +
-            "PRICE_LVL_CODE	nvarchar(20)," +
+            "PRICE_LVL_CODE	TEXT," +
             "UNIT_PRICE	numeric(18, 2)," +
             "TOTAL_PRICE numeric(18, 2)," +
-            "BOM_PARENT	nvarchar(20)," +
+            "BOM_PARENT	TEXT," +
             "TAX_01	numeric(18, 2)," +
             "TAX_02	numeric(18, 2)," +
             "TAX_03	numeric(18, 2)," +
@@ -180,96 +180,96 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             "TAX_05	numeric(18, 2)," +
             "ALLOW_DISC	boolean," +
             "MULTIPLE_DISC boolean," +
-            "DISCOUNT_CODE nvarchar(20)," +
+            "DISCOUNT_CODE TEXT," +
             "ITEM_DISCOUNT_AMOUNT numeric(18, 2)," +
-            "TOTAL_DICOUNT_CODE	nvarchar(20)," +
+            "TOTAL_DICOUNT_CODE	TEXT," +
             "TOTAL_DISCOUNT_AMOUNT numeric(18, 2)," +
             "TICKET_SURCHARGE numeric(18, 2)," +
-            "STAFF_DISCOUNT_CODE nvarchar(20)," +
+            "STAFF_DISCOUNT_CODE TEXT," +
             "STAFF_DISCOUNT	numeric(18, 2)," +
-            "SUSPEND_NUMBER	nvarchar(20)," +
+            "SUSPEND_NUMBER	TEXT," +
             "IsRECALL boolean," +
             "IS_UPSALES	boolean," +
             "UPSALES_CONV numeric(18, 2)," +
             "IS_MULTIPLEUOM	boolean," +
-            "RECALL_BY nvarchar(20)," +
-            "APPROVE_BY	nvarchar(20)," +
+            "RECALL_BY TEXT," +
+            "APPROVE_BY	TEXT," +
             "MODIFIED_DATE TEXT," +
-            "MODIFIED_ID nvarchar(20)," +
-            "CUSTOMER_CODE nvarchar(20)," +
-            "TAXCODE nvarchar(6)," +
+            "MODIFIED_ID TEXT," +
+            "CUSTOMER_CODE TEXT," +
+            "TAXCODE TEXT," +
             "COST numeric(18, 2)," +
-            "PRICE_GRP_CODE	nvarchar(20)," +
-            "TABLE_NO nvarchar(20)," +
-            "PROMOSOURCECODE nvarchar(20)," +
+            "PRICE_GRP_CODE	TEXT," +
+            "TABLE_NO TEXT," +
+            "PROMOSOURCECODE TEXT," +
             "PROMOCHANGEPRICE numeric(18, 2)," +
             "IsNewInDevice int" +
             ");";
 
     public static final String HEADER_TABLE_NAME = "Header";
     public static final String HEADER_TABLE_CREATE = "CREATE TABLE " + HEADER_TABLE_NAME + " ( " +
-            "COMPANY_CODE nvarchar(20)," +
-            "OUTLET_CODE nvarchar(20)," +
-            "EMP_CODE nvarchar(20)," +
-            "POS_NO	nvarchar(10)," +
-            "SHIFT_NO nvarchar(10)," +
-            "RCP_NO	nvarchar(10)," +
-            "TRANS_TYPE	nvarchar(2)," +
+            "COMPANY_CODE TEXT," +
+            "OUTLET_CODE TEXT," +
+            "EMP_CODE TEXT," +
+            "POS_NO	TEXT," +
+            "SHIFT_NO TEXT," +
+            "RCP_NO	TEXT," +
+            "TRANS_TYPE	TEXT," +
             "BUS_DATE TEXT," +
             "TRANS_DATE	TEXT," +
-            "TRANS_TIME	nvarchar(5)," +
+            "TRANS_TIME	TEXT," +
             "SALES_AMOUNT numeric(18, 2)," +
             "TOTAL_TAX numeric(18, 2)," +
             "TOTAL_DISCOUNT	numeric(18, 2)," +
             "ROUNDING numeric(18, 2)," +
             "ROUNDING_ADJ numeric(18, 2)," +
-            "APPROVAL_ID nvarchar(20)," +
-            "CUSTOMER_CODE nvarchar(20)," +
+            "APPROVAL_ID TEXT," +
+            "CUSTOMER_CODE TEXT," +
             "CUSTOMER_POINT	numeric(18, 2)," +
-            "REFUND_VOUCHER_CODE nvarchar(100)," +
+            "REFUND_VOUCHER_CODE TEXT," +
             "REFUND_VOUCHER_AMOUNT numeric(18, 2)," +
             "REFUND_VOUCHER_EXPIRE_DATE	TEXT," +
-            "DRAWER_DECLARE_ID nvarchar(100)," +
-            "BOTRANS_NO	nvarchar(20)," +
+            "DRAWER_DECLARE_ID TEXT," +
+            "BOTRANS_NO	TEXT," +
             "MODIFIED_DATE TEXT," +
-            "MODIFIED_ID nvarchar(20)," +
+            "MODIFIED_ID TEXT," +
             "ITEM_VOID_COUNT int," +
             "REPRINT_COUNT int," +
             "ITEM_VOID_AMOUNT numeric(18, 2)," +
             "REPRINT_AMOUNT numeric(18, 2)," +
-            "PRICE_LEVEL nvarchar(20)," +
-            "REFUND_POS_NO nvarchar(10)," +
-            "REFUND_RCP_NO nvarchar(10)," +
-            "REFUND_REMARK nvarchar(4000)," +
+            "PRICE_LEVEL TEXT," +
+            "REFUND_POS_NO TEXT," +
+            "REFUND_RCP_NO TEXT," +
+            "REFUND_REMARK TEXT," +
             "REFUND_RCP_BUS_DATE TEXT," +
             "IsFORCE_REFUND	bit," +
             "REPRINTCOUNT int," +
             "ToSAP	bit," +
-            "MEMBER_IC nvarchar(20)," +
-            "PROTRANS_NO nvarchar(20)," +
+            "MEMBER_IC TEXT," +
+            "PROTRANS_NO TEXT," +
             "IsNewInDevice int" +
             ");";
 
     public static final String DETAIL_TABLE_NAME = "detail";
     public static final String DETAIL_TABLE_CREATE = "CREATE TABLE " + DETAIL_TABLE_NAME + " ( " +
-            "COMPANY_CODE nvarchar(20)," +
-            "OUTLET_CODE nvarchar(20)," +
-            "EMP_CODE nvarchar(20)," +
-            "POS_NO	nvarchar(10)," +
-            "SHIFT_NO nvarchar(10)," +
-            "RCP_NO	nvarchar(10)," +
-            "TRANS_TYPE	nvarchar(2)," +
+            "COMPANY_CODE TEXT," +
+            "OUTLET_CODE TEXT," +
+            "EMP_CODE TEXT," +
+            "POS_NO	TEXT," +
+            "SHIFT_NO TEXT," +
+            "RCP_NO	TEXT," +
+            "TRANS_TYPE	TEXT," +
             "BUS_DATE TEXT," +
             "TRANS_DATE	TEXT," +
-            "TRANS_TIME	nvarchar(5)," +
+            "TRANS_TIME	TEXT," +
             "ROW_NUMBER	int," +
-            "PROD_CODE nvarchar(20)," +
-            "PROD_NAME nvarchar(30)," +
-            "PROD_TYPE_CODE	nvarchar(20)," +
-            "USAGE_UOM nvarchar(50)," +
+            "PROD_CODE TEXT," +
+            "PROD_NAME TEXT," +
+            "PROD_TYPE_CODE	TEXT," +
+            "USAGE_UOM TEXT," +
             "QUANTITY numeric(18, 4)," +
             "UOM_CONV numeric(18, 4)," +
-            "PRICE_LVL_CODE	nvarchar(20)," +
+            "PRICE_LVL_CODE	TEXT," +
             "UNIT_PRICE	numeric(18, 2)," +
             "TOTAL_PRICE numeric(18, 2)," +
             "TAX_01	numeric(18, 4)," +
@@ -277,15 +277,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             "TAX_03	numeric(18, 4)," +
             "TAX_04	numeric(18, 4)," +
             "TAX_05	numeric(18, 4)," +
-            "DISCOUNT_CODE nvarchar(20)," +
+            "DISCOUNT_CODE TEXT," +
             "ITEM_DISCOUNT_AMOUNT numeric(18, 2)," +
-            "TOTAL_DISCOUNT_CODE nvarchar(20)," +
+            "TOTAL_DISCOUNT_CODE TEXT," +
             "TOTAL_DISCOUNT_AMOUNT numeric(18, 2)," +
             "TICKET_SURCHARGE numeric(18, 2)," +
-            "STAFF_DISCOUNT_CODE nvarchar(20)," +
+            "STAFF_DISCOUNT_CODE TEXT," +
             "STAFF_DISCOUNT	numeric(18, 2)," +
-            "BARCODE nvarchar(130)," +
-            "TAXCODE nvarchar(6)," +
+            "BARCODE TEXT," +
+            "TAXCODE TEXT," +
             "COST numeric(18, 2)," +
             "ToSAP bit," +
             "IsNewInDevice int" +
@@ -293,32 +293,32 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public static final String PAYMENT_TABLE_NAME = "payment";
     public static final String PAYMENT_TABLE_CREATE = "CREATE TABLE " + PAYMENT_TABLE_NAME + " ( " +
-            "COMPANY_CODE nvarchar(20)," +
-            "OUTLET_CODE nvarchar(20)," +
-            "EMP_CODE nvarchar(20)," +
-            "POS_NO	nvarchar(10)," +
-            "SHIFT_NO nvarchar(10)," +
-            "RCP_NO	nvarchar(10)," +
-            "TRANS_TYPE	nvarchar(2)," +
+            "COMPANY_CODE TEXT," +
+            "OUTLET_CODE TEXT," +
+            "EMP_CODE TEXT," +
+            "POS_NO	TEXT," +
+            "SHIFT_NO TEXT," +
+            "RCP_NO	TEXT," +
+            "TRANS_TYPE	TEXT," +
             "BUS_DATE TEXT," +
             "TRANS_DATE	TEXT," +
-            "TRANS_TIME	nvarchar(5)," +
+            "TRANS_TIME	TEXT," +
             "ROW_NUMBER	int," +
-            "PAYMENT_CODE nvarchar(20)," +
-            "PAYMENT_NAME nvarchar(100)," +
-            "PAYMENT_TYPE nvarchar(20)," +
-            "FOREX_CODE	nvarchar(20)," +
+            "PAYMENT_CODE TEXT," +
+            "PAYMENT_NAME TEXT," +
+            "PAYMENT_TYPE TEXT," +
+            "FOREX_CODE	TEXT," +
             "FOREX_AMOUNT numeric(18, 2)," +
-            "CARD_NO nvarchar(20)," +
-            "CARD_TYPE nvarchar(100)," +
-            "BANK_CODE nvarchar(20)," +
+            "CARD_NO TEXT," +
+            "CARD_TYPE TEXT," +
+            "BANK_CODE TEXT," +
             "PAYMENT_AMOUNT	numeric(18, 2)," +
             "CHANGE_AMOUNT numeric(18, 2)," +
             "TENDER_AMOUNT numeric(18, 2)," +
-            "PAYMT_REMARK nvarchar(4000)," +
-            "DRAWER_DECLARE_ID nvarchar(100)," +
+            "PAYMT_REMARK TEXT," +
+            "DRAWER_DECLARE_ID TEXT," +
             "MODIFIED_DATE TEXT," +
-            "MODIFIED_ID nvarchar(20)," +
+            "MODIFIED_ID TEXT," +
             "ToSAP bit," +
             "IsNewInDevice int" +
             ");";
