@@ -701,9 +701,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public void clearOldData(SQLiteDatabase db) {
-        db.execSQL("DELETE FROM employee");
         db.execSQL("DELETE FROM customer");
         db.execSQL("DELETE FROM product_master");
         db.execSQL("DELETE FROM price_group");
+    }
+
+    public void clearEmployeeTable(SQLiteDatabase db) {
+        db.execSQL("DELETE FROM employee"); 
     }
 }

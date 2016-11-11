@@ -14,7 +14,8 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import android.widget.EditText;
 import android.app.AlertDialog;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity 
+extends AppCompatActivity implements IWsdl2CodeEvents {
     DatabaseHelper myDb;
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -58,6 +59,18 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void DownloadEmployees() {
+        DownloadDataService dds = new DownloadDataService(this, "http://175.136.237.81:8030/Service1.svc", this.getApplicationContext());
+
+        try {
+            dds.DownloadEmployeesAsync();
+        }
+        catch(Exception e)
+        {
+            showMessage("Error", e.getMessage());
+        }
+    }
+
     public void selfDestruct(View view) {
         EditText usernameTextbox = (EditText) findViewById(R.id.editText);
         EditText passwordTextbox = (EditText) findViewById(R.id.editText2);
@@ -79,6 +92,40 @@ public class MainActivity extends AppCompatActivity {
     public void onBackPressed() {
         return;
     }
+
+    @Override
+    public void Wsdl2CodeStartedRequest() {
+        enableDisableControls(false);
+    }
+
+    @Override
+    public void Wsdl2CodeFinished(String methodName, Object Data) {
+    }
+
+    @Override
+    public void Wsdl2CodeFinishedWithException(Exception ex) {
+        showMessage("Exception", ex.getMessage());
+    }
+
+    @Override
+    public void Wsdl2CodeEndedRequest() {
+        enableDisableControls(true);
+    }
+
+    private void enableDisableControls(boolean enable) {
+        EditText usernameTextbox = (EditText) findViewById(R.id.editText);
+        usernameTextbox.setEnabled(enable);
+
+        EditText passwordTextbox = (EditText) findViewById(R.id.editText2);
+        passwordTextbox.setEnabled(enable);
+
+        Button loginButton = (Button)findViewById(R.id.loginButton);
+        loginButton.setEnabled(enable);
+        
+        Button cancelButton = (Button)findViewById(R.id.cancelButton);
+        cancelButton.setEnabled(enable);
+    }
+
 
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.

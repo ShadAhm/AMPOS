@@ -37,10 +37,48 @@ public class DownloadDataService extends Service1 {
                 try {
                     DeleteExistingData(db);
 
-                    DownloadEmployees(db);
                     DownloadCustomers(db);
                     DownloadProduct_Master(db);
                     DownloadPrice_Group(db);
+
+                    db.setTransactionSuccessful();
+                    o = "success";
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    db.endTransaction();
+                    db.close();
+                }
+
+                return o;
+            }
+
+            @Override
+            protected void onPostExecute(Object result) {
+                eventHandler.Wsdl2CodeEndedRequest();
+                if (result != null) {
+                    eventHandler.Wsdl2CodeFinished("SQLResult", result);
+                }
+            }
+        }.execute();
+    }
+
+    public void DownloadEmployeesAsync() throws Exception {
+        new AsyncTask<Void, Void, Object>() {
+            @Override
+            protected void onPreExecute() {
+                eventHandler.Wsdl2CodeStartedRequest();
+            }
+
+            @Override
+            protected Object doInBackground(Void... params) {
+                Object o = null;
+                SQLiteDatabase db = dataHelper.getReadableDatabase();
+                db.beginTransaction();
+
+                try {
+                    dataHelper.clearEmployeeTable(db); 
+                    DownloadEmployees(db);
 
                     db.setTransactionSuccessful();
                     o = "success";
