@@ -114,12 +114,12 @@ public class UploadDataService extends Service1 {
                     sb.append(appendStringQueryVar(transTimeColValue));
                     sb.append(",");
 
-                    double salesAmountColValue = cursor.getDouble(cursor.getColumnIndex"SALES_AMOUNT")); 
-                    sb.append(salesAmountColValue.toString());
+                    double salesAmountColValue = cursor.getDouble(cursor.getColumnIndex("SALES_AMOUNT"));
+                    sb.append(Double.toString(salesAmountColValue));
                     sb.append(",");
 
-                    double refundVoucherAmountColValue = cursor.getDouble(cursor.getColumnIndex"REFUND_VOUCHER_AMOUNT"));
-                    sb.append(refundVoucherAmountColValue.toString());
+                    double refundVoucherAmountColValue = cursor.getDouble(cursor.getColumnIndex("REFUND_VOUCHER_AMOUNT"));
+                    sb.append(Double.toString(refundVoucherAmountColValue));
                     sb.append(",");
 
                     String drawerDeclareIdColValue = cursor.getString(cursor.getColumnIndex("DRAWER_DECLARE_ID"));
@@ -135,7 +135,7 @@ public class UploadDataService extends Service1 {
                     sb.append(",");
 
                     int reprintCountColValue = cursor.getInt(cursor.getColumnIndex("REPRINTCOUNT"));
-                    sb.append(reprintCountColValue.toString());
+                    sb.append(Integer.toString(reprintCountColValue));
                     sb.append(",");
 
                     String protransNoColValue = cursor.getString(cursor.getColumnIndex("PROTRANS_NO"));
@@ -156,7 +156,7 @@ public class UploadDataService extends Service1 {
         }
     }
 
-    private void UploadDetail(SQLiteDatabase db) {
+    private void UploadDetails(SQLiteDatabase db) {
         String selectQuery = "SELECT * FROM detail;";
 
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -213,19 +213,19 @@ public class UploadDataService extends Service1 {
                     sb.append(",");
 
                     int rowNumberColValue = cursor.getInt(cursor.getColumnIndex("ROW_NUMBER"));
-                    sb.append(rowNumberColValue.toString());
+                    sb.append(Integer.toString(rowNumberColValue));
                     sb.append(",");
 
                     String prodCodeColValue = cursor.getString(cursor.getColumnIndex("PROD_CODE"));
                     sb.append(appendStringQueryVar(prodCodeColValue));
                     sb.append(",");
 
-                    double unitPriceColValue = cursor.getDouble(cursor.getColumnIndex"UNIT_PRICE"));
-                    sb.append(unitPriceColValue.toString());
+                    double unitPriceColValue = cursor.getDouble(cursor.getColumnIndex("UNIT_PRICE"));
+                    sb.append(Double.toString(unitPriceColValue));
                     sb.append(",");
 
-                    double totalPriceColValue = cursor.getDouble(cursor.getColumnIndex"TOTAL_PRICE"));
-                    sb.append(totalPriceColValue.toString());
+                    double totalPriceColValue = cursor.getDouble(cursor.getColumnIndex("TOTAL_PRICE"));
+                    sb.append(Double.toString(totalPriceColValue));
 
                     sb.append(")");
 
@@ -299,7 +299,7 @@ public class UploadDataService extends Service1 {
                     sb.append(",");
 
                     int rowNumberColValue = cursor.getInt(cursor.getColumnIndex("ROW_NUMBER"));
-                    sb.append(rowNumberColValue.toString());
+                    sb.append(Integer.toString(rowNumberColValue));
                     sb.append(",");
 
                     String paymentcode = cursor.getString(cursor.getColumnIndex("PAYMENT_CODE")); 
@@ -318,16 +318,16 @@ public class UploadDataService extends Service1 {
                     sb.append(appendStringQueryVar(forexcode)); sb.append(",");
                     sb.append(",");
 
-                    double paymentamount = cursor.getDouble(cursor.getColumnIndex"PAYMENT_AMOUNT")); 
-                    sb.append(paymentamount.toString()); sb.append(",");
+                    double paymentamount = cursor.getDouble(cursor.getColumnIndex("PAYMENT_AMOUNT"));
+                    sb.append(Double.toString(paymentamount)); sb.append(",");
                     sb.append(",");
 
-                    double changeamount = cursor.getDouble(cursor.getColumnIndex"CHANGE_AMOUNT")); 
-                    sb.append(changeamount.toString()); sb.append(",");
+                    double changeamount = cursor.getDouble(cursor.getColumnIndex("CHANGE_AMOUNT"));
+                    sb.append(Double.toString(changeamount)); sb.append(",");
                     sb.append(",");
 
-                    double tenderamount = cursor.getDouble(cursor.getColumnIndex"TENDER_AMOUNT")); 
-                    sb.append(tenderamount.toString()); sb.append(",");
+                    double tenderamount = cursor.getDouble(cursor.getColumnIndex("TENDER_AMOUNT"));
+                    sb.append(Double.toString(tenderamount)); sb.append(",");
                     sb.append(",");
 
                     String drawerdeclareid = cursor.getString(cursor.getColumnIndex("DRAWER_DECLARE_ID")); 

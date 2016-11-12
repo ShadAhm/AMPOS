@@ -23,7 +23,9 @@ import android.widget.Toast;
 
 import java.text.DecimalFormat;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.UUID;
 
 /**
@@ -206,7 +208,7 @@ public class PaymentActivity extends Activity {
                 }
 
                 String todaysDateInString = new SimpleDateFormat("yyyyMMdd").format(new Date());
-                String todaysTimeInString = new SimpleDateFormat("HHmm").format(new Date());  
+                String todaysTimeInString = new SimpleDateFormat("HHmm").format(new Date());
                 ssql = "INSERT INTO suspend ( " +
                         "COMPANY_CODE, " +
                         "OUTLET_CODE, " +

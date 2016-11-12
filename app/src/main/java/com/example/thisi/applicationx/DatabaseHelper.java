@@ -700,6 +700,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return false;
     }
 
+    public boolean thereExistSuspends() {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        db.beginTransaction();
+        try {
+            Cursor res = db.rawQuery("SELECT * FROM " + SUSPEND_TABLE_NAME + ";", null);
+
+            db.setTransactionSuccessful();
+
+            return res.getCount() > 0;
+        } catch (SQLiteException e) {
+            e.printStackTrace();
+        } finally {
+            db.endTransaction();
+            db.close();
+        }
+
+        return false;
+    }
+
     public void clearOldData(SQLiteDatabase db) {
         db.execSQL("DELETE FROM customer");
         db.execSQL("DELETE FROM product_master");

@@ -11,6 +11,7 @@ import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
 
+import android.widget.Button;
 import android.widget.EditText;
 import android.app.AlertDialog;
 
@@ -110,6 +111,22 @@ extends AppCompatActivity implements IWsdl2CodeEvents {
     @Override
     public void Wsdl2CodeEndedRequest() {
         enableDisableControls(true);
+    }
+
+    @Override
+    public void UploadDataStartedRequest() {
+    }
+
+    @Override
+    public void UploadDataFinished(String methodName, Object Data) {
+    }
+
+    @Override
+    public void UploadDataFinishedWithException(Exception ex) {
+    }
+
+    @Override
+    public void UploadDataEndedRequest() {
     }
 
     private void enableDisableControls(boolean enable) {

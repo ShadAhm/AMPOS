@@ -3,8 +3,10 @@ package com.example.thisi.applicationx;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.database.sqlite.SQLiteStatement;
 import android.media.audiofx.BassBoost;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.view.View;
 import android.content.Intent;
 import android.widget.Button;
@@ -15,7 +17,7 @@ import org.ksoap2.serialization.SoapObject;
  * Created by thisi on 10/24/2016.
  */
 
-public class MainMenuActivity extends Activity implements IWsdl2CodeEvents{
+public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
     ProgressDialog progress;
 
     @Override
@@ -25,7 +27,7 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents{
 
         boolean isSys = getIntent().getBooleanExtra("isSys", false);
 
-        if(isSys) {
+        if (isSys) {
             enableButtons(
                     false,
                     false,
@@ -38,22 +40,22 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents{
     }
 
     private void enableButtons(boolean enableOrder, boolean enableDayend, boolean enableDownload, boolean enableUpload, boolean enableLogout, boolean enableSettings) {
-        Button btnOrder = (Button)findViewById(R.id.buttonOrder);
+        Button btnOrder = (Button) findViewById(R.id.buttonOrder);
         btnOrder.setEnabled(enableOrder);
 
-        Button buttonDayend = (Button)findViewById(R.id.buttonDayend);
+        Button buttonDayend = (Button) findViewById(R.id.buttonDayend);
         buttonDayend.setEnabled(enableDayend);
 
-        Button btnDownloadData = (Button)findViewById(R.id.buttonDownloadData);
+        Button btnDownloadData = (Button) findViewById(R.id.buttonDownloadData);
         btnDownloadData.setEnabled(enableDownload);
 
-        Button buttonUploadData = (Button)findViewById(R.id.buttonUploadData);
+        Button buttonUploadData = (Button) findViewById(R.id.buttonUploadData);
         buttonUploadData.setEnabled(enableUpload);
 
-        Button buttonLogout = (Button)findViewById(R.id.buttonLogout);
+        Button buttonLogout = (Button) findViewById(R.id.buttonLogout);
         buttonLogout.setEnabled(enableLogout);
 
-        Button buttonSettings = (Button)findViewById(R.id.buttonSettings);
+        Button buttonSettings = (Button) findViewById(R.id.buttonSettings);
         buttonSettings.setEnabled(enableSettings);
     }
 
@@ -62,14 +64,12 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents{
         startActivity(intent);
     }
 
-    public void onSettingsClick(View view)
-    {
+    public void onSettingsClick(View view) {
         Intent intent = new Intent(this, SettingsActivity.class);
         startActivity(intent);
     }
 
-    public void onLogoutClick(View view)
-    {
+    public void onLogoutClick(View view) {
         Intent intent = new Intent(this, MainActivity.class);
         finish();
         startActivity(intent);
@@ -89,9 +89,7 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents{
 
         try {
             dds.DownloadDataAsync();
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             showMessage("Error", e.getMessage());
         }
     }
@@ -99,16 +97,13 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents{
     public void onUploadDataClick(View view) {
         UploadDataService uds = new UploadDataService(this, "http://175.136.237.81:8030/Service1.svc", this.getApplicationContext());
 
-        if(!thereExistSuspends()) {
+        if (!thereExistSuspends()) {
             try {
-                uds.UploadDataService();
-            }
-            catch(Exception e)
-            {
+                uds.UploadDataAsync();
+            } catch (Exception e) {
                 showMessage("Error", e.getMessage());
             }
-        }
-        else {
+        } else {
             showMessage("Error", "There are still orders on-hold");
         }
     }
@@ -159,20 +154,19 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents{
     @Override
     public void UploadDataStartedRequest() {
         enableButtons(
-            false,
-            false,
-            false,
-            false,
-            false,
-            false
+                false,
+                false,
+                false,
+                false,
+                false,
+                false
         );
-        
+
         progress = new ProgressDialog(this);
         progress.setTitle("Uploading data...");
         progress.setMessage("Do not close this application");
         progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
         progress.show();
-        }
     }
 
     @Override
@@ -199,9 +193,10 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents{
         );
     }
 
+    DatabaseHelper mydb;
     public boolean thereExistSuspends() {
-        SQLiteStatement s = mDb.compileStatement( "select count(*) from suspend;" );
-        long count = s.simpleQueryForLong();
-        return count > 0; 
+        mydb = DatabaseHelper.getHelper(this);
+
+        return mydb.thereExistSuspends();
     }
 }
