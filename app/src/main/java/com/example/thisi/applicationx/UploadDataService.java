@@ -68,10 +68,18 @@ public class UploadDataService extends Service1 {
             if (rowCount > 0) {
                 StringBuilder sb = new StringBuilder(); 
 
+                while(cursor.moveToNext()) {
+                    String rcpNoColValue = cursor.getString(cursor.getColumnIndex("RCP_NO"));
+                    String deletef = "DELETE FROM payment WHERE rcp_no = " + rcpNoColValue + "; DELETE FROM detail WHERE rcp_no = " + rcpNoColValue + "; DELETE FROM header WHERE rcp_no = " + rcpNoColValue + ";";
+                    super.SQLExec(deletef);
+                }
+
+                cursor.moveToFirst();
+
                 sb.append("INSERT INTO header (COMPANY_CODE, OUTLET_CODE, EMP_CODE, POS_NO, SHIFT_NO, RCP_NO, TRANS_TYPE, BUS_DATE, TRANS_DATE, TRANS_TIME, SALES_AMOUNT, REFUND_VOUCHER_AMOUNT, DRAWER_DECLARE_ID, MODIFIED_DATE, MODIFIED_ID, REPRINTCOUNT, PROTRANS_NO) ");
                 sb.append("VALUES ");
 
-                while (cursor.moveToNext()) {
+                do {
                     sb.append("("); 
 
                     String companyCodeColValue = cursor.getString(cursor.getColumnIndex("COMPANY_CODE"));
@@ -146,7 +154,7 @@ public class UploadDataService extends Service1 {
                     if(!cursor.isLast()) {
                         sb.append(",");                        
                     }
-                }
+                } while (cursor.moveToNext());
 
                 super.SQLExec(sb.toString()); 
             }
@@ -304,42 +312,36 @@ public class UploadDataService extends Service1 {
 
                     String paymentcode = cursor.getString(cursor.getColumnIndex("PAYMENT_CODE")); 
                     sb.append(appendStringQueryVar(paymentcode)); sb.append(",");
-                    sb.append(",");
 
                     String paymentname = cursor.getString(cursor.getColumnIndex("PAYMENT_NAME")); 
                     sb.append(appendStringQueryVar(paymentname)); sb.append(",");
-                    sb.append(",");
+
 
                     String paymenttype = cursor.getString(cursor.getColumnIndex("PAYMENT_TYPE")); 
                     sb.append(appendStringQueryVar(paymenttype)); sb.append(",");
-                    sb.append(",");
+
 
                     String forexcode = cursor.getString(cursor.getColumnIndex("FOREX_CODE")); 
                     sb.append(appendStringQueryVar(forexcode)); sb.append(",");
-                    sb.append(",");
 
                     double paymentamount = cursor.getDouble(cursor.getColumnIndex("PAYMENT_AMOUNT"));
                     sb.append(Double.toString(paymentamount)); sb.append(",");
-                    sb.append(",");
+
 
                     double changeamount = cursor.getDouble(cursor.getColumnIndex("CHANGE_AMOUNT"));
                     sb.append(Double.toString(changeamount)); sb.append(",");
-                    sb.append(",");
 
                     double tenderamount = cursor.getDouble(cursor.getColumnIndex("TENDER_AMOUNT"));
                     sb.append(Double.toString(tenderamount)); sb.append(",");
-                    sb.append(",");
 
                     String drawerdeclareid = cursor.getString(cursor.getColumnIndex("DRAWER_DECLARE_ID")); 
                     sb.append(appendStringQueryVar(drawerdeclareid)); sb.append(",");
-                    sb.append(",");
 
                     String modifieddate = cursor.getString(cursor.getColumnIndex("MODIFIED_DATE")); 
                     sb.append(appendStringQueryVar(modifieddate)); sb.append(",");
-                    sb.append(",");
 
                     String modifiedid = cursor.getString(cursor.getColumnIndex("MODIFIED_ID")); 
-                    sb.append(appendStringQueryVar(modifiedid)); sb.append(",");
+                    sb.append(appendStringQueryVar(modifiedid));
 
                     sb.append(")");
 

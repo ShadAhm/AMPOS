@@ -507,7 +507,7 @@ public class PaymentActivity extends Activity {
                     "'999', " +
                     "'011', " +
                     "'1', " +
-                    "RCP_NO, " +
+                    "'"+ rcp_id +"', " +
                     "'S', " +
                     "'" + todaysDateInString + "', " + // bus date
                     "'" + todaysDateInString + "', " + // trans date
@@ -527,6 +527,7 @@ public class PaymentActivity extends Activity {
                     "product_master.TAX_03, " +
                     "product_master.TAX_04, " +
                     "product_master.TAX_05, " +
+                    "null, " +
                     "null, " +
                     "null, " +
                     "null, " +
