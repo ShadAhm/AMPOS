@@ -323,9 +323,34 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             "IsNewInDevice int" +
             ");";
 
+    public static final String POS_CONTROL_TABLE_NAME = "POS_control"; 
+    public static final String POS_CONTROL_TABLE_CREATE =  "CREATE TABLE " + POS_CONTROL_TABLE_NAME + "( " +
+            "COMPANY_CODE TEXT NOT NULL,  " +
+            "OUTLET_CODE TEXT NOT NULL,  " +
+            "POS_NO  TEXT NOT NULL,  " +
+            "BUS_DATE TEXT NOT NULL, " +
+            "SHIFT_NUMBER INT,  " +
+            "EMP_CD TEXT, " +
+            "LAST_RCP  TEXT,  " +
+            "LAST_SUSPEND_NUMBER  TEXT,  " +
+            "REPRINT_COUNT INT NOT NULL,  " +
+            "DAYEND INT NOT NULL  " +
+            ");";
+
+    public static final String SHIFT_MASTER_TABLE_NAME = "SHIFT_MASTER";
+    public static final String SHIFT_MASTER_TABLE_CREATE = "CREATE TABLE " + SHIFT_MASTER_TABLE_NAME + "( " +
+            "COMPANY_CODE TEXT,  " +
+            "OUTLET_CODE TEXT,  " +
+            "POS_NO TEXT,  " +
+            "BUS_DATE TEXT,  " +
+            "SHIFT_NUMBER int, " +
+            "SHIFT_STATUS TEXT,  " +
+            "SHIFT_START_AMT REAL, " +
+            "SHIFT_END_AMT REAL " +
+            ");";
+
     public DatabaseHelper(Context context, int version) {
         super(context, DATABASE_NAME, null, version);
-
     }
 
     public static DatabaseHelper instance;
@@ -347,6 +372,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(HEADER_TABLE_CREATE);
         db.execSQL(DETAIL_TABLE_CREATE);
         db.execSQL(PAYMENT_TABLE_CREATE);
+        db.execSQL(POS_CONTROL_TABLE_CREATE);
+        db.execSQL(SHIFT_MASTER_TABLE_CREATE);
 
         insertAdminUser(db);
     }
@@ -361,6 +388,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXIST " + HEADER_TABLE_NAME);
         db.execSQL("DROP TABLE IF EXIST " + DETAIL_TABLE_NAME);
         db.execSQL("DROP TABLE IF EXIST " + PAYMENT_TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXIST " + SHIFT_MASTER_TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXIST " + POS_CONTROL_TABLE_NAME);        
 
         onCreate(db);
     }
