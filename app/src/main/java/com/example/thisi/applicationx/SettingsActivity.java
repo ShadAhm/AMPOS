@@ -31,15 +31,20 @@ public class SettingsActivity extends Activity implements AdapterView.OnItemSele
     private void populatePreviousValues() {
         SharedPreferences prefs = this.getSharedPreferences("com.example.thisi.applicationx", Context.MODE_PRIVATE);
 
+        String comCode = prefs.getString("companycode", null); 
+        EditText textCompanyCode = (EditText)findViewById(R.id.editTextCompanyCode); 
+        textCompanyCode.setText(comCode);
+
         String serverConne = prefs.getString("serverconnection", "http://175.136.237.81:8030/Service1.svc");
-        String defPric = prefs.getString("defaultprice", "PRICE_01");
-
         EditText textServerConnection = (EditText)findViewById(R.id.textServerConnection);
-
         textServerConnection.setText(serverConne);
 
-        int selectedIndex = 0;
+        String posNum = prefs.getString("posnumber", null); 
+        EditText textPOSNumber = (EditText)findViewById(R.id.editTextPOSNumber); 
+        textPOSNumber.setText(posNum);
 
+        int selectedIndex = 0;
+        String defPric = prefs.getString("defaultprice", "PRICE_01");
         switch (defPric) {
             case "PRICE_01":  selectedIndex = 0;
                 break;
@@ -124,11 +129,18 @@ public class SettingsActivity extends Activity implements AdapterView.OnItemSele
         SharedPreferences prefs = this.getSharedPreferences("com.example.thisi.applicationx", Context.MODE_PRIVATE);
 
         EditText textServerConnection = (EditText)findViewById(R.id.textServerConnection);
-
         String serverConnection = textServerConnection.getText().toString();
+
+        EditText textPOSNumber = (EditText)findViewById(R.id.editTextPOSNumber); 
+        String posNumber = textPOSNumber.getText().toString(); 
+        
+        EditText textCompanyCode = (EditText)findViewById(R.id.editTextCompanyCode); 
+        String companyCode = textCompanyCode.getText().toString(); 
 
         prefs.edit().putString("serverconnection", serverConnection).apply();
         prefs.edit().putString("defaultprice", selectedDefaultPrice).apply();
+        prefs.edit().putString("posnumber", posNumber).apply();
+        prefs.edit().putString("companycode", companyCode).apply(); 
 
         Toast.makeText(getApplicationContext(), "Changes saved", Toast.LENGTH_SHORT).show();
     }

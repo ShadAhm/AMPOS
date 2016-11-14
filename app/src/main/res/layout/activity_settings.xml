@@ -44,6 +44,38 @@
             android:hint="Server database"
             android:background="@color/highlightgray" />
 
+        <TextView
+            android:text="POS Number:"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/textViewPOSNumber" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:ems="10"
+            android:id="@+id/editTextPOSNumber"
+            android:padding="10dp"
+            android:hint=""
+            android:background="@color/highlightgray" />
+
+        <TextView
+            android:text="Company Code:"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/textViewCompanyCode" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:ems="10"
+            android:id="@+id/editTextCompanyCode"
+            android:padding="10dp"
+            android:hint=""
+            android:background="@color/highlightgray" />
+
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
