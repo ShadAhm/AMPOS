@@ -66,9 +66,11 @@ public class OrderActivity extends Activity {
         customer_code = b.getString("customer_code");
         price_group_code = b.getString("price_group_code");
         newProductsCodes = b.getString("new_products_codes"); // todo : change to Parcelable http://www.survivingwithandroid.com/2015/05/android-parcelable-tutorial-list-class-2.html
+        
         SharedPreferences prefs = this.getSharedPreferences("com.example.thisi.applicationx", Context.MODE_PRIVATE);
-
         default_price_field = prefs.getString("defaultprice", "PRICE_01");
+        posNo = prefs.getString("posnumber", null);    
+        companyCode = prefs.getString("companycode", null);
 
         latest_row_after_suspend_inserts = 0; 
 
