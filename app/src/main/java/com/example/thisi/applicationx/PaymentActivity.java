@@ -274,9 +274,9 @@ public class PaymentActivity extends Activity {
                         "IsNewInDevice " +
                         ") " +
                         "SELECT  " +
-                        "'BECON', " +
+                        "'" + this.companyCode + "', " +
                         "'BE001-00', " +
-                        "'011', " +
+                        "'" + this.posNo + "', " +
                         "'1', " +
                         "null, " +
                         "'S', " +
@@ -511,9 +511,9 @@ public class PaymentActivity extends Activity {
                     "IsNewInDevice" +
                     ") " +
                     "SELECT  " +
-                    "'BECON', " +
+                    "'" + this.companyCode + "', " +
                     "'BE001-00', " +
-                    "'999', " +
+                    "'" +this.posNo + "', " +
                     "'011', " +
                     "'1', " +
                     "'"+ rcp_id +"', " +
@@ -614,9 +614,9 @@ public class PaymentActivity extends Activity {
                     "IsNewInDevice " +
                     ") " +
                     "VALUES " +
-                    "('BECON', " +
+                    "('" + this.companyCode + "', " +
                     "'BE001-00', " +
-                    "'999', " +
+                    "'" + this.posNo + "', " +
                     "'011', " +
                     "'1', " +
                     "'" + rcp_id + "', " +
@@ -690,7 +690,7 @@ public class PaymentActivity extends Activity {
                 "SELECT  " +
                 "suspend.COMPANY_CODE, " +
                 "suspend.OUTLET_CODE, " +
-                "'999', " +
+                "'" +this.posNo + "', " +
                 "suspend.POS_NO, " +
                 "suspend.SHIFT_NO, " +
                 "'" + rcp_id + "', " +
@@ -800,9 +800,9 @@ public class PaymentActivity extends Activity {
                 "IsNewInDevice" +
                 ") " +
                 "VALUES (" +
-                "'BECON', " +
+                "'" + this.companyCode + "', " +
                 "'BE001-00', " +
-                "'999', " +
+                "'" + this.posNo + "', " +
                 "'011', " +
                 "'1', " +
                 "?, " +
@@ -824,7 +824,7 @@ public class PaymentActivity extends Activity {
                 "null, " +
                 "null, " +
                 "'" + todaysDateInString + "', " + // modified date
-                "'999', " +
+                "'" + this.posNo + "', " +
                 "0, " +
                 "0, " +
                 "null, " +
