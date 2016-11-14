@@ -59,6 +59,8 @@ public class OrderActivity extends Activity {
 
         default_price_field = prefs.getString("defaultprice", "PRICE_01");
 
+        latest_row_after_suspend_inserts = 0; 
+
         dataHelper = DatabaseHelper.getHelper(this);
 
         addSuspendProductsToView();
