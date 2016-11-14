@@ -100,7 +100,7 @@ public class OrderActivity extends Activity {
                     i++;
 
                     // Read columns data
-                    int outlet_id = i; //cursor.getInt(cursor.getColumnIndex("outlet_id"));
+                    int outlet_id = i; 
                     String nameColumnValue = cursor.getString(cursor.getColumnIndex("PROD_NAME"));
                     String rmColumnValue = cursor.getString(cursor.getColumnIndex("PRICE"));
 
@@ -325,7 +325,6 @@ public class OrderActivity extends Activity {
     }
 
     private void removeProductFromView(String productCode) {
-
         newProductsCodes = newProductsCodes.replace(productCode + ";", "");
 
         reDrawTable();

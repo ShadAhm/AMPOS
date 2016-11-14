@@ -84,6 +84,16 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
         builder.show();
     }
 
+    public void onStartShiftClick(View view) {
+
+    }
+
+    public void onEndShiftClick(View view) {
+
+    }
+
+
+
     public void onDownloadDataClick(View view) {
         DownloadDataService dds = new DownloadDataService(this, "http://175.136.237.81:8030/Service1.svc", this.getApplicationContext());
 

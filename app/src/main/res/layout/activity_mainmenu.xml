@@ -21,6 +21,22 @@
         android:layout_weight="1" />
 
     <Button
+        android:text="Start Shift"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/buttonStartShift"
+        android:onClick="onStartShiftClick"
+        android:layout_weight="1" />
+
+    <Button
+        android:text="End Shift"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/buttonEndShift"
+        android:onClick="onEndShiftClick"
+        android:layout_weight="1" />
+
+    <Button
         android:text="Download Data"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
