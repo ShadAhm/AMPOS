@@ -690,7 +690,7 @@ public class PaymentActivity extends Activity {
                 "SELECT  " +
                 "suspend.COMPANY_CODE, " +
                 "suspend.OUTLET_CODE, " +
-                "'" +this.posNo + "', " +
+                "'" + this.posNo + "', " +
                 "suspend.POS_NO, " +
                 "suspend.SHIFT_NO, " +
                 "'" + rcp_id + "', " +
