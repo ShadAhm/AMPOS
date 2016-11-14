@@ -52,6 +52,17 @@ public class OrderActivity extends Activity {
         setEnterKeyListenerToProductCodeTextbox();
 
         Bundle b = getIntent().getExtras();
+        initializeVariables(b); 
+
+        addSuspendProductsToView();
+        if(newProductsCodes != null && newProductsCodes != "") {
+            addNewProductMastersToView();
+        }
+
+        ninePLUs();
+    }
+
+    private void initializeVariables(Bundle b) {
         customer_code = b.getString("customer_code");
         price_group_code = b.getString("price_group_code");
         newProductsCodes = b.getString("new_products_codes"); // todo : change to Parcelable http://www.survivingwithandroid.com/2015/05/android-parcelable-tutorial-list-class-2.html
@@ -63,12 +74,39 @@ public class OrderActivity extends Activity {
 
         dataHelper = DatabaseHelper.getHelper(this);
 
-        addSuspendProductsToView();
-        if(newProductsCodes != null && newProductsCodes != "") {
-            addNewProductMastersToView();
+        if(posNo == null || posNo.isEmpty()) {
+            onOrderErrorCantContinue(errorCantContinueType.POS);
+        }
+        else if (companyCode == null || companyCode.isEmpty) {
+            onOrderErrorCantContinue(errorCantContinueType.COMCODE);
+        }
+        else if (default_price_field == null || default_price_field.isEmpty) {
+            onOrderErrorCantContinue(errorCantContinueType.DEFAULTPRICE); 
+        }
+    }
+
+    private void onOrderErrorCantContinue(errorCantContinueType errType) {
+        Button buttonPayment = (Button) findViewById(R.id.buttonPayment);
+        buttonPayment.setEnabled(false);
+
+        String whatsNotGood = null; 
+
+        switch(errType) {
+            case POS : whatsNotGood = "POS number"; 
+                break; 
+            case COMCODE : whatsNotGood = "Company Code";
+                break;
+            case DEFAULTPRICE : whatsNotGood = "Default Price"
+                break;
         }
 
-        ninePLUs();
+        showMessage("Payment Disabled", "Proceed to Payment has been disabled due to incomplete settings. Go to Settings then select a " + whatsNotGood); 
+    }
+
+    private enum errorCantContinueType {
+        POS, 
+        COMCODE,
+        DEFAULTPRICE
     }
 
     private void addSuspendProductsToView() {

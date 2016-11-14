@@ -46,6 +46,9 @@ public class PaymentActivity extends Activity {
 
     private static ArrayList<PaymentMade> paymentsMade;
 
+    private static String companyCode;
+    private static Sring posNo;
+
     DatabaseHelper dataHelper;
 
     @Override
@@ -54,6 +57,16 @@ public class PaymentActivity extends Activity {
         setContentView(R.layout.activity_payment);
 
         Bundle b = getIntent().getExtras();
+        initializeVariables(b); 
+
+        addFilterToTextBox();
+
+        setEnterKeyListenerToProductCodeTextbox();
+
+        calculateTotal();
+    }
+
+    private void initializeVariables(Bundle b) {
         customer_code = b.getString("customer_code");
         newProductsCodes = b.getString("newproductscodes");
         price_grp_code = b.getString("price_grp_code");
@@ -67,12 +80,8 @@ public class PaymentActivity extends Activity {
 
         SharedPreferences prefs = this.getSharedPreferences("com.example.thisi.applicationx", Context.MODE_PRIVATE);
         default_price_field = prefs.getString("defaultprice", "PRICE_01");
-
-        addFilterToTextBox();
-
-        setEnterKeyListenerToProductCodeTextbox();
-
-        calculateTotal();
+        posNo = prefs.getString("posnumber", null);    
+        companyCode = prefs.getString("companycode", null);
     }
 
     private void setEnterKeyListenerToProductCodeTextbox() {
