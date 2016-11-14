@@ -54,7 +54,7 @@ public class OrderActivity extends Activity {
         Bundle b = getIntent().getExtras();
         customer_code = b.getString("customer_code");
         price_group_code = b.getString("price_group_code");
-        newProductsCodes = b.getString("new_products_codes");
+        newProductsCodes = b.getString("new_products_codes"); // todo : change to Parcelable http://www.survivingwithandroid.com/2015/05/android-parcelable-tutorial-list-class-2.html
         SharedPreferences prefs = this.getSharedPreferences("com.example.thisi.applicationx", Context.MODE_PRIVATE);
 
         default_price_field = prefs.getString("defaultprice", "PRICE_01");
@@ -237,7 +237,6 @@ public class OrderActivity extends Activity {
         }
     }
 
-
     private void addProductMasterToView(final String productCode, SQLiteDatabase db) {
         final TableLayout tableLayout = (TableLayout) findViewById(R.id.tablelayout);
 
@@ -251,7 +250,6 @@ public class OrderActivity extends Activity {
                 "LEFT JOIN price_group ON price_group.prod_code = product_master.prod_code " +
                 "LEFT JOIN customer ON customer.price_grp_code = price_group.price_grp_code " +
                 "WHERE product_master.prod_code = '" + productCode + "'";
-
 
         Cursor cursor1 = db.rawQuery(selectFromPriceGroup, null);
         int cursor1RowCount = cursor1.getCount();
