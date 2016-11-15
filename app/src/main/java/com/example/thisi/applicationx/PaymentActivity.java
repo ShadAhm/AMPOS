@@ -61,7 +61,7 @@ public class PaymentActivity extends Activity {
 
         addFilterToTextBox();
 
-        setEnterKeyListenerToProductCodeTextbox();
+        setEnterKeyListenerToPaymentTextbox();
 
         calculateTotal();
     }
@@ -84,7 +84,7 @@ public class PaymentActivity extends Activity {
         companyCode = prefs.getString("companycode", null);
     }
 
-    private void setEnterKeyListenerToProductCodeTextbox() {
+    private void setEnterKeyListenerToPaymentTextbox() {
         final EditText editTextPayment = (EditText) findViewById(R.id.editTextPayment);
         editTextPayment.setOnKeyListener(new View.OnKeyListener() {
             @Override
