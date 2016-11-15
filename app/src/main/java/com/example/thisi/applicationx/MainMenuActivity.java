@@ -3,8 +3,11 @@ package com.example.thisi.applicationx;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteStatement;
 import android.media.audiofx.BassBoost;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.view.View;
@@ -73,7 +76,7 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
     }
 
     private void checkStateOfShiftsToEnableDisableButtons() {
-        new LongOperation().execute("");
+        new StartShiftLongOperation().execute("");
     }
 
     public void onOrderButtonClick(View view) {
@@ -102,7 +105,7 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
     }
 
     public void onStartShiftClick(View view) {
-        StartShiftLongOperation.execute(""); 
+        new StartShiftLongOperation().execute("");
     }
 
     public void onEndShiftClick(View view) {
@@ -235,7 +238,7 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
     private class StartShiftLongOperation extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
-            SQLiteDatabase db = dataHelper.getReadableDatabase();
+            SQLiteDatabase db = mydb.getReadableDatabase();
 
             db.beginTransaction();
             try {
@@ -246,6 +249,8 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
                 db.endTransaction();
                 db.close();
             }
+
+            return "bulldog";
         }
 
         @Override

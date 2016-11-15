@@ -47,7 +47,7 @@ public class PaymentActivity extends Activity {
     private static ArrayList<PaymentMade> paymentsMade;
 
     private static String companyCode;
-    private static Sring posNo;
+    private static String posNo;
 
     DatabaseHelper dataHelper;
 

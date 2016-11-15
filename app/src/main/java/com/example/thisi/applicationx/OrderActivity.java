@@ -8,26 +8,18 @@ import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.graphics.Color;
 import android.widget.TextView;
 import android.view.Gravity;
 import android.database.Cursor;
-
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
-
-/**
- * Created by thisi on 10/25/2016.
- */
 
 public class OrderActivity extends Activity {
     private static String customer_code;
@@ -36,7 +28,8 @@ public class OrderActivity extends Activity {
     private static String default_price_field;
     private static String newProductsCodes = "";
 
-    private static BigDecimal total;
+    private static String posNo;
+    private static String companyCode;
 
     final String headerRowColor = "#00688B";
     final String evenRowColor = "#E0FFFF";
@@ -79,10 +72,10 @@ public class OrderActivity extends Activity {
         if(posNo == null || posNo.isEmpty()) {
             onOrderErrorCantContinue(errorCantContinueType.POS);
         }
-        else if (companyCode == null || companyCode.isEmpty) {
+        else if (companyCode == null || companyCode.isEmpty()) {
             onOrderErrorCantContinue(errorCantContinueType.COMCODE);
         }
-        else if (default_price_field == null || default_price_field.isEmpty) {
+        else if (default_price_field == null || default_price_field.isEmpty()) {
             onOrderErrorCantContinue(errorCantContinueType.DEFAULTPRICE); 
         }
     }
@@ -98,7 +91,7 @@ public class OrderActivity extends Activity {
                 break; 
             case COMCODE : whatsNotGood = "Company Code";
                 break;
-            case DEFAULTPRICE : whatsNotGood = "Default Price"
+            case DEFAULTPRICE : whatsNotGood = "Default Price";
                 break;
         }
 
