@@ -102,7 +102,7 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
     }
 
     public void onStartShiftClick(View view) {
-        
+        StartShiftLongOperation.execute(""); 
     }
 
     public void onEndShiftClick(View view) {
@@ -232,16 +232,13 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
         return mydb.thereExistSuspends();
     }
 
-    private class LongOperation extends AsyncTask<String, Void, String> {
+    private class StartShiftLongOperation extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
             SQLiteDatabase db = dataHelper.getReadableDatabase();
 
             db.beginTransaction();
             try {
-
-
-                cursor.close();
                 db.setTransactionSuccessful();
             } catch (SQLiteException e) {
                 e.printStackTrace();
