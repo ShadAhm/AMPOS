@@ -499,8 +499,5 @@ public class OrderActivity extends Activity {
             db.endTransaction();
             db.close();
         }
-
-
     }
-
 }

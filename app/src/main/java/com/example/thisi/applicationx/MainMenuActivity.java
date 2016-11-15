@@ -19,16 +19,20 @@ import org.ksoap2.serialization.SoapObject;
 
 public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
     ProgressDialog progress;
+    DatabaseHelper mydb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mainmenu);
-
+        
+        mydb = DatabaseHelper.getHelper(this);
         boolean isSys = getIntent().getBooleanExtra("isSys", false);
 
         if (isSys) {
             enableButtons(
+                    false,
+                    false,
                     false,
                     false,
                     true,
@@ -37,14 +41,23 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
                     true
             );
         }
+        else {
+            checkStateOfShiftsToEnableDisableButtons(); 
+        }
     }
 
-    private void enableButtons(boolean enableOrder, boolean enableDayend, boolean enableDownload, boolean enableUpload, boolean enableLogout, boolean enableSettings) {
+    private void enableButtons(boolean enableOrder, boolean enableDayend, boolean enableStartShift, boolean enableEndShift, boolean enableDownload, boolean enableUpload, boolean enableLogout, boolean enableSettings) {
         Button btnOrder = (Button) findViewById(R.id.buttonOrder);
         btnOrder.setEnabled(enableOrder);
 
         Button buttonDayend = (Button) findViewById(R.id.buttonDayend);
         buttonDayend.setEnabled(enableDayend);
+
+        Button btnStartShift = (Button) findViewById(R.id.buttonStartShift);
+        btnStartShift.setEnabled(enableStartShift);
+
+        Button btnEndShift = (Button) findViewById(R.id.buttonEndShift);
+        btnEndShift.setEnabled(enableEndShift);
 
         Button btnDownloadData = (Button) findViewById(R.id.buttonDownloadData);
         btnDownloadData.setEnabled(enableDownload);
@@ -57,6 +70,10 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
 
         Button buttonSettings = (Button) findViewById(R.id.buttonSettings);
         buttonSettings.setEnabled(enableSettings);
+    }
+
+    private void checkStateOfShiftsToEnableDisableButtons() {
+        new LongOperation().execute("");
     }
 
     public void onOrderButtonClick(View view) {
@@ -85,7 +102,7 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
     }
 
     public void onStartShiftClick(View view) {
-
+        
     }
 
     public void onEndShiftClick(View view) {
@@ -126,6 +143,8 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
                 false,
                 false,
                 false,
+                false,
+                false,
                 false
         );
 
@@ -157,6 +176,8 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
                 true,
                 true,
                 true,
+                true,
+                true,
                 true
         );
     }
@@ -164,6 +185,8 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
     @Override
     public void UploadDataStartedRequest() {
         enableButtons(
+                false,
+                false,
                 false,
                 false,
                 false,
@@ -198,15 +221,70 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
                 true,
                 true,
                 true,
+                true, 
+                true,
                 true,
                 true
         );
     }
 
-    DatabaseHelper mydb;
     public boolean thereExistSuspends() {
-        mydb = DatabaseHelper.getHelper(this);
-
         return mydb.thereExistSuspends();
     }
+
+    private class LongOperation extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... params) {
+            SQLiteDatabase db = dataHelper.getReadableDatabase();
+
+            db.beginTransaction();
+            try {
+
+
+                cursor.close();
+                db.setTransactionSuccessful();
+            } catch (SQLiteException e) {
+                e.printStackTrace();
+            } finally {
+                db.endTransaction();
+                db.close();
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            
+        }
+
+        @Override
+        protected void onPreExecute() {
+
+        }
+    }
+
+    // Hi Shad,
+
+    // Attach are the files that needed to develop a start shift and end shift function. Below is the logic:
+
+    // Start shift: 
+    // 1) User must start a shift in order to start to place order, if there is no shift started then system should prompt user a message ask to start shift when user press on order.
+    // 2) User can only have one shift at a time. No multiple concurrent shift allow. But user can have multiple shift in a day (if they done shift start and shift end properly). Thus you need to check the table provided in the excel, to make sure there is one and only one shift started.
+    // 3) User are require to enter float amount when start a shift. Float amount is a text box that accept any number of money include 0.00. No negative amount is allowed. This amount 
+
+    // Shift end: 
+    // 1) Shift end is to close the shift started. And to consolidate all the transactions done within that shift. 
+    // 2) User must declare the money on their hand during shift end. Formula as below:
+    //           ---> DECLARE AMOUNT (CASH ON HAND)  = FLOAT AMOUNT + TOTAL PAYMENT RECEIVED by CASH In the shift.
+    //           ---> FLOAT = 100.00, CASH = 389.00, CREDIT = 250.00.
+    //           ---> CASH ON HAND = 100 + 389 = 489.00. (Not include credit)
+    // 3) User cannot perform dayend if there is a shift started and not yet close.
+    // 4) Shift end will print out a shift report to show some basic info. Provide later.
+    // 5) If there is any single HOLD ORDER in the system, system should now allow to shift end.
+    
+    // Changes in Dayend:
+    // 1) Whenever there is a shift haven't end, user can't do dayend. 
+    // 2) Day end will consolidate transactions from all shifts in a day.
+    // 3) If user do not do dayend of today, they can't perform shift start or order on tomorrow, system must prompt user to ask them perform proper shift end and dayend before start a new shift on tomorrow. 
+
+    // For table details, please refer the excel. Thanks.
 }

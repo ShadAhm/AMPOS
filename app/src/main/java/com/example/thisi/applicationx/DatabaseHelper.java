@@ -327,12 +327,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String POS_CONTROL_TABLE_CREATE =  "CREATE TABLE " + POS_CONTROL_TABLE_NAME + "( " +
             "COMPANY_CODE TEXT NOT NULL,  " +
             "OUTLET_CODE TEXT NOT NULL,  " +
-            "POS_NO  TEXT NOT NULL,  " +
+            "POS_NO TEXT NOT NULL,  " +
             "BUS_DATE TEXT NOT NULL, " +
             "SHIFT_NUMBER INT,  " +
             "EMP_CD TEXT, " +
-            "LAST_RCP  TEXT,  " +
-            "LAST_SUSPEND_NUMBER  TEXT,  " +
+            "LAST_RCP TEXT,  " +
+            "LAST_SUSPEND_NUMBER TEXT,  " +
             "REPRINT_COUNT INT NOT NULL,  " +
             "DAYEND INT NOT NULL  " +
             ");";
