@@ -20,6 +20,8 @@ import android.view.Gravity;
 import android.database.Cursor;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 public class OrderActivity extends Activity {
     private static String customer_code;
@@ -491,6 +493,33 @@ public class OrderActivity extends Activity {
         } finally {
             db.endTransaction();
             db.close();
+        }
+    }
+
+    private class CrossableProducts {
+
+        public ArrayList<String> productCodes;
+
+        public void addToList(String productCode) {
+            productCodes.add(productCode);
+        }
+
+        public void removeOneFromList(String productCode) {
+            for (Iterator<String> iterator = this.productCodes.iterator(); iterator.hasNext();) {
+                String currentProdCode = iterator.next();
+                if (currentProdCode == productCode) {
+                    iterator.remove();
+                    return;
+                }
+            }
+        }
+
+        public void addSemicolonDelimitedToList(String productCodes) {
+
+        }
+
+        public String toSemicolonDelimited() {
+            return "";
         }
     }
 }
