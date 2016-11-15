@@ -28,7 +28,6 @@ public class OrderActivity extends Activity {
     private static String price_group_code;
     private static int latest_row_after_suspend_inserts = 0;
     private static String default_price_field;
-    private static String newProductsCodes = "";
 
     private static String posNo;
     private static String companyCode;
@@ -36,6 +35,8 @@ public class OrderActivity extends Activity {
     final String headerRowColor = "#00688B";
     final String evenRowColor = "#E0FFFF";
     final String oddRowColor = "#00EEEE";
+
+    CrossableProducts crossableProducts; 
 
     DatabaseHelper dataHelper;
 
@@ -50,7 +51,10 @@ public class OrderActivity extends Activity {
         initializeVariables(b); 
 
         addSuspendProductsToView();
+
+        String newProductsCodes = b.getString("new_products_codes");
         if(newProductsCodes != null && newProductsCodes != "") {
+            crossableProducts.addSemicolonDelimitedToList(newProductsCodes); 
             addNewProductMastersToView();
         }
 
@@ -58,10 +62,11 @@ public class OrderActivity extends Activity {
     }
 
     private void initializeVariables(Bundle b) {
-        customer_code = b.getString("customer_code");
-        price_group_code = b.getString("price_group_code");
-        newProductsCodes = b.getString("new_products_codes"); // todo : change to Parcelable http://www.survivingwithandroid.com/2015/05/android-parcelable-tutorial-list-class-2.html
-        
+        this.crossableProducts = new CrossableProducts(); 
+
+        this.customer_code = b.getString("customer_code");
+        this.price_group_code = b.getString("price_group_code");
+
         SharedPreferences prefs = this.getSharedPreferences("com.example.thisi.applicationx", Context.MODE_PRIVATE);
         default_price_field = prefs.getString("defaultprice", "PRICE_01");
         posNo = prefs.getString("posnumber", null);    
@@ -203,10 +208,8 @@ public class OrderActivity extends Activity {
     }
 
     private void addNewProductMastersToView() {
-        String[] newProductsCodesArray = newProductsCodes.split(";");
-
-        for (int i = 0; i < newProductsCodesArray.length; i++) {
-            searchProductCode(newProductsCodesArray[i]);
+        for(String prodCode: crossableProducts.productCodes) {
+            searchProductCode(prodCode); 
         }
     }
 
@@ -275,11 +278,11 @@ public class OrderActivity extends Activity {
     private void addProductMasterToView(final String productCode, SQLiteDatabase db) {
         final TableLayout tableLayout = (TableLayout) findViewById(R.id.tablelayout);
 
-        if(newProductsCodes == null) {
-            newProductsCodes = "";
+        if(crossableProducts == null) {
+            crossableProducts = new CrossableProducts();
         }
 
-        newProductsCodes += (productCode + ";");
+        crossableProducts.addToList(productCode);
 
         String selectFromPriceGroup = "SELECT product_master.prod_name, price_group.price, customer.customer_code, product_master." + default_price_field + " FROM product_master " +
                 "LEFT JOIN price_group ON price_group.prod_code = product_master.prod_code " +
@@ -430,10 +433,8 @@ public class OrderActivity extends Activity {
     public void onPaymentClick(View view) {
         Intent intent = new Intent(this, PaymentActivity.class);
         intent.putExtra("customer_code", customer_code);
-        intent.putExtra("newproductscodes", newProductsCodes);
+        intent.putExtra("newproductscodes", crossableProducts.toSemicolonDelimited());
         intent.putExtra("price_grp_code", price_group_code);
-
-        newProductsCodes = "";
 
         finish();
         startActivity(intent);
@@ -497,8 +498,11 @@ public class OrderActivity extends Activity {
     }
 
     private class CrossableProducts {
-
         public ArrayList<String> productCodes;
+
+        public CrossableProducts() {
+            productCodes = new ArrayList<String>();
+        }
 
         public void addToList(String productCode) {
             productCodes.add(productCode);
@@ -515,7 +519,11 @@ public class OrderActivity extends Activity {
         }
 
         public void addSemicolonDelimitedToList(String productCodes) {
+            String[] newProductsCodesArray = newProductsCodes.split(";");
 
+            for (int i = 0; i < newProductsCodesArray.length; i++) {
+                productCodes.add(newProductsCodesArray[i]);
+            }
         }
 
         public String toSemicolonDelimited() {
