@@ -678,7 +678,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return result > -1;
     }
 
-
     public boolean insertPayment(SQLiteDatabase db, Payment paym) {
         ContentValues contentValues = new ContentValues();
         contentValues.put("COMPANY_CODE", paym.COMPANY_CODE);
@@ -747,6 +746,27 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
 
         return false;
+    }
+
+    public boolean deleteAndInsertPOSControl(SQLiteDatabase db, POS_control pctrl) {
+        db.execSQL("DELETE FROM POS_Control");
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("COMPANY_CODE", pctrl.COMPANY_CODE);
+        contentValues.put("OUTLET_CODE", pctrl.OUTLET_CODE);
+        contentValues.put("POS_NO", pctrl.POS_NO);
+        contentValues.put("BUS_DATE", pctrl.BUS_DATE);
+        contentValues.put("SHIFT_NUMBER", pctrl.SHIFT_NUMBER);
+        contentValues.put("EMP_CD", pctrl.EMP_CD);
+        contentValues.put("LAST_RCP", pctrl.LAST_RCP);
+        contentValues.put("LAST_SUSPEND_NUMBER", pctrl.LAST_SUSPEND_NUMBER);
+        contentValues.put("REPRINT_COUNT", pctrl.REPRINT_COUNT);
+
+        int dayend = pctrl.DAYEND ? 1 : 0; 
+        contentValues.put("DAYEND", dayend);
+
+        long result = db.insertOrThrow("POS_Control", null, contentValues);
+        return result > -1;
     }
 
     public void clearOldData(SQLiteDatabase db) {
