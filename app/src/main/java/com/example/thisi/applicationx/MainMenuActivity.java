@@ -3,6 +3,8 @@ package com.example.thisi.applicationx;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteStatement;
@@ -16,6 +18,9 @@ import android.widget.Button;
 
 import org.ksoap2.serialization.SoapObject;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * Created by thisi on 10/24/2016.
  */
@@ -28,17 +33,16 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mainmenu);
-        
+
         mydb = DatabaseHelper.getHelper(this);
-        
-        enableButtons(false,false,false,false,false,false,false,false);
+
+        enableButtons(false, false, false, false, false, false, false, false);
 
         boolean isSys = getIntent().getBooleanExtra("isSys", false);
         if (isSys) {
-            enableButtons(false,false,false,false,false,false,true,true);
-        }
-        else {
-            sortOutShiftSituationsAndEnableButtons(); 
+            enableButtons(false, false, false, false, false, false, true, true);
+        } else {
+            checkShiftsLongOperation();
         }
     }
 
@@ -68,15 +72,11 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
         buttonSettings.setEnabled(enableSettings);
     }
 
-    private void checkStateOfShiftsToEnableDisableButtons() {
-        checkShiftsLongOperation(); 
-    }
-
     public void onOrderButtonClick(View view) {
-        if(checkIfTheresOpenShift()) {
-            Intent intent = new Intent(this, EnterCustomerCodeActivity.class);
-            startActivity(intent);
-        }
+        //if(checkIfTheresOpenShift()) {
+        Intent intent = new Intent(this, EnterCustomerCodeActivity.class);
+        startActivity(intent);
+        //}
     }
 
     public void onSettingsClick(View view) {
@@ -105,7 +105,6 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
     public void onEndShiftClick(View view) {
 
     }
-
 
 
     public void onDownloadDataClick(View view) {
@@ -218,7 +217,7 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
                 true,
                 true,
                 true,
-                true, 
+                true,
                 true,
                 true,
                 true
@@ -229,132 +228,109 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
         return mydb.thereExistSuspends();
     }
 
-    private void checkShiftsLongOperation() 
-    {
-        new AsyncTask<Void, Void, String>() {
-            @Override
-            protected String doInBackground(String... params) {
-                if(!isSettingsComplete()) {
-                    return "settingsIncomplete"; 
-                }
-                
-                SQLiteDatabase db = mydb.getReadableDatabase();
-
-                db.beginTransaction();
-                try {
-                    POS_Control pctrl = getPostControl(); 
-                    if(pctrl == null) {
-                        SharedPreferences prefs = this.getSharedPreferences("com.example.thisi.applicationx", Context.MODE_PRIVATE);
-                        String posNo = prefs.getString("posnumber", null);    
-                        String companyCode = prefs.getString("companycode", null);
-
-                        POS_Control newPostControl = new POS_Control();
-                        newPostControl.COMPANY_CODE = companyCode;
-                        newPostControl.OUTLET_CODE = companyCode; 
-                        newPostControl.POS_NO = posNo; 
-                        String todaysDateInString = new SimpleDateFormat("yyyyMMdd").format(new Date());
-                        newPostControl.BUS_DATE = todaysDateInString; 
-                        newPostControl.SHIFT_NUMBER = 0; 
-                        newPostControl.REPRINT_COUNT = 0;
-                        newPostControl.DAYEND = false;
-                        mydb.deleteAndInsertPOSControl(db, newPostControl); 
-
-                        Shift_Master openShift = lookForOpenShiftsAtDate(db); // start here
-
-                        if(openShift != null) {
-                            return "freetogo"; 
-                        }
-                        else {
-                            return "noopenshift"; 
-                        }
-                    }
-                    else {
-                        if(pctrl.DAYEND) // checks if latest POS_Control already dayend 
-                        {
-                            if(todayDate() == busDateInPosControl()) {
-                                return "alreadydayend"; 
-                            }
-                            else {
-                                pctrl.BUS_DATE = todayDate(); 
-                                pctrl.DAYEND = false; 
-
-                                mydb.deleteAndInsertPOSControl(db, pctrl); 
-                            }
-
-
-                        }
-
-                    }
-
-
-                    db.setTransactionSuccessful();
-                } catch (SQLiteException e) {
-                    e.printStackTrace();
-                } finally {
-                    db.endTransaction();
-                    db.close();
-                }
-
-                return "bulldog";
-            }
-
-            @Override
-            protected void onPostExecute(String result) {
-                
-            }
-
-            @Override
-            protected void onPreExecute() {
-                enableButtons(false,false,false,false,false,false,false,false);
-
-                progress = new ProgressDialog(this);
-                progress.setTitle("Checking shifts...");
-                progress.setMessage("Do not close this application");
-                progress.setCancelable(false); 
-                progress.show();
-            }
-
-            protected boolean isSettingsComplete() {
-                SharedPreferences prefs = this.getSharedPreferences("com.example.thisi.applicationx", Context.MODE_PRIVATE);
-                String default_price_field = prefs.getString("defaultprice", null);
-                String posNo = prefs.getString("posnumber", null);    
-                String companyCode = prefs.getString("companycode", null);
-                String serverConne = prefs.getString("serverconnection", null);
-
-                if(default_price_field == null || posNo == null || companyCode == null || serverConne == null
-                || default_price_field.trim().isEmpty() || posNo.trim().isEmpty() || companyCode.trim().isEmpty() || serverConne.trim().isEmpty()) {
-                    return false; 
-                }
-            }
-
-        }.execute(); 
-
+    private void checkShiftsLongOperation() {
+        SharedPreferences prefs = this.getSharedPreferences("com.example.thisi.applicationx", Context.MODE_PRIVATE);
+        new checkShiftsLongOperationTask(this, prefs).execute();
     }
 
-    // Hi Shad,
+    public class checkShiftsLongOperationTask extends AsyncTask<Void, Void, String> {
+        public MainMenuActivity _ctx;
+        public SharedPreferences _sp;
 
-    // Attach are the files that needed to develop a start shift and end shift function. Below is the logic:
+        public checkShiftsLongOperationTask(MainMenuActivity ctx, SharedPreferences sp) {
+            this._ctx = ctx;
+            this._sp = sp;
+        }
 
-    // Start shift: 
-    // 1) User must start a shift in order to start to place order, if there is no shift started then system should prompt user a message ask to start shift when user press on order.
-    // 2) User can only have one shift at a time. No multiple concurrent shift allow. But user can have multiple shift in a day (if they done shift start and shift end properly). 
-    //    Thus you need to check the table provided in the excel, to make sure there is one and only one shift started.
-    // 3) User are require to enter float amount when start a shift. Float amount is a text box that accept any number of money include 0.00. No negative amount is allowed. This amount 
+        @Override
+        protected String doInBackground(Void... params) {
+            if (!isSettingsComplete()) {
+                return "settingsIncomplete";
+            }
 
-    // Shift end: 
-    // 1) Shift end is to close the shift started. And to consolidate all the transactions done within that shift. 
-    // 2) User must declare the money on their hand during shift end. Formula as below:
-    //           ---> DECLARE AMOUNT (CASH ON HAND)  = FLOAT AMOUNT + TOTAL PAYMENT RECEIVED by CASH In the shift.
-    //           ---> FLOAT = 100.00, CASH = 389.00, CREDIT = 250.00.
-    //           ---> CASH ON HAND = 100 + 389 = 489.00. (Not include credit)
-    // 3) User cannot perform dayend if there is a shift started and not yet close.
-    // 4) Shift end will print out a shift report to show some basic info. Provide later.
-    // 5) If there is any single HOLD ORDER in the system, system should now allow to shift end.
-    
-    // Changes in Dayend:
-    // 1) Whenever there is a shift haven't end, user can't do dayend. 
-    // 2) Day end will consolidate transactions from all shifts in a day.
-    // 3) If user do not do dayend of today, they can't perform shift start or order on tomorrow, system must prompt user to ask them perform proper shift end and dayend before start a new shift on tomorrow. 
+            SQLiteDatabase db = mydb.getReadableDatabase();
 
-    // For table details, please refer the excel. Thanks.
+            db.beginTransaction();
+            try {
+                POS_Control pctrl = getPostControl();
+                if (pctrl == null) {
+                    String posNo = _sp.getString("posnumber", null);
+                    String companyCode = _sp.getString("companycode", null);
+
+                    POS_Control newPostControl = new POS_Control();
+                    newPostControl.COMPANY_CODE = companyCode;
+                    newPostControl.OUTLET_CODE = companyCode;
+                    newPostControl.POS_NO = posNo;
+                    String todaysDateInString = new SimpleDateFormat("yyyyMMdd").format(new Date());
+                    newPostControl.BUS_DATE = todaysDateInString;
+                    newPostControl.SHIFT_NUMBER = 0;
+                    newPostControl.REPRINT_COUNT = 0;
+                    newPostControl.DAYEND = false;
+                    mydb.deleteAndInsertPOSControl(db, newPostControl);
+
+                    Shift_Master openShift = lookForOpenShiftsAtDate(db); // start here
+
+                    if (openShift != null) {
+                        return "freetogo";
+                    } else {
+                        return "noopenshift";
+                    }
+                } else {
+                    if (pctrl.DAYEND) // checks if latest POS_Control already dayend
+                    {
+                        if (todayDate() == busDateInPosControl()) {
+                            return "alreadydayend";
+                        } else {
+                            pctrl.BUS_DATE = todayDate();
+                            pctrl.DAYEND = false;
+
+                            mydb.deleteAndInsertPOSControl(db, pctrl);
+                        }
+
+
+                    }
+
+                }
+
+
+                db.setTransactionSuccessful();
+            } catch (SQLiteException e) {
+                e.printStackTrace();
+            } finally {
+                db.endTransaction();
+                db.close();
+            }
+
+            return "bulldog";
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+
+        }
+
+        @Override
+        protected void onPreExecute() {
+            enableButtons(false, false, false, false, false, false, false, false);
+
+            progress = new ProgressDialog(_ctx);
+            progress.setTitle("Checking shifts...");
+            progress.setMessage("Do not close this application");
+            progress.setCancelable(false);
+            progress.show();
+        }
+
+        protected boolean isSettingsComplete() {
+            String default_price_field = _sp.getString("defaultprice", null);
+            String posNo = _sp.getString("posnumber", null);
+            String companyCode = _sp.getString("companycode", null);
+            String serverConne = _sp.getString("serverconnection", null);
+
+            if (default_price_field == null || posNo == null || companyCode == null || serverConne == null
+                    || default_price_field.trim().isEmpty() || posNo.trim().isEmpty() || companyCode.trim().isEmpty() || serverConne.trim().isEmpty()) {
+                return false;
+            }
+            return true;
+        }
+    }
 }

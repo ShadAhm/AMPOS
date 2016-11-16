@@ -1,8 +1,5 @@
 package com.example.thisi.applicationx;
 
-import java.math.BigDecimal;
-import java.util.Date;
-
 public class POS_Control {
     public String COMPANY_CODE;
     public String OUTLET_CODE;

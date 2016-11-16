@@ -748,7 +748,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return false;
     }
 
-    public boolean deleteAndInsertPOSControl(SQLiteDatabase db, POS_control pctrl) {
+    public boolean deleteAndInsertPOSControl(SQLiteDatabase db, POS_Control pctrl) {
         db.execSQL("DELETE FROM POS_Control");
 
         ContentValues contentValues = new ContentValues();
@@ -768,6 +768,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         long result = db.insertOrThrow("POS_Control", null, contentValues);
         return result > -1;
     }
+
+
 
     public void clearOldData(SQLiteDatabase db) {
         db.execSQL("DELETE FROM customer");
