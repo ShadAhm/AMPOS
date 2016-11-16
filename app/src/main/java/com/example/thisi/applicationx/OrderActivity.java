@@ -209,7 +209,7 @@ public class OrderActivity extends Activity {
 
     private void addNewProductMastersToView() {
         for(String prodCode: crossableProducts.productCodes) {
-            searchProductCode(prodCode); 
+            searchAndAddProductCode(prodCode); 
         }
     }
 
@@ -243,10 +243,10 @@ public class OrderActivity extends Activity {
             productcode = productcode.replaceAll("\\r", "");
         }
 
-        searchProductCode(productcode);
+        searchAndAddProductCode(productcode);
     }
 
-    private void searchProductCode(String productcode) {
+    private void searchAndAddProductCode(String productcode) {
         if(productcode == null || productcode == "") {
             return;
         }
