@@ -279,7 +279,6 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
                                 pctrl.DAYEND = false; 
 
                                 mydb.deleteAndInsertPOSControl(db, pctrl); 
-
                             }
 
 
