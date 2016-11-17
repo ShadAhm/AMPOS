@@ -44,33 +44,27 @@ public class DeclareShiftMoneyActivity extends Activity {
             if (textDeclareShiftMoney.getText() == null || textDeclareShiftMoney.getText().toString() == null || textDeclareShiftMoney.getText().toString().isEmpty())
                 return;
 
-            String floatAmount = textDeclareShiftMoney.getText().toString();
-
-            BigDecimal bd = new BigDecimal(floatAmount);
-
             SharedPreferences prefs = this.getSharedPreferences("com.example.thisi.applicationx", Context.MODE_PRIVATE);
-            String posNo = _sp.getString("posnumber", "errorUndefined");
-            String companyCode = _sp.getString("companycode", "errorUndefined");
+            posNo = prefs.getString("posnumber", null); 
 
-            Shift_Master newShift = new Shift_Master();
-            newShift.COMPANY_CODE = companyCode; 
-            newShift.OUTLET_CODE = "TODOFINDOUTWHERETHISCOMEFROM"; 
-            newShift.POS_NO = posNo; 
-            newShift.BUS_DATE = todaysDateInString; 
-            newShift.SHIFT_NUMBER = newShiftNo; 
-            newShift.SHIFT_STATUS = "O"; 
-            newShift.SHIFT_START_AMT = bd; 
-            newShift.SHIFT_END_AMT = new BigDecimal("0.00"); 
+            String floatAmount = textDeclareShiftMoney.getText().toString();
+            BigDecimal enteredAmount = new BigDecimal(floatAmount);
+            BigDecimal correctAmount = mydb.supposedEndShiftMoney(db, latestOpenShift.SHIFT_START_AMT, latestOpenShift.SHIFT_NUMBER, latestOpenShift.BUS_DATE, posNo);
 
-            mydb.insertShiftMaster(db, newShift); 
+            if(enteredAmount.compareTo(correctAmount) == 0) {
+                // TODO : update shift set to close 
 
-            db.setTransactionSuccessful();
+                ContentValues cvals = new ContentValues();
+                cvals.put("SHIFT_STATUS", "C");
+                cvals.put("SHIFT_END_AMT", enteredAmount.doubleValue());
+                db.update("shift_master", cvals, "ID = " + latestOpenShift.ID, null);
 
-            Toast.makeText(getApplicationContext(), "Shift started", Toast.LENGTH_SHORT).show();
-            
-            finish(); 
-            Intent intent = new Intent(this, MainMenuActivity.class);
-            startActivity(intent);
+                db.setTransactionSuccessful();
+                finish(); 
+                Intent intent = new Intent(this, MainMenuActivity.class);
+                startActivity(intent);
+            }
+
         } catch (SQLiteException e) {
             e.printStackTrace();
         } finally {

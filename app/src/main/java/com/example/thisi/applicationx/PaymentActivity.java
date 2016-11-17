@@ -204,10 +204,11 @@ public class PaymentActivity extends Activity {
             if (newProductsCodes != null && !newProductsCodes.isEmpty()) {
                 String[] newProductsCodesArray = newProductsCodes.split(";");
 
-                StringBuilder sb = new StringBuilder();
-
                 String todaysDateInString = new SimpleDateFormat("yyyyMMdd").format(new Date());
                 String todaysTimeInString = new SimpleDateFormat("HHmm").format(new Date());
+
+                Shift_Master currentShift = dataHelper.lookForOpenShiftsAtDate(db, todaysDateInString);
+
                 for (int i = 0; i < newProductsCodesArray.length; i++) {
                     String ssql = "INSERT INTO suspend ( " +
                         "COMPANY_CODE, " +
@@ -268,7 +269,7 @@ public class PaymentActivity extends Activity {
                         "'" + this.companyCode + "', " +
                         "'BE001-00', " +
                         "'" + this.posNo + "', " +
-                        "'1', " +
+                        "'" + currentShift.SHIFT_NUMBER.toString() + "', " +
                         "null, " +
                         "'S', " +
                         "'" + todaysDateInString + "', " + // bus date

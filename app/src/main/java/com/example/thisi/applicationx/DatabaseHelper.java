@@ -339,6 +339,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public static final String SHIFT_MASTER_TABLE_NAME = "SHIFT_MASTER";
     public static final String SHIFT_MASTER_TABLE_CREATE = "CREATE TABLE " + SHIFT_MASTER_TABLE_NAME + "( " +
+            "ID INTEGER PRIMARY KEY AUTOINCREMENT, " + 
             "COMPANY_CODE TEXT,  " +
             "OUTLET_CODE TEXT,  " +
             "POS_NO TEXT,  " +
@@ -832,6 +833,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             res.moveToFirst(); 
 
             Shift_Master smst = new Shift_Master();
+            smst.ID = res.getInt(res.getColumnIndex("ID"));            
             smst.COMPANY_CODE = res.getString(res.getColumnIndex("COMPANY_CODE")); 
             smst.OUTLET_CODE = res.getString(res.getColumnIndex("OUTLET_CODE"));  
             smst.POS_NO = res.getString(res.getColumnIndex("POS_NO"));
@@ -860,6 +862,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             res.moveToFirst(); 
 
             Shift_Master smst = new Shift_Master();
+            smst.ID = res.getInt(res.getColumnIndex("ID"));   
             smst.COMPANY_CODE = res.getString(res.getColumnIndex("COMPANY_CODE")); 
             smst.OUTLET_CODE = res.getString(res.getColumnIndex("OUTLET_CODE"));  
             smst.POS_NO = res.getString(res.getColumnIndex("POS_NO"));
@@ -877,9 +880,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public BigDecimal supposedEndShiftMoney(BigDecimal shiftStartAmount, int shiftNumber, String busDate, String posNo) {
-        // String qry = "SELECT SUM() FROM " + SHIFT_MASTER_TABLE_NAME + " " +
-        //     "WHERE "
+    public BigDecimal supposedEndShiftMoney(SQLiteDatabase db, BigDecimal shiftStartAmount, int shiftNumber, String busDate, String posNo) {
+         String qry = "SELECT SUM(PAYMENT_AMOUNT) as SumPayment, SUM(CHANGE_AMOUNT) as SumChange FROM " + PAYMENT_TABLE_NAME + " " +
+             "WHERE BUS_DATE = '" + busDate + "' " +
+             "AND SHIFT_NO = '" + shiftNumber.toString() + "' " +
+             "AND PAYMENT_CODE = 'CASH';";
 
+        Cursor res = db.rawQuery(qry, null);
+
+        double sumPayment = res.getDouble(res.getColumnIndex("SumPayment"));
+        double sumChange = res.getDouble(res.getColumnIndex("SumChange"));
+
+        BigDecimal bigdecSumPayment = BigDecimal.valueOf(sumPayment);
+        BigDecimal bigdecSumChange = BigDecimal.valueOf(sumChange); 
+        BigDecimal collections = bigdecSumPayment.subtract(bigdecSumChange); 
+        BigDecimal supposedEndShiftAmount = collections.add(shiftStartAmount);
+
+        return supposedEndShiftAmount; 
     }
 }
