@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 public class Shift_Master {
-    public String COMPANY_COD;
+    public String COMPANY_CODE;
     public String OUTLET_CODE;
     public String POS_NO;
     public String BUS_DATE;

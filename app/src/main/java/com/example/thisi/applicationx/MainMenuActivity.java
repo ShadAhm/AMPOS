@@ -73,7 +73,7 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
     }
 
     public void onOrderButtonClick(View view) {
-        //if(checkIfTheresOpenShift()) {
+        //TODO if(checkIfTheresOpenShift()) {
         Intent intent = new Intent(this, EnterCustomerCodeActivity.class);
         startActivity(intent);
         //}
@@ -100,12 +100,14 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
     }
 
     public void onStartShiftClick(View view) {
+        Intent intent = new Intent(this, EnterFloatAmountActivity.class);
+        startActivity(intent);
     }
 
     public void onEndShiftClick(View view) {
-
+        Intent intent = new Intent(this, DeclareShiftMoneyActivity.class);
+        startActivity(intent);
     }
-
 
     public void onDownloadDataClick(View view) {
         DownloadDataService dds = new DownloadDataService(this, "http://175.136.237.81:8030/Service1.svc", this.getApplicationContext());
@@ -252,7 +254,10 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
 
             db.beginTransaction();
             try {
-                POS_Control pctrl = getPostControl();
+                POS_Control pctrl = mydb.getPOSControl(db);
+
+                String todaysDateInString = new SimpleDateFormat("yyyyMMdd").format(new Date());
+
                 if (pctrl == null) {
                     String posNo = _sp.getString("posnumber", null);
                     String companyCode = _sp.getString("companycode", null);
@@ -261,38 +266,44 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
                     newPostControl.COMPANY_CODE = companyCode;
                     newPostControl.OUTLET_CODE = companyCode;
                     newPostControl.POS_NO = posNo;
-                    String todaysDateInString = new SimpleDateFormat("yyyyMMdd").format(new Date());
                     newPostControl.BUS_DATE = todaysDateInString;
                     newPostControl.SHIFT_NUMBER = 0;
                     newPostControl.REPRINT_COUNT = 0;
                     newPostControl.DAYEND = false;
                     mydb.deleteAndInsertPOSControl(db, newPostControl);
 
-                    Shift_Master openShift = lookForOpenShiftsAtDate(db); // start here
+                    Shift_Master openShift = mydb.lookForOpenShiftsAtDate(db, todaysDateInString);
 
                     if (openShift != null) {
-                        return "freetogo";
-                    } else {
-                        return "noopenshift";
+                        return "shiftOpen";
+                    } 
+                    else {
+                        return "noOpenShift";
                     }
-                } else {
+
+                } 
+                else {
                     if (pctrl.DAYEND) // checks if latest POS_Control already dayend
                     {
-                        if (todayDate() == busDateInPosControl()) {
-                            return "alreadydayend";
+                        if (todaysDateInString == pctrl.BUS_DATE) {
+                            return "alreadyDayend";
                         } else {
-                            pctrl.BUS_DATE = todayDate();
+                            pctrl.BUS_DATE = todaysDateInString;
                             pctrl.DAYEND = false;
 
                             mydb.deleteAndInsertPOSControl(db, pctrl);
+
+                            Shift_Master openShift = mydb.lookForOpenShiftsAtDate(db, todaysDateInString);
+
+                            if (openShift != null) {
+                                return "shiftOpen";
+                            } 
+                            else {
+                                return "noOpenShift";
+                            }
                         }
-
-
                     }
-
                 }
-
-
                 db.setTransactionSuccessful();
             } catch (SQLiteException e) {
                 e.printStackTrace();
@@ -306,7 +317,21 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
 
         @Override
         protected void onPostExecute(String result) {
+            switch(result) 
+            {
+                case "settingsIncomplete" : showMessage("Settings Incomplete", "Please go to settings and complete all required information"); 
+                    enableButtons(false, false, false, false, false, false, true, true); 
+                    break; 
+                case "shiftOpen" : enableButtons(true, true, false, true, true, true, true, true);
+                    break;
+                case "alreadyDayend" : enableButtons(false, false, false, false, true, false, true, true); 
+                    break; 
+                case "noOpenShift" : showMessage("", "Please start a shift to continue");
+                    enableButtons(false, false, true, false, true, false, true, true); 
+                    break;
+            }
 
+            progress.dismiss();
         }
 
         @Override

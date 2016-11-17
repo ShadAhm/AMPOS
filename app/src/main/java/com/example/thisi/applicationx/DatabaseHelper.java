@@ -708,6 +708,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return result > -1;
     }
 
+    public boolean insertShiftMaster(SQLiteDatabase db, Shift_Master shmst) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("COMPANY_CODE", shmst.COMPANY_CODE);
+        contentValues.put("OUTLET_CODE", shmst.OUTLET_CODE);
+        contentValues.put("POS_NO", shmst.POS_NO);
+        contentValues.put("BUS_DATE", shmst.BUS_DATE);
+        contentValues.put("SHIFT_NUMBER", shmst.SHIFT_NUMBER);
+        contentValues.put("SHIFT_STATUS", shmst.SHIFT_STATUS);
+        contentValues.put("SHIFT_START_AMT", shmst.SHIFT_START_AMT.doubleValue());
+        contentValues.put("SHIFT_END_AMT", shmst.SHIFT_END_AMT.doubleValue());
+        long result = db.insertOrThrow("Shift_Master", null, contentValues);
+        return result > -1;
+    }
+
     public boolean loginEmployee(String username, String password) {
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -769,8 +783,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return result > -1;
     }
 
-
-
     public void clearOldData(SQLiteDatabase db) {
         db.execSQL("DELETE FROM customer");
         db.execSQL("DELETE FROM product_master");
@@ -779,5 +791,89 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public void clearEmployeeTable(SQLiteDatabase db) {
         db.execSQL("DELETE FROM employee"); 
+    }
+
+    public POS_Control getPOSControl(SQLiteDatabase db) {
+        Cursor res = db.rawQuery("SELECT * FROM " + POS_CONTROL_TABLE_NAME + " LIMIT 1;", null);
+
+        if(res.getCount() > 0) {
+            res.moveToFirst(); 
+
+            POS_Control pctrl = new POS_Control();
+            pctrl.COMPANY_CODE = res.getString(res.getColumnIndex("COMPANY_CODE")); 
+            pctrl.OUTLET_CODE = res.getString(res.getColumnIndex("OUTLET_CODE"));  
+            pctrl.POS_NO = res.getString(res.getColumnIndex("POS_NO"));
+            pctrl.BUS_DATE = res.getString(res.getColumnIndex("BUS_DATE"));
+            pctrl.SHIFT_NUMBER = res.getInt(res.getColumnIndex("SHIFT_NUMBER"));
+            pctrl.EMP_CD = res.getString(res.getColumnIndex("EMP_CD"));
+            pctrl.LAST_RCP = res.getString(res.getColumnIndex("LAST_RCP"));
+            pctrl.LAST_SUSPEND_NUMBER = res.getString(res.getColumnIndex("LAST_SUSPEND_NUMBER"));
+            pctrl.REPRINT_COUNT = res.getString(res.getColumnIndex("REPRINT_COUNT"));
+            
+            int dayend = res.getInt(res.getColumnIndex("DAYEND"));
+            pctrl.DAYEND = dayend == 1; 
+            
+            res.close(); 
+
+            return pctrl; 
+        } else {
+            return null; 
+        }
+    }
+
+    public Shift_Master lookForOpenShiftsAtDate(SQLiteDatabase db, String todaysDate) {
+        String qry = "SELECT * FROM " SHIFT_MASTER_TABLE_NAME + " " +
+            "WHERE BUS_DATE = '" + todaysDate + "' AND " +
+            "SHIFT_STATUS = 'O' ORDER BY SHIFT_NUMBER DESC LIMIT 1;";
+
+        Cursor res = db.rawQuery(qry, null);
+
+        if(res.getCount() > 0) {
+            res.moveToFirst(); 
+
+            Shift_Master smst = new Shift_Master();
+            smst.COMPANY_CODE = res.getString(res.getColumnIndex("COMPANY_CODE")); 
+            smst.OUTLET_CODE = res.getString(res.getColumnIndex("OUTLET_CODE"));  
+            smst.POS_NO = res.getString(res.getColumnIndex("POS_NO"));
+            smst.BUS_DATE = res.getString(res.getColumnIndex("BUS_DATE"));
+            smst.SHIFT_NUMBER = res.getInt(res.getColumnIndex("SHIFT_NUMBER"));
+            smst.SHIFT_STATUS = res.getString(res.getColumnIndex("SHIFT_STATUS"));
+            smst.SHIFT_START_AMT = res.getDouble(res.getColumnIndex("SHIFT_START_AMT"));
+            smst.SHIFT_END_AMT = res.getDouble(res.getColumnIndex("SHIFT_END_AMT"));
+            
+            res.close(); 
+
+            return smst; 
+        } else {
+            return null; 
+        }
+    }
+
+    public Shift_Master lookForLatestShiftAtDate(SQLiteDatabase db, String todaysDate) {
+        String qry = "SELECT * FROM " SHIFT_MASTER_TABLE_NAME + " " +
+            "WHERE BUS_DATE = '" + todaysDate + "' " +
+            "ORDER BY SHIFT_NUMBER DESC LIMIT 1;";
+
+        Cursor res = db.rawQuery(qry, null);
+
+        if(res.getCount() > 0) {
+            res.moveToFirst(); 
+
+            Shift_Master smst = new Shift_Master();
+            smst.COMPANY_CODE = res.getString(res.getColumnIndex("COMPANY_CODE")); 
+            smst.OUTLET_CODE = res.getString(res.getColumnIndex("OUTLET_CODE"));  
+            smst.POS_NO = res.getString(res.getColumnIndex("POS_NO"));
+            smst.BUS_DATE = res.getString(res.getColumnIndex("BUS_DATE"));
+            smst.SHIFT_NUMBER = res.getInt(res.getColumnIndex("SHIFT_NUMBER"));
+            smst.SHIFT_STATUS = res.getString(res.getColumnIndex("SHIFT_STATUS"));
+            smst.SHIFT_START_AMT = res.getDouble(res.getColumnIndex("SHIFT_START_AMT"));
+            smst.SHIFT_END_AMT = res.getDouble(res.getColumnIndex("SHIFT_END_AMT"));
+            
+            res.close(); 
+
+            return smst; 
+        } else {
+            return null; 
+        }
     }
 }
