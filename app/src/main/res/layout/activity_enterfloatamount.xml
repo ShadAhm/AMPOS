@@ -33,14 +33,14 @@ android:layout_height="match_parent">
             android:id="@+id/buttonOK"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="onCustomerCodeOK"
+            android:onClick="onEnterFloatAmountOK"
             android:text="OK"
             android:layout_weight="1"/>
         <Button
             android:id="@+id/buttonCancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="onCustomerCodeCancel"
+            android:onClick="onEnterFloatAmountCancel"
             android:text="Cancel"
             android:layout_weight="1"/>
     </LinearLayout>
