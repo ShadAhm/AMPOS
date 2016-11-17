@@ -876,4 +876,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             return null; 
         }
     }
+
+    public BigDecimal supposedEndShiftMoney(BigDecimal shiftStartAmount, int shiftNumber, String busDate, String posNo) {
+        // String qry = "SELECT SUM() FROM " + SHIFT_MASTER_TABLE_NAME + " " +
+        //     "WHERE "
+
+    }
 }

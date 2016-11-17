@@ -80,6 +80,7 @@ public class EnterFloatAmountActivity extends Activity {
     }
 
     public void onEnterFloatAmountCancel(View view) {
+        finish(); 
         Intent intent = new Intent(this, MainMenuActivity.class);
         startActivity(intent);
     }

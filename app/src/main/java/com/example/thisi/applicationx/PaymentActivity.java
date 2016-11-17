@@ -199,7 +199,6 @@ public class PaymentActivity extends Activity {
     }
 
     public void onHoldOrder(View view) {
-        String ssql = null;
         SQLiteDatabase db = dataHelper.getReadableDatabase();
         try {
             if (newProductsCodes != null && !newProductsCodes.isEmpty()) {
@@ -207,18 +206,10 @@ public class PaymentActivity extends Activity {
 
                 StringBuilder sb = new StringBuilder();
 
-                for (int i = 0; i < newProductsCodesArray.length; i++) {
-
-                    sb.append(String.format("'%s'", newProductsCodesArray[i]));
-
-                    if (i < newProductsCodesArray.length - 1) {
-                        sb.append(",");
-                    }
-                }
-
                 String todaysDateInString = new SimpleDateFormat("yyyyMMdd").format(new Date());
                 String todaysTimeInString = new SimpleDateFormat("HHmm").format(new Date());
-                ssql = "INSERT INTO suspend ( " +
+                for (int i = 0; i < newProductsCodesArray.length; i++) {
+                    String ssql = "INSERT INTO suspend ( " +
                         "COMPANY_CODE, " +
                         "OUTLET_CODE, " +
                         "POS_NO, " +
@@ -328,13 +319,13 @@ public class PaymentActivity extends Activity {
                         "null, " +
                         "1 " +
                         "FROM product_master " +
-                        "WHERE PROD_CODE IN (" + sb.toString() + "); ";
+                        "WHERE PROD_CODE = ''" + newProductsCodesArray[i].toString() + "'' ";
+
+                        String[] objs = new String[]{customer_code, price_grp_code};
+                        db.execSQL(ssql, objs);
+                }
 
                 db.beginTransaction();
-
-                String[] objs = new String[]{customer_code, price_grp_code};
-                db.execSQL(ssql, objs);
-
                 db.setTransactionSuccessful();
             }
         } catch (SQLiteException e) {
@@ -432,9 +423,12 @@ public class PaymentActivity extends Activity {
         SQLiteDatabase db = dataHelper.getReadableDatabase();
         db.beginTransaction();
         try {
+            String todaysDateInString = new SimpleDateFormat("yyyyMMdd").format(new Date());
+            Shift_Master currentShift = dataHelper.lookForOpenShiftsAtDate(db, todaysDateInString);
+
             String rcp_id = insertHeader(db);
             insertDetailFromSuspend(db, rcp_id);
-            insertDetailFromProducts(db, rcp_id);
+            insertDetailFromProducts(db, rcp_id, currentShift.SHIFT_NUMBER);
             insertPayment(db, rcp_id);
 
             int op = db.delete("suspend", "customer_code == '" + customer_code + "'",null);
@@ -454,7 +448,7 @@ public class PaymentActivity extends Activity {
         }
     }
 
-    private void insertDetailFromProducts(SQLiteDatabase db, String rcp_id) {
+    private void insertDetailFromProducts(SQLiteDatabase db, String rcp_id, int shift_number) {
         if (newProductsCodes != null && !newProductsCodes.isEmpty()) {
             String[] newProductsCodesArray = newProductsCodes.split(";");
 
@@ -513,9 +507,9 @@ public class PaymentActivity extends Activity {
                     "SELECT  " +
                     "'" + this.companyCode + "', " +
                     "'BE001-00', " +
-                    "'" +this.posNo + "', " +
                     "'011', " +
-                    "'1', " +
+                    "'" + this.posNo + "', " +
+                    "'" + shift_number.toString() + "', " +
                     "'"+ rcp_id +"', " +
                     "'S', " +
                     "'" + todaysDateInString + "', " + // bus date
@@ -583,6 +577,12 @@ public class PaymentActivity extends Activity {
                     break;
             }
 
+            String changeAmountInsertString = "0.00";
+            int lastItemIndex = paymentsMade.size() - 1; 
+            if(i == lastItemIndex) {
+                changeAmountInsertString = changeAmount.toString();
+            }
+
             ssql = "INSERT INTO payment ( " +
                     "COMPANY_CODE, " +
                     "OUTLET_CODE, " +
@@ -634,7 +634,7 @@ public class PaymentActivity extends Activity {
                     "null, " +
                     "null, " +
                     "" + paymentsMade.get(i).getPrice().toString() + ", " +
-                    "" + changeAmount.toString() + ", " +
+                    "" + changeAmountInsertString + ", " +
                     "" + paymentsMade.get(i).getPrice().toString() + ", " +
                     "'', " +
                     "null, " +
