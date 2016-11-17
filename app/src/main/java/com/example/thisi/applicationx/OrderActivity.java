@@ -363,8 +363,7 @@ public class OrderActivity extends Activity {
     }
 
     private void removeProductFromView(String productCode) {
-        newProductsCodes = newProductsCodes.replace(productCode + ";", "");
-
+        crossableProducts.removeOneFromList(productCode); 
         reDrawTable();
     }
 
