@@ -2,11 +2,20 @@ package com.example.thisi.applicationx;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.os.Bundle;
 import android.text.InputFilter;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
+
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class EnterFloatAmountActivity extends Activity {
     DatabaseHelper myDb;
@@ -14,7 +23,7 @@ public class EnterFloatAmountActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_entercustomercode);
+        setContentView(R.layout.activity_enterfloatamount);
 
         myDb = DatabaseHelper.getHelper(this);
 
@@ -27,12 +36,12 @@ public class EnterFloatAmountActivity extends Activity {
     }
 
     public void onEnterFloatAmountOK(View view) {
-        SQLiteDatabase db = mydb.getReadableDatabase();
+        SQLiteDatabase db = myDb.getReadableDatabase();
 
         db.beginTransaction();
         try {
             String todaysDateInString = new SimpleDateFormat("yyyyMMdd").format(new Date());
-            Shift_Master latestShift = mydb.lookForLatestShiftAtDate(db, todaysDateInString);
+            Shift_Master latestShift = myDb.lookForLatestShiftAtDate(db, todaysDateInString);
 
             int newShiftNo = 0; 
             if(latestShift != null)
@@ -49,8 +58,8 @@ public class EnterFloatAmountActivity extends Activity {
             BigDecimal bd = new BigDecimal(floatAmount);
 
             SharedPreferences prefs = this.getSharedPreferences("com.example.thisi.applicationx", Context.MODE_PRIVATE);
-            String posNo = _sp.getString("posnumber", "errorUndefined");
-            String companyCode = _sp.getString("companycode", "errorUndefined");
+            String posNo = prefs.getString("posnumber", "errorUndefined");
+            String companyCode = prefs.getString("companycode", "errorUndefined");
 
             Shift_Master newShift = new Shift_Master();
             newShift.COMPANY_CODE = companyCode; 
@@ -60,9 +69,9 @@ public class EnterFloatAmountActivity extends Activity {
             newShift.SHIFT_NUMBER = newShiftNo; 
             newShift.SHIFT_STATUS = "O"; 
             newShift.SHIFT_START_AMT = bd; 
-            newShift.SHIFT_END_AMT = new BigDecimal("0.00"); 
+            newShift.SHIFT_END_AMT = new BigDecimal("0.00");
 
-            mydb.insertShiftMaster(db, newShift); 
+            myDb.insertShiftMaster(db, newShift);
 
             db.setTransactionSuccessful();
 

@@ -7,6 +7,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.math.BigDecimal;
+
 /**
  * Created by thisi on 10/19/2016.
  */
@@ -809,7 +811,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             pctrl.EMP_CD = res.getString(res.getColumnIndex("EMP_CD"));
             pctrl.LAST_RCP = res.getString(res.getColumnIndex("LAST_RCP"));
             pctrl.LAST_SUSPEND_NUMBER = res.getString(res.getColumnIndex("LAST_SUSPEND_NUMBER"));
-            pctrl.REPRINT_COUNT = res.getString(res.getColumnIndex("REPRINT_COUNT"));
+            pctrl.REPRINT_COUNT = res.getInt(res.getColumnIndex("REPRINT_COUNT"));
             
             int dayend = res.getInt(res.getColumnIndex("DAYEND"));
             pctrl.DAYEND = dayend == 1; 
@@ -823,7 +825,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public Shift_Master lookForOpenShiftsAtDate(SQLiteDatabase db, String todaysDate) {
-        String qry = "SELECT * FROM " SHIFT_MASTER_TABLE_NAME + " " +
+        String qry = "SELECT * FROM " + SHIFT_MASTER_TABLE_NAME + " " +
             "WHERE BUS_DATE = '" + todaysDate + "' AND " +
             "SHIFT_STATUS = 'O' ORDER BY SHIFT_NUMBER DESC LIMIT 1;";
 
@@ -840,8 +842,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             smst.BUS_DATE = res.getString(res.getColumnIndex("BUS_DATE"));
             smst.SHIFT_NUMBER = res.getInt(res.getColumnIndex("SHIFT_NUMBER"));
             smst.SHIFT_STATUS = res.getString(res.getColumnIndex("SHIFT_STATUS"));
-            smst.SHIFT_START_AMT = res.getDouble(res.getColumnIndex("SHIFT_START_AMT"));
-            smst.SHIFT_END_AMT = res.getDouble(res.getColumnIndex("SHIFT_END_AMT"));
+            smst.SHIFT_START_AMT = new BigDecimal(res.getDouble(res.getColumnIndex("SHIFT_START_AMT")));
+            smst.SHIFT_END_AMT = new BigDecimal(res.getDouble(res.getColumnIndex("SHIFT_END_AMT")));
             
             res.close(); 
 
@@ -852,7 +854,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public Shift_Master lookForLatestShiftAtDate(SQLiteDatabase db, String todaysDate) {
-        String qry = "SELECT * FROM " SHIFT_MASTER_TABLE_NAME + " " +
+        String qry = "SELECT * FROM " + SHIFT_MASTER_TABLE_NAME + " " +
             "WHERE BUS_DATE = '" + todaysDate + "' " +
             "ORDER BY SHIFT_NUMBER DESC LIMIT 1;";
 
@@ -869,8 +871,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             smst.BUS_DATE = res.getString(res.getColumnIndex("BUS_DATE"));
             smst.SHIFT_NUMBER = res.getInt(res.getColumnIndex("SHIFT_NUMBER"));
             smst.SHIFT_STATUS = res.getString(res.getColumnIndex("SHIFT_STATUS"));
-            smst.SHIFT_START_AMT = res.getDouble(res.getColumnIndex("SHIFT_START_AMT"));
-            smst.SHIFT_END_AMT = res.getDouble(res.getColumnIndex("SHIFT_END_AMT"));
+            smst.SHIFT_START_AMT = new BigDecimal(res.getDouble(res.getColumnIndex("SHIFT_START_AMT")));
+            smst.SHIFT_END_AMT = new BigDecimal(res.getDouble(res.getColumnIndex("SHIFT_END_AMT")));
             
             res.close(); 
 
@@ -883,14 +885,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public BigDecimal supposedEndShiftMoney(SQLiteDatabase db, BigDecimal shiftStartAmount, int shiftNumber, String busDate, String posNo) {
          String qry = "SELECT SUM(PAYMENT_AMOUNT) as SumPayment, SUM(CHANGE_AMOUNT) as SumChange FROM " + PAYMENT_TABLE_NAME + " " +
              "WHERE BUS_DATE = '" + busDate + "' " +
-             "AND SHIFT_NO = '" + shiftNumber.toString() + "' " +
+             "AND SHIFT_NO = '" + Integer.toString(shiftNumber) + "' " +
              "AND PAYMENT_CODE = 'CASH';";
 
         Cursor res = db.rawQuery(qry, null);
 
+        res.moveToFirst();
         double sumPayment = res.getDouble(res.getColumnIndex("SumPayment"));
         double sumChange = res.getDouble(res.getColumnIndex("SumChange"));
 
+        res.close();
         BigDecimal bigdecSumPayment = BigDecimal.valueOf(sumPayment);
         BigDecimal bigdecSumChange = BigDecimal.valueOf(sumChange); 
         BigDecimal collections = bigdecSumPayment.subtract(bigdecSumChange); 
@@ -898,4 +902,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         return supposedEndShiftAmount; 
     }
+
+
 }

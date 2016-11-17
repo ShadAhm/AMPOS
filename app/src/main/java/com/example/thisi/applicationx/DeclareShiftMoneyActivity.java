@@ -2,11 +2,20 @@ package com.example.thisi.applicationx;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.os.Bundle;
 import android.text.InputFilter;
 import android.view.View;
 import android.widget.EditText;
+
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class DeclareShiftMoneyActivity extends Activity {
     DatabaseHelper myDb;
@@ -14,7 +23,7 @@ public class DeclareShiftMoneyActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_entercustomercode);
+        setContentView(R.layout.activity_declareshiftmoney);
 
         myDb = DatabaseHelper.getHelper(this);
 
@@ -27,12 +36,12 @@ public class DeclareShiftMoneyActivity extends Activity {
     }
 
     public void onDeclareShiftMoneyOK(View view) {
-        SQLiteDatabase db = mydb.getReadableDatabase();
+        SQLiteDatabase db = myDb.getReadableDatabase();
 
         db.beginTransaction();
         try {
             String todaysDateInString = new SimpleDateFormat("yyyyMMdd").format(new Date());
-            Shift_Master latestOpenShift = mydb.lookForOpenShiftsAtDate(db, todaysDateInString);
+            Shift_Master latestOpenShift = myDb.lookForOpenShiftsAtDate(db, todaysDateInString);
 
             if(latestOpenShift == null)
             {
@@ -45,11 +54,11 @@ public class DeclareShiftMoneyActivity extends Activity {
                 return;
 
             SharedPreferences prefs = this.getSharedPreferences("com.example.thisi.applicationx", Context.MODE_PRIVATE);
-            posNo = prefs.getString("posnumber", null); 
+            String posNo = prefs.getString("posnumber", null);
 
             String floatAmount = textDeclareShiftMoney.getText().toString();
             BigDecimal enteredAmount = new BigDecimal(floatAmount);
-            BigDecimal correctAmount = mydb.supposedEndShiftMoney(db, latestOpenShift.SHIFT_START_AMT, latestOpenShift.SHIFT_NUMBER, latestOpenShift.BUS_DATE, posNo);
+            BigDecimal correctAmount = myDb.supposedEndShiftMoney(db, latestOpenShift.SHIFT_START_AMT, latestOpenShift.SHIFT_NUMBER, latestOpenShift.BUS_DATE, posNo);
 
             if(enteredAmount.compareTo(correctAmount) == 0) {
                 // TODO : update shift set to close 
@@ -63,6 +72,9 @@ public class DeclareShiftMoneyActivity extends Activity {
                 finish(); 
                 Intent intent = new Intent(this, MainMenuActivity.class);
                 startActivity(intent);
+            }
+            else {
+                showMessage("Amount incorrect", "We have detected a different amount, please recalculate.");
             }
 
         } catch (SQLiteException e) {

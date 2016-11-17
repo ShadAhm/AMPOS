@@ -9,8 +9,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/buttonOrder"
+
         android:layout_weight="1"
-        android:onClick="onOrderButtonClick"/>
+        android:onClick="onOrderButtonClick" />
 
     <Button
         android:text="Dayend"
@@ -58,8 +59,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/buttonLogout"
         android:layout_weight="1"
-        android:onClick="onLogoutClick"
-        />
+        android:onClick="onLogoutClick" />
 
     <Button
         android:text="Settings"

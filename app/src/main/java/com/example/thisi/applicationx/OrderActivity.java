@@ -208,8 +208,11 @@ public class OrderActivity extends Activity {
     }
 
     private void addNewProductMastersToView() {
-        for(String prodCode: crossableProducts.productCodes) {
-            searchAndAddProductCode(prodCode); 
+        Iterator<String> iter = crossableProducts.productCodes.iterator();
+
+        while(iter.hasNext()) {
+            String p = iter.next();
+            searchAndAddProductCode(p, false);
         }
     }
 
@@ -243,10 +246,10 @@ public class OrderActivity extends Activity {
             productcode = productcode.replaceAll("\\r", "");
         }
 
-        searchAndAddProductCode(productcode);
+        searchAndAddProductCode(productcode, true);
     }
 
-    private void searchAndAddProductCode(String productcode) {
+    private void searchAndAddProductCode(String productcode, Boolean fromTextbox) {
         if(productcode == null || productcode == "") {
             return;
         }
@@ -263,7 +266,7 @@ public class OrderActivity extends Activity {
             cursor.close();
 
             if (rowCount > 0) {
-                addProductMasterToView(productcode, db);
+                addProductMasterToView(productcode, db, fromTextbox);
             } else {
                 showMessage("Error", "Product \"" + productcode + "\" does not exist");
             }
@@ -275,19 +278,22 @@ public class OrderActivity extends Activity {
         }
     }
 
-    private void addProductMasterToView(final String productCode, SQLiteDatabase db) {
+    private void addProductMasterToView(final String productCode, SQLiteDatabase db, boolean fromTextbox) {
         final TableLayout tableLayout = (TableLayout) findViewById(R.id.tablelayout);
 
         if(crossableProducts == null) {
             crossableProducts = new CrossableProducts();
         }
 
-        crossableProducts.addToList(productCode);
+        if(fromTextbox) { // otherwise it would have been from initial load
+            crossableProducts.addToList(productCode);
+        }
 
-        String selectFromPriceGroup = "SELECT product_master.prod_name, price_group.price, customer.customer_code, product_master." + default_price_field + " FROM product_master " +
-                "LEFT JOIN price_group ON price_group.prod_code = product_master.prod_code " +
-                "LEFT JOIN customer ON customer.price_grp_code = price_group.price_grp_code " +
-                "WHERE product_master.prod_code = '" + productCode + "'";
+        String selectFromPriceGroup = "SELECT product_master.prod_name, price_group.price, customer.customer_code, product_master.price_01 FROM product_master   " +
+                "LEFT JOIN customer ON customer.price_grp_code = price_group.price_grp_code   " +
+                "LEFT JOIN price_group ON price_group.prod_code = product_master.prod_code   " +
+                "WHERE product_master.prod_code = '" + productCode + "' " +
+                "AND customer.customer_code = '" + this.customer_code + "' ";
 
         Cursor cursor1 = db.rawQuery(selectFromPriceGroup, null);
         int cursor1RowCount = cursor1.getCount();
@@ -369,11 +375,10 @@ public class OrderActivity extends Activity {
 
     private void reDrawTable() {
         TableLayout tableLayout = (TableLayout) findViewById(R.id.tablelayout);
-
         tableLayout.removeAllViews();
 
         addSuspendProductsToView();
-        if(newProductsCodes != null && newProductsCodes != "") {
+        if(crossableProducts != null && crossableProducts.productCodes != null && crossableProducts.productCodes.size() > 0) {
             addNewProductMastersToView();
         }
     }
@@ -517,16 +522,21 @@ public class OrderActivity extends Activity {
             }
         }
 
-        public void addSemicolonDelimitedToList(String productCodes) {
-            String[] newProductsCodesArray = newProductsCodes.split(";");
+        public void addSemicolonDelimitedToList(String prodCodes) {
+            String[] newProductsCodesArray = prodCodes.split(";");
 
             for (int i = 0; i < newProductsCodesArray.length; i++) {
-                productCodes.add(newProductsCodesArray[i]);
+                this.productCodes.add(newProductsCodesArray[i]);
             }
         }
 
         public String toSemicolonDelimited() {
-            return "";
+            StringBuilder sb = new StringBuilder();
+            for(String p : this.productCodes) {
+                sb.append(p);
+                sb.append(";");
+            }
+            return sb.toString();
         }
     }
 }

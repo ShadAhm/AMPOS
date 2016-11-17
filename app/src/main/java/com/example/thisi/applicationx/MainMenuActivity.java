@@ -168,16 +168,7 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
         // To dismiss the dialog
         progress.dismiss();
 
-        enableButtons(
-                true,
-                true,
-                true,
-                true,
-                true,
-                true,
-                true,
-                true
-        );
+        this.recreate();
     }
 
     @Override
@@ -202,6 +193,21 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
 
     @Override
     public void UploadDataFinished(String methodName, Object Data) {
+        SQLiteDatabase db = mydb.getReadableDatabase();
+        db.beginTransaction();
+        try {
+            POS_Control pctrl = mydb.getPOSControl(db);
+            pctrl.DAYEND = true;
+
+            mydb.deleteAndInsertPOSControl(db, pctrl);
+            db.setTransactionSuccessful();
+        } catch (SQLiteException e) {
+            e.printStackTrace();
+        } finally {
+            db.endTransaction();
+            db.close();
+        }
+
         showMessage("Success", "Data has been synced to the server");
     }
 
@@ -214,16 +220,7 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
     public void UploadDataEndedRequest() {
         progress.dismiss();
 
-        enableButtons(
-                true,
-                true,
-                true,
-                true,
-                true,
-                true,
-                true,
-                true
-        );
+        this.recreate();
     }
 
     public boolean thereExistSuspends() {
@@ -274,13 +271,13 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
 
                     Shift_Master openShift = mydb.lookForOpenShiftsAtDate(db, todaysDateInString);
 
+                    db.setTransactionSuccessful();
                     if (openShift != null) {
                         return "shiftOpen";
                     } 
                     else {
                         return "noOpenShift";
                     }
-
                 } 
                 else {
                     if (pctrl.DAYEND) // checks if latest POS_Control already dayend
@@ -288,13 +285,9 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
                         if (todaysDateInString == pctrl.BUS_DATE) {
                             return "alreadyDayend";
                         } else {
-                            pctrl.BUS_DATE = todaysDateInString;
-                            pctrl.DAYEND = false;
-
-                            mydb.deleteAndInsertPOSControl(db, pctrl);
-
                             Shift_Master openShift = mydb.lookForOpenShiftsAtDate(db, todaysDateInString);
 
+                            db.setTransactionSuccessful();
                             if (openShift != null) {
                                 return "shiftOpen";
                             } 
@@ -303,8 +296,17 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
                             }
                         }
                     }
+                    else {
+                        Shift_Master openShift = mydb.lookForOpenShiftsAtDate(db, todaysDateInString);
+                        db.setTransactionSuccessful();
+                        if (openShift != null) {
+                            return "shiftOpen";
+                        }
+                        else {
+                            return "noOpenShift";
+                        }
+                    }
                 }
-                db.setTransactionSuccessful();
             } catch (SQLiteException e) {
                 e.printStackTrace();
             } finally {
@@ -322,12 +324,12 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
                 case "settingsIncomplete" : showMessage("Settings Incomplete", "Please go to settings and complete all required information"); 
                     enableButtons(false, false, false, false, false, false, true, true); 
                     break; 
-                case "shiftOpen" : enableButtons(true, true, false, true, true, true, true, true);
+                case "shiftOpen" : enableButtons(true, false, false, true, true, false, true, true);
                     break;
                 case "alreadyDayend" : enableButtons(false, false, false, false, true, false, true, true); 
                     break; 
-                case "noOpenShift" : showMessage("", "Please start a shift to continue");
-                    enableButtons(false, false, true, false, true, false, true, true); 
+                case "noOpenShift" : // showMessage("", "Please start a shift to continue");
+                    enableButtons(false, true, true, false, true, true, true, true);
                     break;
             }
 

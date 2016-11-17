@@ -142,10 +142,12 @@ public class PaymentActivity extends Activity {
                 String[] newProductsCodesArray = newProductsCodes.split(";");
 
                 for (String newProdCode : newProductsCodesArray) {
-                    String selectFromPriceGroup = "SELECT product_master.prod_name, price_group.price, customer.customer_code, product_master." + default_price_field + " FROM product_master " +
-                            "LEFT JOIN price_group ON price_group.prod_code = product_master.prod_code " +
-                            "LEFT JOIN customer ON customer.price_grp_code = price_group.price_grp_code " +
-                            "WHERE product_master.prod_code = '" + newProdCode + "'";
+                    String selectFromPriceGroup =
+                    "SELECT product_master.prod_name, price_group.price, customer.customer_code, product_master.price_01 FROM product_master   " +
+                            "LEFT JOIN customer ON customer.price_grp_code = price_group.price_grp_code   " +
+                            "LEFT JOIN price_group ON price_group.prod_code = product_master.prod_code   " +
+                            "WHERE product_master.prod_code = '" + newProdCode + "' " +
+                            "AND customer.customer_code = '" + this.customer_code + "' ";
 
                     Cursor cursor1 = db.rawQuery(selectFromPriceGroup, null);
                     int cursor1RowCount = cursor1.getCount();
@@ -269,7 +271,7 @@ public class PaymentActivity extends Activity {
                         "'" + this.companyCode + "', " +
                         "'BE001-00', " +
                         "'" + this.posNo + "', " +
-                        "'" + currentShift.SHIFT_NUMBER.toString() + "', " +
+                        "'" + Integer.toString(currentShift.SHIFT_NUMBER) + "', " +
                         "null, " +
                         "'S', " +
                         "'" + todaysDateInString + "', " + // bus date
@@ -320,7 +322,7 @@ public class PaymentActivity extends Activity {
                         "null, " +
                         "1 " +
                         "FROM product_master " +
-                        "WHERE PROD_CODE = ''" + newProductsCodesArray[i].toString() + "'' ";
+                        "WHERE PROD_CODE = '" + newProductsCodesArray[i].toString() + "' ";
 
                         String[] objs = new String[]{customer_code, price_grp_code};
                         db.execSQL(ssql, objs);
@@ -510,7 +512,7 @@ public class PaymentActivity extends Activity {
                     "'BE001-00', " +
                     "'011', " +
                     "'" + this.posNo + "', " +
-                    "'" + shift_number.toString() + "', " +
+                    "'" + Integer.toString(shift_number) + "', " +
                     "'"+ rcp_id +"', " +
                     "'S', " +
                     "'" + todaysDateInString + "', " + // bus date

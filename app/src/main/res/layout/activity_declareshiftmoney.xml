@@ -19,9 +19,9 @@ android:layout_height="match_parent">
             android:id="@+id/textDeclareShiftMoney"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="0.00"
             android:inputType="numberDecimal"
-            android:gravity="right|center_vertical"/>
+            android:gravity="right|center_vertical"
+            android:nextFocusDown="@+id/buttonOK"/>
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
