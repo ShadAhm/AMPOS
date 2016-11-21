@@ -81,6 +81,11 @@ extends AppCompatActivity implements IWsdl2CodeEvents {
         builder.show();
     }
 
+    public void onRefresh(View view) {
+        DownloadEmployees();
+    }
+
+
     @Override
     public void onBackPressed() {
         return;
@@ -93,6 +98,13 @@ extends AppCompatActivity implements IWsdl2CodeEvents {
 
     @Override
     public void Wsdl2CodeFinished(String methodName, Object Data) {
+        if(Data == "success") {
+            enableDisableControls(true);
+        }
+        else {
+            showMessage("System unavailable", "Please hit Refresh and try again later");
+            enableDisableControls(false);
+        }
     }
 
     @Override
@@ -102,7 +114,7 @@ extends AppCompatActivity implements IWsdl2CodeEvents {
 
     @Override
     public void Wsdl2CodeEndedRequest() {
-        enableDisableControls(true);
+
     }
 
     private void enableDisableControls(boolean enable) {
@@ -134,4 +146,5 @@ extends AppCompatActivity implements IWsdl2CodeEvents {
     @Override
     public void UploadDataEndedRequest() {
     }
+
 }

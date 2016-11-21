@@ -148,7 +148,7 @@ public class SettingsActivity extends Activity implements AdapterView.OnItemSele
         prefs.edit().putString("defaultprice", selectedDefaultPrice).apply();
         prefs.edit().putString("posnumber", posNumber).apply();
         prefs.edit().putString("companycode", companyCode).apply(); 
-        prefs.edit().putString("outloetcode", outletCode).apply(); 
+        prefs.edit().putString("outletcode", outletCode).apply();
 
         Toast.makeText(getApplicationContext(), "Changes saved", Toast.LENGTH_SHORT).show();
     }

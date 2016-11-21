@@ -45,6 +45,7 @@ public class DownloadDataService extends Service1 {
                     o = "success";
                 } catch (Exception e) {
                     e.printStackTrace();
+                    o = "failure";
                 } finally {
                     db.endTransaction();
                     db.close();
@@ -78,17 +79,16 @@ public class DownloadDataService extends Service1 {
 
                 try {
                     dataHelper.clearEmployeeTable(db); 
-                    DownloadEmployees(db);
+                    o = DownloadEmployees(db);
 
                     db.setTransactionSuccessful();
-                    o = "success";
                 } catch (Exception e) {
                     e.printStackTrace();
+                    o = "failure";
                 } finally {
                     db.endTransaction();
                     db.close();
                 }
-
                 return o;
             }
 
@@ -106,7 +106,7 @@ public class DownloadDataService extends Service1 {
         dataHelper.clearOldData(db);
     }
 
-    private void DownloadEmployees(SQLiteDatabase db) {
+    private String DownloadEmployees(SQLiteDatabase db) {
         SoapObject returned = super.SQLResultReturn(
                 "SELECT COALESCE(EMP_CODE, 0) AS EMP_CODE,COALESCE(EMP_NAME, '') AS EMP_NAME,COALESCE(EMP_PASSWORD, '') AS EMP_PASSWORD,COALESCE(EMP_LVL, 0) AS EMP_LVL,COALESCE(POS_ALLOW, 0) AS POS_ALLOW,COALESCE(VIEW_COST_ALLOW, 0) AS VIEW_COST_ALLOW,COALESCE(EMP_GROUP_CODE, '') AS EMP_GROUP_CODE,COALESCE(EMP_GROUP_NAME, '') AS EMP_GROUP_NAME,COALESCE(IsActive, 0) AS IsActive FROM Employee"
                 , null
@@ -118,10 +118,15 @@ public class DownloadDataService extends Service1 {
             for (int i = 0; i < emps.length; i++) {
                 dataHelper.insertEmployee(db, emps[i]);
             }
+
+            return "success";
+        }
+        else {
+            return "employeenull";
         }
     }
 
-    private void DownloadCustomers(SQLiteDatabase db) {
+    private int DownloadCustomers(SQLiteDatabase db) {
         SoapObject returned = super.SQLResultReturn(
                 "SELECT COALESCE(CUSTOMER_CODE, '') AS CUSTOMER_CODE,COALESCE(CUSTOMER_NAME, '') AS CUSTOMER_NAME,COALESCE(CUSTOMER_GRP_CODE, '') AS CUSTOMER_GRP_CODE,COALESCE(IC_NO, '') AS IC_NO,COALESCE(ADDRESS1, '') AS ADDRESS1,COALESCE(ADDRESS2, '') AS ADDRESS2,COALESCE(POS_CODE, '') AS POS_CODE,COALESCE(COUNTY, '') AS COUNTY,COALESCE(STATE, '') AS STATE,COALESCE(COUNTRY, '') AS COUNTRY,COALESCE(CONTACT, '') AS CONTACT,COALESCE(MOBILE, '') AS MOBILE,COALESCE(FAX, '') AS FAX,COALESCE(EMAIL, '') AS EMAIL,COALESCE(IsWHOLESALES, 0) AS IsWHOLESALES,COALESCE(IsActive, 0) AS IsActive,COALESCE(IsMember, 0) AS IsMember,COALESCE(POINT_VALUE, 0) AS POINT_VALUE,COALESCE(BYSMS, 0) AS BYSMS,COALESCE(BYEMAIL, 0) AS BYEMAIL,COALESCE(MODIFIED_ID, '') AS MODIFIED_ID,COALESCE(TEMP_CUSTOMER_CODE, '') AS TEMP_CUSTOMER_CODE,COALESCE(GST_REG_NO, '') AS GST_REG_NO,COALESCE(IsEMPLOYEE, 0) AS IsEMPLOYEE,COALESCE(PRICE_GRP_CODE, '') AS PRICE_GRP_CODE,COALESCE(Outlet_Code, '') AS Outlet_Code FROM Customer_data"
                 , null
@@ -133,10 +138,13 @@ public class DownloadDataService extends Service1 {
             for (int i = 0; i < custs.length; i++) {
                 dataHelper.insertCustomer(db, custs[i]);
             }
+
+            return 0;
         }
+        return 0;
     }
 
-    private void DownloadProduct_Master(SQLiteDatabase db) {
+    private int DownloadProduct_Master(SQLiteDatabase db) {
         SoapObject returned = super.SQLResultReturn(
             "SELECT COALESCE(PROD_CODE, '') AS PROD_CODE,COALESCE(PRODUCT_SHORT_NAME, '') AS PRODUCT_SHORT_NAME,COALESCE(PROD_NAME, '') AS PROD_NAME,COALESCE(PROD_TYPE_CODE, '') AS PROD_TYPE_CODE,COALESCE(BARCODE, '') AS BARCODE,COALESCE(PROD_GRP_01, '') AS PROD_GRP_01,COALESCE(PROD_GRP_02, '') AS PROD_GRP_02,COALESCE(PROD_GRP_03, '') AS PROD_GRP_03,COALESCE(PROD_GRP_04, '') AS PROD_GRP_04,COALESCE(PROD_GRP_05, '') AS PROD_GRP_05,COALESCE(PROD_DISC_GRP, '') AS PROD_DISC_GRP,COALESCE(TAX_01, 0) AS TAX_01,COALESCE(TAX_02, 0) AS TAX_02,COALESCE(TAX_03, 0) AS TAX_03,COALESCE(TAX_04, 0) AS TAX_04,COALESCE(TAX_05, 0) AS TAX_05,COALESCE(PRICE_01, '0.0') AS PRICE_01,COALESCE(PRICE_02, '0.0') AS PRICE_02,COALESCE(PRICE_03, '0.0') AS PRICE_03,COALESCE(PRICE_04, '0.0') AS PRICE_04,COALESCE(PRICE_05, '0.0') AS PRICE_05,COALESCE(PRICE_06, '0.0') AS PRICE_06,COALESCE(PRICE_07, '0.0') AS PRICE_07,COALESCE(PRICE_08, '0.0') AS PRICE_08,COALESCE(PRICE_09, '0.0') AS PRICE_09,COALESCE(PRICE_10, '0.0') AS PRICE_10,COALESCE(COST, '0.0') AS COST,COALESCE(AVERAGE_COST, '0.0') AS AVERAGE_COST,COALESCE(DISPLAY_ORDER, 0) AS DISPLAY_ORDER,COALESCE(POS_DISPLAY, 0) AS POS_DISPLAY,COALESCE(ALLOW_ZERO_PRICE, 0) AS ALLOW_ZERO_PRICE,COALESCE(IsActive, 0) AS IsActive,COALESCE(ACTIVE_PERIOD, 0) AS ACTIVE_PERIOD,COALESCE(STOCK_UOM, '') AS STOCK_UOM,COALESCE(PURCH_UOM, '') AS PURCH_UOM,COALESCE(USAGE_UOM, '') AS USAGE_UOM,COALESCE(PURCH_CONV, 0) AS PURCH_CONV,COALESCE(USAGE_CONV, 0) AS USAGE_CONV,COALESCE(IsBOM, 0) AS IsBOM,COALESCE(IsSERIAL, 0) AS IsSERIAL,COALESCE(ALLOW_DISC, 0) AS ALLOW_DISC,COALESCE(MULTIPLE_DISC, 0) AS MULTIPLE_DISC,COALESCE(MULTIPLE_UOM, 0) AS MULTIPLE_UOM,COALESCE(TICKET_TYPE, '') AS TICKET_TYPE,COALESCE(STAFF_DISCOUNT_CODE, '') AS STAFF_DISCOUNT_CODE,COALESCE(SUPPLIER_CODE, '') AS SUPPLIER_CODE,COALESCE(BARCODE_01, '') AS BARCODE_01,COALESCE(BARCODE_02, '') AS BARCODE_02,COALESCE(BARCODE_03, '') AS BARCODE_03,COALESCE(BARCODE_04, '') AS BARCODE_04,COALESCE(BARCODE_05, '') AS BARCODE_05,COALESCE(BARCODE_06, '') AS BARCODE_06,COALESCE(BARCODE_07, '') AS BARCODE_07,COALESCE(BARCODE_08, '') AS BARCODE_08,COALESCE(BARCODE_09, '') AS BARCODE_09,COALESCE(BARCODE_10, '') AS BARCODE_10,COALESCE(PRICE_PERCENTAGE_01, 0) AS PRICE_PERCENTAGE_01,COALESCE(PRICE_PERCENTAGE_02, 0) AS PRICE_PERCENTAGE_02,COALESCE(PRICE_PERCENTAGE_03, 0) AS PRICE_PERCENTAGE_03,COALESCE(PRICE_PERCENTAGE_04, 0) AS PRICE_PERCENTAGE_04,COALESCE(PRICE_PERCENTAGE_05, 0) AS PRICE_PERCENTAGE_05,COALESCE(PRICE_PERCENTAGE_06, 0) AS PRICE_PERCENTAGE_06,COALESCE(PRICE_PERCENTAGE_07, 0) AS PRICE_PERCENTAGE_07,COALESCE(PRICE_PERCENTAGE_08, 0) AS PRICE_PERCENTAGE_08,COALESCE(PRICE_PERCENTAGE_09, 0) AS PRICE_PERCENTAGE_09,COALESCE(PRICE_PERCENTAGE_10, 0) AS PRICE_PERCENTAGE_10,COALESCE(STOCK_TAKE_INTERIM, '') AS STOCK_TAKE_INTERIM,COALESCE(MODIFIED_ID, '') AS MODIFIED_ID,COALESCE(IMG_PATH, '') AS IMG_PATH,COALESCE(TAXCODE, '') AS TAXCODE FROM product_master"
         , null);
@@ -147,10 +155,13 @@ public class DownloadDataService extends Service1 {
             for (int i = 0; i < prods.length; i++) {
                 dataHelper.insertProductMaster(db, prods[i]);
             }
+
+            return 0;
         }
+        return 0;
     }
 
-    private void DownloadPrice_Group(SQLiteDatabase db) {
+    private int DownloadPrice_Group(SQLiteDatabase db) {
         SoapObject returned = super.SQLResultReturn(
                 "SELECT COALESCE(PRICE_GRP_CODE, '') AS PRICE_GRP_CODE,COALESCE(PRICE_GRP_NAME, '') AS PRICE_GRP_NAME,COALESCE(PROD_CODE, '') AS PROD_CODE,COALESCE(PRICE, '0.0') AS PRICE FROM price_group"
                 , null
@@ -162,7 +173,9 @@ public class DownloadDataService extends Service1 {
             for (int i = 0; i < pgroups.length; i++) {
                 dataHelper.insertprice_group(db, pgroups[i]);
             }
+            return 0;
         }
+        return 0;
     }
 
     private Product_Master[] RetrieveProduct_MasterFromSoap(SoapObject soap) {

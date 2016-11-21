@@ -40,6 +40,7 @@ public class UploadDataService extends Service1 {
                     o = "success";
                 } catch (Exception e) {
                     e.printStackTrace();
+                    o = "failure";
                 } finally {
                     db.endTransaction();
                     db.close();
@@ -177,6 +178,7 @@ public class UploadDataService extends Service1 {
                 sb.append("INSERT INTO detail (COMPANY_CODE,OUTLET_CODE,EMP_CODE,POS_NO,SHIFT_NO,RCP_NO,TRANS_TYPE,BUS_DATE,TRANS_DATE,TRANS_TIME,ROW_NUMBER,PROD_CODE,UNIT_PRICE,TOTAL_PRICE) ");
                 sb.append("VALUES ");
 
+                int rownumIn = 1;
                 while (cursor.moveToNext()) {
                     sb.append("("); 
 
@@ -221,7 +223,7 @@ public class UploadDataService extends Service1 {
                     sb.append(",");
 
                     int rowNumberColValue = cursor.getInt(cursor.getColumnIndex("ROW_NUMBER"));
-                    sb.append(Integer.toString(rowNumberColValue));
+                    sb.append(Integer.toString(rownumIn));
                     sb.append(",");
 
                     String prodCodeColValue = cursor.getString(cursor.getColumnIndex("PROD_CODE"));
@@ -236,6 +238,8 @@ public class UploadDataService extends Service1 {
                     sb.append(Double.toString(totalPriceColValue));
 
                     sb.append(")");
+
+                    rownumIn++;
 
                     if(!cursor.isLast()) {
                         sb.append(",");                        
@@ -263,6 +267,7 @@ public class UploadDataService extends Service1 {
                 sb.append("INSERT INTO payment (COMPANY_CODE,OUTLET_CODE,EMP_CODE,POS_NO,SHIFT_NO,RCP_NO,TRANS_TYPE,BUS_DATE,TRANS_DATE,TRANS_TIME,ROW_NUMBER,PAYMENT_CODE,PAYMENT_NAME,PAYMENT_TYPE,FOREX_CODE,PAYMENT_AMOUNT,CHANGE_AMOUNT,TENDER_AMOUNT,DRAWER_DECLARE_ID,MODIFIED_DATE,MODIFIED_ID) ");
                 sb.append("VALUES ");
 
+                int rownumIn = 1;
                 while (cursor.moveToNext()) {
                     sb.append("("); 
 
@@ -307,7 +312,7 @@ public class UploadDataService extends Service1 {
                     sb.append(",");
 
                     int rowNumberColValue = cursor.getInt(cursor.getColumnIndex("ROW_NUMBER"));
-                    sb.append(Integer.toString(rowNumberColValue));
+                    sb.append(Integer.toString(rownumIn));
                     sb.append(",");
 
                     String paymentcode = cursor.getString(cursor.getColumnIndex("PAYMENT_CODE")); 
@@ -344,6 +349,8 @@ public class UploadDataService extends Service1 {
                     sb.append(appendStringQueryVar(modifiedid));
 
                     sb.append(")");
+
+                    rownumIn++;
 
                     if(!cursor.isLast()) {
                         sb.append(",");                        

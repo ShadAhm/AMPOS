@@ -43,7 +43,7 @@ public class EnterFloatAmountActivity extends Activity {
             String todaysDateInString = new SimpleDateFormat("yyyyMMdd").format(new Date());
             Shift_Master latestShift = myDb.lookForLatestShiftAtDate(db, todaysDateInString);
 
-            int newShiftNo = 0; 
+            int newShiftNo = 1;
             if(latestShift != null)
             {
                 newShiftNo = latestShift.SHIFT_NUMBER + 1; 
@@ -60,10 +60,11 @@ public class EnterFloatAmountActivity extends Activity {
             SharedPreferences prefs = this.getSharedPreferences("com.example.thisi.applicationx", Context.MODE_PRIVATE);
             String posNo = prefs.getString("posnumber", "errorUndefined");
             String companyCode = prefs.getString("companycode", "errorUndefined");
+            String outletCode = prefs.getString("outletcode", "errorUndefined");
 
             Shift_Master newShift = new Shift_Master();
             newShift.COMPANY_CODE = companyCode; 
-            newShift.OUTLET_CODE = "TODOFINDOUTWHERETHISCOMEFROM"; 
+            newShift.OUTLET_CODE = outletCode;
             newShift.POS_NO = posNo; 
             newShift.BUS_DATE = todaysDateInString; 
             newShift.SHIFT_NUMBER = newShiftNo; 

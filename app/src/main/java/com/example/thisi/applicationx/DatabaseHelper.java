@@ -900,8 +900,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         BigDecimal collections = bigdecSumPayment.subtract(bigdecSumChange); 
         BigDecimal supposedEndShiftAmount = collections.add(shiftStartAmount);
 
+        if(supposedEndShiftAmount.compareTo(BigDecimal.ZERO) <= 0)
+            supposedEndShiftAmount = new BigDecimal("0.0");
+
         return supposedEndShiftAmount; 
     }
-
-
 }

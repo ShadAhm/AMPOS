@@ -155,7 +155,13 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
 
     @Override
     public void Wsdl2CodeFinished(String methodName, Object Data) {
-        showMessage("Success", "Data has been synced to the server");
+        if(Data == "success") {
+            showMessage("Success", "Data has been synced to the server");
+        }
+        else {
+            showMessage("Failed to sync data", "Please try again later");
+        }
+        this.recreate();
     }
 
     @Override
@@ -167,8 +173,6 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
     public void Wsdl2CodeEndedRequest() {
         // To dismiss the dialog
         progress.dismiss();
-
-        this.recreate();
     }
 
     @Override
@@ -193,22 +197,28 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
 
     @Override
     public void UploadDataFinished(String methodName, Object Data) {
-        SQLiteDatabase db = mydb.getReadableDatabase();
-        db.beginTransaction();
-        try {
-            POS_Control pctrl = mydb.getPOSControl(db);
-            pctrl.DAYEND = true;
 
-            mydb.deleteAndInsertPOSControl(db, pctrl);
-            db.setTransactionSuccessful();
-        } catch (SQLiteException e) {
-            e.printStackTrace();
-        } finally {
-            db.endTransaction();
-            db.close();
+        if(Data == "success") {
+            SQLiteDatabase db = mydb.getReadableDatabase();
+            db.beginTransaction();
+            try {
+                POS_Control pctrl = mydb.getPOSControl(db);
+                pctrl.DAYEND = true;
+
+                mydb.deleteAndInsertPOSControl(db, pctrl);
+                db.setTransactionSuccessful();
+            } catch (SQLiteException e) {
+                e.printStackTrace();
+            } finally {
+                db.endTransaction();
+                db.close();
+            }
+
+            showMessage("Success", "Data has been synced to the server");
         }
-
-        showMessage("Success", "Data has been synced to the server");
+        else {
+            showMessage("Failure to sync data", "Please try again later");
+        }
     }
 
     @Override
@@ -282,7 +292,7 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
                 else {
                     if (pctrl.DAYEND) // checks if latest POS_Control already dayend
                     {
-                        if (todaysDateInString == pctrl.BUS_DATE) {
+                        if (todaysDateInString.equals(pctrl.BUS_DATE)) {
                             return "alreadyDayend";
                         } else {
                             Shift_Master openShift = mydb.lookForOpenShiftsAtDate(db, todaysDateInString);
@@ -326,7 +336,9 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
                     break; 
                 case "shiftOpen" : enableButtons(true, false, false, true, true, false, true, true);
                     break;
-                case "alreadyDayend" : enableButtons(false, false, false, false, true, false, true, true); 
+                case "alreadyDayend" :
+                    showMessage("Day Ended", "Dayend has already been performed for today.");
+                    enableButtons(false, false, false, false, true, false, true, true);
                     break; 
                 case "noOpenShift" : // showMessage("", "Please start a shift to continue");
                     enableButtons(false, true, true, false, true, true, true, true);

@@ -46,8 +46,10 @@ public class PaymentActivity extends Activity {
 
     private static ArrayList<PaymentMade> paymentsMade;
 
+    // from settings :
     private static String companyCode;
     private static String posNo;
+    private static String outletCode;
 
     DatabaseHelper dataHelper;
 
@@ -82,6 +84,7 @@ public class PaymentActivity extends Activity {
         default_price_field = prefs.getString("defaultprice", "PRICE_01");
         posNo = prefs.getString("posnumber", null);    
         companyCode = prefs.getString("companycode", null);
+        outletCode = prefs.getString("outletcode", "BE221-00"); // todo remove this shit
     }
 
     private void setEnterKeyListenerToPaymentTextbox() {
@@ -269,7 +272,7 @@ public class PaymentActivity extends Activity {
                         ") " +
                         "SELECT  " +
                         "'" + this.companyCode + "', " +
-                        "'BE001-00', " +
+                        "'" + this.outletCode + "', " +
                         "'" + this.posNo + "', " +
                         "'" + Integer.toString(currentShift.SHIFT_NUMBER) + "', " +
                         "null, " +
@@ -432,7 +435,7 @@ public class PaymentActivity extends Activity {
             String rcp_id = insertHeader(db);
             insertDetailFromSuspend(db, rcp_id);
             insertDetailFromProducts(db, rcp_id, currentShift.SHIFT_NUMBER);
-            insertPayment(db, rcp_id);
+            insertPayment(db, rcp_id, currentShift.SHIFT_NUMBER);
 
             int op = db.delete("suspend", "customer_code == '" + customer_code + "'",null);
 
@@ -455,106 +458,98 @@ public class PaymentActivity extends Activity {
         if (newProductsCodes != null && !newProductsCodes.isEmpty()) {
             String[] newProductsCodesArray = newProductsCodes.split(";");
 
-            StringBuilder sb = new StringBuilder();
+            String todaysDateInString = new SimpleDateFormat("yyyyMMdd").format(new Date());
+            String todaysTimeInString = new SimpleDateFormat("HHmm").format(new Date());
 
             for (int i = 0; i < newProductsCodesArray.length; i++) {
+                String ssql = "INSERT INTO detail ( " +
+                        "COMPANY_CODE, " +
+                        "OUTLET_CODE, " +
+                        "EMP_CODE, " +
+                        "POS_NO, " +
+                        "SHIFT_NO, " +
+                        "RCP_NO, " +
+                        "TRANS_TYPE, " +
+                        "BUS_DATE, " +
+                        "TRANS_DATE, " +
+                        "TRANS_TIME, " +
+                        "ROW_NUMBER, " +
+                        "PROD_CODE, " +
+                        "PROD_NAME, " +
+                        "PROD_TYPE_CODE, " +
+                        "USAGE_UOM, " +
+                        "QUANTITY, " +
+                        "UOM_CONV, " +
+                        "PRICE_LVL_CODE, " +
+                        "UNIT_PRICE, " +
+                        "TOTAL_PRICE, " +
+                        "TAX_01, " +
+                        "TAX_02, " +
+                        "TAX_03, " +
+                        "TAX_04, " +
+                        "TAX_05, " +
+                        "DISCOUNT_CODE, " +
+                        "ITEM_DISCOUNT_AMOUNT, " +
+                        "TOTAL_DISCOUNT_CODE, " +
+                        "TOTAL_DISCOUNT_AMOUNT, " +
+                        "TICKET_SURCHARGE, " +
+                        "STAFF_DISCOUNT_CODE, " +
+                        "STAFF_DISCOUNT, " +
+                        "BARCODE, " +
+                        "TAXCODE, " +
+                        "COST, " +
+                        "ToSAP, " +
+                        "IsNewInDevice" +
+                        ") " +
+                        "SELECT  " +
+                        "'" + this.companyCode + "', " +
+                        "'" + this.outletCode + "', " +
+                        "'011', " +
+                        "'" + this.posNo + "', " +
+                        "'" + Integer.toString(shift_number) + "', " +
+                        "'" + rcp_id + "', " +
+                        "'S', " +
+                        "'" + todaysDateInString + "', " + // bus date
+                        "'" + todaysDateInString + "', " + // trans date
+                        "'" + todaysTimeInString + "', " + // trans time
+                        "null, " +
+                        "product_master.PROD_CODE, " +
+                        "product_master.PROD_NAME, " +
+                        "product_master.PROD_TYPE_CODE, " +
+                        "null, " +
+                        "1, " +
+                        "null, " +
+                        "null, " +
+                        "coalesce(price_group.price, product_master." + default_price_field + ") as UNIT_PRICE, " +
+                        "coalesce(price_group.price, product_master." + default_price_field + ") as TOTAL_PRICE, " +
+                        "product_master.TAX_01, " +
+                        "product_master.TAX_02, " +
+                        "product_master.TAX_03, " +
+                        "product_master.TAX_04, " +
+                        "product_master.TAX_05, " +
+                        "null, " +
+                        "null, " +
+                        "null, " +
+                        "null, " +
+                        "null, " +
+                        "product_master.STAFF_DISCOUNT_CODE, " +
+                        "null, " +
+                        "product_master.BARCODE, " +
+                        "product_master.TAXCODE, " +
+                        "product_master.COST, " +
+                        "0," +
+                        "1 " +
+                        "FROM product_master  " +
+                        "LEFT JOIN price_group ON price_group.prod_code = product_master.prod_code  " +
+                        "LEFT JOIN customer ON customer.price_grp_code = price_group.price_grp_code  " +
+                        "WHERE product_master.prod_code ='" + newProductsCodesArray[i] + "';  ";
 
-                sb.append(String.format("'%s'", newProductsCodesArray[i]));
-
-                if (i < newProductsCodesArray.length - 1) {
-                    sb.append(",");
-                }
+                db.execSQL(ssql);
             }
-
-            String todaysDateInString = new SimpleDateFormat("yyyyMMdd").format(new Date());
-            String todaysTimeInString = new SimpleDateFormat("HHmm").format(new Date());  
-            String ssql = "INSERT INTO detail ( " +
-                    "COMPANY_CODE, " +
-                    "OUTLET_CODE, " +
-                    "EMP_CODE, " +
-                    "POS_NO, " +
-                    "SHIFT_NO, " +
-                    "RCP_NO, " +
-                    "TRANS_TYPE, " +
-                    "BUS_DATE, " +
-                    "TRANS_DATE, " +
-                    "TRANS_TIME, " +
-                    "ROW_NUMBER, " +
-                    "PROD_CODE, " +
-                    "PROD_NAME, " +
-                    "PROD_TYPE_CODE, " +
-                    "USAGE_UOM, " +
-                    "QUANTITY, " +
-                    "UOM_CONV, " +
-                    "PRICE_LVL_CODE, " +
-                    "UNIT_PRICE, " +
-                    "TOTAL_PRICE, " +
-                    "TAX_01, " +
-                    "TAX_02, " +
-                    "TAX_03, " +
-                    "TAX_04, " +
-                    "TAX_05, " +
-                    "DISCOUNT_CODE, " +
-                    "ITEM_DISCOUNT_AMOUNT, " +
-                    "TOTAL_DISCOUNT_CODE, " +
-                    "TOTAL_DISCOUNT_AMOUNT, " +
-                    "TICKET_SURCHARGE, " +
-                    "STAFF_DISCOUNT_CODE, " +
-                    "STAFF_DISCOUNT, " +
-                    "BARCODE, " +
-                    "TAXCODE, " +
-                    "COST, " +
-                    "ToSAP, " +
-                    "IsNewInDevice" +
-                    ") " +
-                    "SELECT  " +
-                    "'" + this.companyCode + "', " +
-                    "'BE001-00', " +
-                    "'011', " +
-                    "'" + this.posNo + "', " +
-                    "'" + Integer.toString(shift_number) + "', " +
-                    "'"+ rcp_id +"', " +
-                    "'S', " +
-                    "'" + todaysDateInString + "', " + // bus date
-                    "'" + todaysDateInString + "', " + // trans date
-                    "'" + todaysTimeInString + "', " + // trans time
-                    "null, " +
-                    "product_master.PROD_CODE, " +
-                    "product_master.PROD_NAME, " +
-                    "product_master.PROD_TYPE_CODE, " +
-                    "null, " +
-                    "1, " +
-                    "null, " +
-                    "null, " +
-                    "coalesce(price_group.price, product_master." + default_price_field + ") as UNIT_PRICE, " +
-                    "coalesce(price_group.price, product_master." + default_price_field + ") as TOTAL_PRICE, " +
-                    "product_master.TAX_01, " +
-                    "product_master.TAX_02, " +
-                    "product_master.TAX_03, " +
-                    "product_master.TAX_04, " +
-                    "product_master.TAX_05, " +
-                    "null, " +
-                    "null, " +
-                    "null, " +
-                    "null, " +
-                    "null, " +
-                    "product_master.STAFF_DISCOUNT_CODE, " +
-                    "null, " +
-                    "product_master.BARCODE, " +
-                    "product_master.TAXCODE, " +
-                    "product_master.COST, " +
-                    "0," +
-                    "1 " +
-                    "FROM product_master  " +
-                    "LEFT JOIN price_group ON price_group.prod_code = product_master.prod_code  " +
-                    "LEFT JOIN customer ON customer.price_grp_code = price_group.price_grp_code  " +
-                    "WHERE product_master.prod_code IN (" + sb.toString() + ");  ";
-
-            db.execSQL(ssql);
         }
     }
 
-    private void insertPayment(SQLiteDatabase db, String rcp_id) {
+    private void insertPayment(SQLiteDatabase db, String rcp_id, int shiftNo) {
         String ssql = "";
 
         String todaysDateInString = new SimpleDateFormat("yyyyMMdd").format(new Date());
@@ -618,10 +613,10 @@ public class PaymentActivity extends Activity {
                     ") " +
                     "VALUES " +
                     "('" + this.companyCode + "', " +
-                    "'BE001-00', " +
+                    "'" + this.outletCode + "', " +
                     "'" + this.posNo + "', " +
                     "'011', " +
-                    "'1', " +
+                    "'" + Integer.toString(shiftNo) + "', " +
                     "'" + rcp_id + "', " +
                     "'S', " +
                     "'" + todaysDateInString + "', " + // bus date
@@ -804,7 +799,7 @@ public class PaymentActivity extends Activity {
                 ") " +
                 "VALUES (" +
                 "'" + this.companyCode + "', " +
-                "'BE001-00', " +
+                "'" + this.outletCode + "', " +
                 "'" + this.posNo + "', " +
                 "'011', " +
                 "'1', " +
