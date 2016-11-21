@@ -43,6 +43,10 @@ public class SettingsActivity extends Activity implements AdapterView.OnItemSele
         EditText textPOSNumber = (EditText)findViewById(R.id.editTextPOSNumber); 
         textPOSNumber.setText(posNum);
 
+        String outletCod = prefs.getString("outletcode", null); 
+        EditText textOutletCode = (EditText)findViewById(R.id.editTextOutletCode); 
+        textOutletCode.setText(outletCod);
+
         int selectedIndex = 0;
         String defPric = prefs.getString("defaultprice", "PRICE_01");
         switch (defPric) {
@@ -137,10 +141,14 @@ public class SettingsActivity extends Activity implements AdapterView.OnItemSele
         EditText textCompanyCode = (EditText)findViewById(R.id.editTextCompanyCode); 
         String companyCode = textCompanyCode.getText().toString(); 
 
+        EditText textOutletCode = (EditText)findViewById(R.id.editTextOutletCode); 
+        String outletCode = textOutletCode.getText().toString(); 
+
         prefs.edit().putString("serverconnection", serverConnection).apply();
         prefs.edit().putString("defaultprice", selectedDefaultPrice).apply();
         prefs.edit().putString("posnumber", posNumber).apply();
         prefs.edit().putString("companycode", companyCode).apply(); 
+        prefs.edit().putString("outloetcode", outletCode).apply(); 
 
         Toast.makeText(getApplicationContext(), "Changes saved", Toast.LENGTH_SHORT).show();
     }

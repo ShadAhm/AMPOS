@@ -65,13 +65,27 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/textViewCompanyCode" />
-
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textPersonName"
             android:ems="10"
             android:id="@+id/editTextCompanyCode"
+            android:padding="10dp"
+            android:hint=""
+            android:background="@color/highlightgray" />
+
+        <TextView
+            android:text="Outlet Code:"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/textViewOutletCode" />
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:ems="10"
+            android:id="@+id/editTextOutletCode"
             android:padding="10dp"
             android:hint=""
             android:background="@color/highlightgray" />
