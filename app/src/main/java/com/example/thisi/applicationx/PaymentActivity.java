@@ -614,8 +614,8 @@ public class PaymentActivity extends Activity {
                     "VALUES " +
                     "('" + this.companyCode + "', " +
                     "'" + this.outletCode + "', " +
-                    "'" + this.posNo + "', " +
                     "'011', " +
+                    "'" + this.posNo + "', " +
                     "'" + Integer.toString(shiftNo) + "', " +
                     "'" + rcp_id + "', " +
                     "'S', " +
