@@ -37,13 +37,7 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
         mydb = DatabaseHelper.getHelper(this);
 
         enableButtons(false, false, false, false, false, false, false, false);
-
-        boolean isSys = getIntent().getBooleanExtra("isSys", false);
-        if (isSys) {
-            enableButtons(false, false, false, false, false, false, true, true);
-        } else {
-            checkShiftsLongOperation();
-        }
+        checkShiftsLongOperation();
     }
 
     private void enableButtons(boolean enableOrder, boolean enableDayend, boolean enableStartShift, boolean enableEndShift, boolean enableDownload, boolean enableUpload, boolean enableLogout, boolean enableSettings) {
@@ -73,10 +67,8 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
     }
 
     public void onOrderButtonClick(View view) {
-        //TODO if(checkIfTheresOpenShift()) {
         Intent intent = new Intent(this, EnterCustomerCodeActivity.class);
         startActivity(intent);
-        //}
     }
 
     public void onSettingsClick(View view) {
@@ -110,7 +102,10 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
     }
 
     public void onDownloadDataClick(View view) {
-        DownloadDataService dds = new DownloadDataService(this, "http://175.136.237.81:8030/Service1.svc", this.getApplicationContext());
+        SharedPreferences prefs = this.getSharedPreferences("com.example.thisi.applicationx", Context.MODE_PRIVATE);
+        String serverConne = prefs.getString("serverconnection", "http://175.136.237.81:8030/Service1.svc");
+
+        DownloadDataService dds = new DownloadDataService(this, serverConne, this.getApplicationContext());
 
         try {
             dds.DownloadDataAsync();
@@ -120,7 +115,10 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
     }
 
     public void onUploadDataClick(View view) {
-        UploadDataService uds = new UploadDataService(this, "http://175.136.237.81:8030/Service1.svc", this.getApplicationContext());
+        SharedPreferences prefs = this.getSharedPreferences("com.example.thisi.applicationx", Context.MODE_PRIVATE);
+        String serverConne = prefs.getString("serverconnection", "http://175.136.237.81:8030/Service1.svc");
+
+        UploadDataService uds = new UploadDataService(this, serverConne, this.getApplicationContext());
 
         if (!thereExistSuspends()) {
             try {

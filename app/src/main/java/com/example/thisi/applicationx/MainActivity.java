@@ -37,15 +37,12 @@ extends AppCompatActivity implements IWsdl2CodeEvents {
         String password = passwordTextbox.getText().toString();
 
         boolean loginOk = myDb.loginEmployee(username, password);
-        boolean isSys = username.equals("@sys") && password.equals("123");
 
         Intent intent = new Intent(this, MainMenuActivity.class);
         
-        if (!loginOk && !isSys) {
+        if (!loginOk) {
             showMessage("Error", "Invalid username or password");
             return; 
-        } else if (isSys) {
-            intent.putExtra("isSys", true);
         }
 
         finish();
@@ -53,7 +50,10 @@ extends AppCompatActivity implements IWsdl2CodeEvents {
     }
 
     private void DownloadEmployees() {
-        DownloadDataService dds = new DownloadDataService(this, "http://175.136.237.81:8030/Service1.svc", this.getApplicationContext());
+        SharedPreferences prefs = this.getSharedPreferences("com.example.thisi.applicationx", Context.MODE_PRIVATE);
+        String serverConne = prefs.getString("serverconnection", "http://175.136.237.81:8030/Service1.svc");
+
+        DownloadDataService dds = new DownloadDataService(this, serverConne, this.getApplicationContext());
 
         try {
             dds.DownloadEmployeesAsync();
