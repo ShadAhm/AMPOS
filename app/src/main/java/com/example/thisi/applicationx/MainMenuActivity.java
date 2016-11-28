@@ -26,7 +26,8 @@ import java.util.Date;
  */
 
 public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
-    ProgressDialog progress;
+    ProgressDialog downloadProgress;
+    ProgressDialog uploadProgress;
     DatabaseHelper mydb;
 
     @Override
@@ -144,11 +145,11 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
                 false
         );
 
-        progress = new ProgressDialog(this);
-        progress.setTitle("Downloading data...");
-        progress.setMessage("Do not close this application");
-        progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
-        progress.show();
+        downloadProgress = new ProgressDialog(this);
+        downloadProgress.setTitle("Downloading data...");
+        downloadProgress.setMessage("Do not close this application");
+        downloadProgress.setCancelable(false); // disable dismiss by tapping outside of the dialog
+        downloadProgress.show();
     }
 
     @Override
@@ -170,7 +171,7 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
     @Override
     public void Wsdl2CodeEndedRequest() {
         // To dismiss the dialog
-        progress.dismiss();
+        downloadProgress.dismiss();
     }
 
     @Override
@@ -186,11 +187,11 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
                 false
         );
 
-        progress = new ProgressDialog(this);
-        progress.setTitle("Uploading data...");
-        progress.setMessage("Do not close this application");
-        progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
-        progress.show();
+        uploadProgress = new ProgressDialog(this);
+        uploadProgress.setTitle("Uploading data...");
+        uploadProgress.setMessage("Do not close this application");
+        uploadProgress.setCancelable(false); // disable dismiss by tapping outside of the dialog
+        uploadProgress.show();
     }
 
     @Override
@@ -226,7 +227,7 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
 
     @Override
     public void UploadDataEndedRequest() {
-        progress.dismiss();
+        uploadProgress.dismiss();
 
         this.recreate();
     }
@@ -342,19 +343,11 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
                     enableButtons(false, true, true, false, true, true, true, true);
                     break;
             }
-
-            progress.dismiss();
         }
 
         @Override
         protected void onPreExecute() {
             enableButtons(false, false, false, false, false, false, false, false);
-
-            progress = new ProgressDialog(_ctx);
-            progress.setTitle("Checking shifts...");
-            progress.setMessage("Do not close this application");
-            progress.setCancelable(false);
-            progress.show();
         }
 
         protected boolean isSettingsComplete() {

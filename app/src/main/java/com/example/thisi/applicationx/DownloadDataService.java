@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import org.ksoap2.serialization.SoapObject;
 
 import java.math.BigDecimal;
+import java.net.InetAddress;
 
 /**
  * Created by thisi on 11/5/2016.
@@ -36,13 +37,13 @@ public class DownloadDataService extends Service1 {
 
                 try {
                     DeleteExistingData(db);
-
                     DownloadCustomers(db);
                     DownloadProduct_Master(db);
                     DownloadPrice_Group(db);
 
                     db.setTransactionSuccessful();
                     o = "success";
+
                 } catch (Exception e) {
                     e.printStackTrace();
                     o = "failure";
@@ -99,7 +100,7 @@ public class DownloadDataService extends Service1 {
                     eventHandler.Wsdl2CodeFinished("SQLResult", result);
                 }
             }
-        }.execute();
+        }.execute().get();
     }
 
     private void DeleteExistingData(SQLiteDatabase db) {
