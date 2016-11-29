@@ -26,7 +26,9 @@ extends AppCompatActivity implements IWsdl2CodeEvents {
 
         myDb = DatabaseHelper.getHelper(this);
 
-        DownloadEmployees();
+        if(!myDb.thereExistEmployees()) {
+                DownloadEmployees();
+        }
     }
 
     public void onLogin(View view) {

@@ -765,6 +765,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return false;
     }
 
+    public boolean thereExistEmployees() {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        db.beginTransaction();
+        try {
+            Cursor res = db.rawQuery("SELECT * FROM " + EMPLOYEE_TABLE_NAME + ";", null);
+
+            db.setTransactionSuccessful();
+
+            return res.getCount() > 0;
+        } catch (SQLiteException e) {
+            e.printStackTrace();
+        } finally {
+            db.endTransaction();
+            db.close();
+        }
+
+        return false;
+    }
+
     public boolean deleteAndInsertPOSControl(SQLiteDatabase db, POS_Control pctrl) {
         db.execSQL("DELETE FROM POS_Control");
 

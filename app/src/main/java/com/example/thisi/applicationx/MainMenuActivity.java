@@ -338,7 +338,7 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
                     showMessage("Day Ended", "Dayend has already been performed for today.");
                     enableButtons(false, false, false, false, true, false, true, true);
                     break; 
-                case "noOpenShift" : // showMessage("", "Please start a shift to continue");
+                case "noOpenShift" :
                     enableButtons(false, true, true, false, true, true, true, true);
                     break;
             }
