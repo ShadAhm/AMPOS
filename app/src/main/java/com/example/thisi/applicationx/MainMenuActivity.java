@@ -116,7 +116,7 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
             }
         }
         else {
-            showMessage("Error", "Could not find server. Please go to Settings and ensure the server connection is correct.")
+            showMessage("Error", "Could not find server. Please go to Settings and ensure the server connection is correct.");
         }
     }
 
@@ -138,7 +138,7 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
             }
         }
         else {
-            showMessage("Error", "Could not find server. Please go to Settings and ensure the server connection is correct.")
+            showMessage("Error", "Could not find server. Please go to Settings and ensure the server connection is correct.");
         }
     }
 

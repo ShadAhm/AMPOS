@@ -325,8 +325,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             "IsNewInDevice int" +
             ");";
 
-    public static final String POS_CONTROL_TABLE_NAME = "POS_control"; 
-    public static final String POS_CONTROL_TABLE_CREATE =  "CREATE TABLE " + POS_CONTROL_TABLE_NAME + "( " +
+    public static final String POS_CONTROL_TABLE_NAME = "POS_control";
+    public static final String POS_CONTROL_TABLE_CREATE = "CREATE TABLE " + POS_CONTROL_TABLE_NAME + "( " +
             "COMPANY_CODE TEXT NOT NULL,  " +
             "OUTLET_CODE TEXT NOT NULL,  " +
             "POS_NO TEXT NOT NULL,  " +
@@ -341,7 +341,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public static final String SHIFT_MASTER_TABLE_NAME = "SHIFT_MASTER";
     public static final String SHIFT_MASTER_TABLE_CREATE = "CREATE TABLE " + SHIFT_MASTER_TABLE_NAME + "( " +
-            "ID INTEGER PRIMARY KEY AUTOINCREMENT, " + 
+            "ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
             "COMPANY_CODE TEXT,  " +
             "OUTLET_CODE TEXT,  " +
             "POS_NO TEXT,  " +
@@ -359,7 +359,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static DatabaseHelper instance;
 
     public static synchronized DatabaseHelper getHelper(Context context) {
-        if(instance == null)
+        if (instance == null)
             instance = new DatabaseHelper(context, 1);
 
         return instance;
@@ -392,7 +392,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXIST " + DETAIL_TABLE_NAME);
         db.execSQL("DROP TABLE IF EXIST " + PAYMENT_TABLE_NAME);
         db.execSQL("DROP TABLE IF EXIST " + SHIFT_MASTER_TABLE_NAME);
-        db.execSQL("DROP TABLE IF EXIST " + POS_CONTROL_TABLE_NAME);        
+        db.execSQL("DROP TABLE IF EXIST " + POS_CONTROL_TABLE_NAME);
 
         onCreate(db);
     }
@@ -745,9 +745,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return false;
     }
 
-    public boolean loginAdminEmployee(SQLiteDatabase db, String username, String password) {
-        Cursor res = db.rawQuery("SELECT * FROM " + EMPLOYEE_TABLE_NAME + " WHERE EMP_CODE = '" + username + "' AND EMP_PASSWORD = '" + password + "' AND EMP_LVL >= 7;", null);
-        return res.getCount() > 0;
+    public boolean loginAdminEmployee(String username, String password) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        db.beginTransaction();
+        try {
+            Cursor res = db.rawQuery("SELECT * FROM " + EMPLOYEE_TABLE_NAME + " WHERE EMP_CODE = '" + username + "' AND EMP_PASSWORD = '" + password + "' AND EMP_LVL >= 7;", null);
+
+            db.setTransactionSuccessful();
+
+            return res.getCount() > 0;
+        } catch (SQLiteException e) {
+            e.printStackTrace();
+        } finally {
+            db.endTransaction();
+            db.close();
+        }
+
+        return false;
     }
 
     public boolean thereExistSuspends() {
@@ -804,7 +819,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put("LAST_SUSPEND_NUMBER", pctrl.LAST_SUSPEND_NUMBER);
         contentValues.put("REPRINT_COUNT", pctrl.REPRINT_COUNT);
 
-        int dayend = pctrl.DAYEND ? 1 : 0; 
+        int dayend = pctrl.DAYEND ? 1 : 0;
         contentValues.put("DAYEND", dayend);
 
         long result = db.insertOrThrow("POS_Control", null, contentValues);
@@ -818,18 +833,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public void clearEmployeeTable(SQLiteDatabase db) {
-        db.execSQL("DELETE FROM employee"); 
+        db.execSQL("DELETE FROM employee");
     }
 
     public POS_Control getPOSControl(SQLiteDatabase db) {
         Cursor res = db.rawQuery("SELECT * FROM " + POS_CONTROL_TABLE_NAME + " LIMIT 1;", null);
 
-        if(res.getCount() > 0) {
-            res.moveToFirst(); 
+        if (res.getCount() > 0) {
+            res.moveToFirst();
 
             POS_Control pctrl = new POS_Control();
-            pctrl.COMPANY_CODE = res.getString(res.getColumnIndex("COMPANY_CODE")); 
-            pctrl.OUTLET_CODE = res.getString(res.getColumnIndex("OUTLET_CODE"));  
+            pctrl.COMPANY_CODE = res.getString(res.getColumnIndex("COMPANY_CODE"));
+            pctrl.OUTLET_CODE = res.getString(res.getColumnIndex("OUTLET_CODE"));
             pctrl.POS_NO = res.getString(res.getColumnIndex("POS_NO"));
             pctrl.BUS_DATE = res.getString(res.getColumnIndex("BUS_DATE"));
             pctrl.SHIFT_NUMBER = res.getInt(res.getColumnIndex("SHIFT_NUMBER"));
@@ -837,81 +852,81 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             pctrl.LAST_RCP = res.getString(res.getColumnIndex("LAST_RCP"));
             pctrl.LAST_SUSPEND_NUMBER = res.getString(res.getColumnIndex("LAST_SUSPEND_NUMBER"));
             pctrl.REPRINT_COUNT = res.getInt(res.getColumnIndex("REPRINT_COUNT"));
-            
-            int dayend = res.getInt(res.getColumnIndex("DAYEND"));
-            pctrl.DAYEND = dayend == 1; 
-            
-            res.close(); 
 
-            return pctrl; 
+            int dayend = res.getInt(res.getColumnIndex("DAYEND"));
+            pctrl.DAYEND = dayend == 1;
+
+            res.close();
+
+            return pctrl;
         } else {
-            return null; 
+            return null;
         }
     }
 
     public Shift_Master lookForOpenShiftsAtDate(SQLiteDatabase db, String todaysDate) {
         String qry = "SELECT * FROM " + SHIFT_MASTER_TABLE_NAME + " " +
-            "WHERE BUS_DATE = '" + todaysDate + "' AND " +
-            "SHIFT_STATUS = 'O' ORDER BY SHIFT_NUMBER DESC LIMIT 1;";
+                "WHERE BUS_DATE = '" + todaysDate + "' AND " +
+                "SHIFT_STATUS = 'O' ORDER BY SHIFT_NUMBER DESC LIMIT 1;";
 
         Cursor res = db.rawQuery(qry, null);
 
-        if(res.getCount() > 0) {
-            res.moveToFirst(); 
+        if (res.getCount() > 0) {
+            res.moveToFirst();
 
             Shift_Master smst = new Shift_Master();
-            smst.ID = res.getInt(res.getColumnIndex("ID"));            
-            smst.COMPANY_CODE = res.getString(res.getColumnIndex("COMPANY_CODE")); 
-            smst.OUTLET_CODE = res.getString(res.getColumnIndex("OUTLET_CODE"));  
+            smst.ID = res.getInt(res.getColumnIndex("ID"));
+            smst.COMPANY_CODE = res.getString(res.getColumnIndex("COMPANY_CODE"));
+            smst.OUTLET_CODE = res.getString(res.getColumnIndex("OUTLET_CODE"));
             smst.POS_NO = res.getString(res.getColumnIndex("POS_NO"));
             smst.BUS_DATE = res.getString(res.getColumnIndex("BUS_DATE"));
             smst.SHIFT_NUMBER = res.getInt(res.getColumnIndex("SHIFT_NUMBER"));
             smst.SHIFT_STATUS = res.getString(res.getColumnIndex("SHIFT_STATUS"));
             smst.SHIFT_START_AMT = new BigDecimal(res.getDouble(res.getColumnIndex("SHIFT_START_AMT")));
             smst.SHIFT_END_AMT = new BigDecimal(res.getDouble(res.getColumnIndex("SHIFT_END_AMT")));
-            
-            res.close(); 
 
-            return smst; 
+            res.close();
+
+            return smst;
         } else {
-            return null; 
+            return null;
         }
     }
 
     public Shift_Master lookForLatestShiftAtDate(SQLiteDatabase db, String todaysDate) {
         String qry = "SELECT * FROM " + SHIFT_MASTER_TABLE_NAME + " " +
-            "WHERE BUS_DATE = '" + todaysDate + "' " +
-            "ORDER BY SHIFT_NUMBER DESC LIMIT 1;";
+                "WHERE BUS_DATE = '" + todaysDate + "' " +
+                "ORDER BY SHIFT_NUMBER DESC LIMIT 1;";
 
         Cursor res = db.rawQuery(qry, null);
 
-        if(res.getCount() > 0) {
-            res.moveToFirst(); 
+        if (res.getCount() > 0) {
+            res.moveToFirst();
 
             Shift_Master smst = new Shift_Master();
-            smst.ID = res.getInt(res.getColumnIndex("ID"));   
-            smst.COMPANY_CODE = res.getString(res.getColumnIndex("COMPANY_CODE")); 
-            smst.OUTLET_CODE = res.getString(res.getColumnIndex("OUTLET_CODE"));  
+            smst.ID = res.getInt(res.getColumnIndex("ID"));
+            smst.COMPANY_CODE = res.getString(res.getColumnIndex("COMPANY_CODE"));
+            smst.OUTLET_CODE = res.getString(res.getColumnIndex("OUTLET_CODE"));
             smst.POS_NO = res.getString(res.getColumnIndex("POS_NO"));
             smst.BUS_DATE = res.getString(res.getColumnIndex("BUS_DATE"));
             smst.SHIFT_NUMBER = res.getInt(res.getColumnIndex("SHIFT_NUMBER"));
             smst.SHIFT_STATUS = res.getString(res.getColumnIndex("SHIFT_STATUS"));
             smst.SHIFT_START_AMT = new BigDecimal(res.getDouble(res.getColumnIndex("SHIFT_START_AMT")));
             smst.SHIFT_END_AMT = new BigDecimal(res.getDouble(res.getColumnIndex("SHIFT_END_AMT")));
-            
-            res.close(); 
 
-            return smst; 
+            res.close();
+
+            return smst;
         } else {
-            return null; 
+            return null;
         }
     }
 
     public BigDecimal supposedEndShiftMoney(SQLiteDatabase db, BigDecimal shiftStartAmount, int shiftNumber, String busDate, String posNo) {
-         String qry = "SELECT SUM(PAYMENT_AMOUNT) as SumPayment, SUM(CHANGE_AMOUNT) as SumChange FROM " + PAYMENT_TABLE_NAME + " " +
-             "WHERE BUS_DATE = '" + busDate + "' " +
-             "AND SHIFT_NO = '" + Integer.toString(shiftNumber) + "' " +
-             "AND PAYMENT_CODE = 'CASH';";
+        String qry = "SELECT SUM(PAYMENT_AMOUNT) as SumPayment, SUM(CHANGE_AMOUNT) as SumChange FROM " + PAYMENT_TABLE_NAME + " " +
+                "WHERE BUS_DATE = '" + busDate + "' " +
+                "AND SHIFT_NO = '" + Integer.toString(shiftNumber) + "' " +
+                "AND PAYMENT_CODE = 'CASH';";
 
         Cursor res = db.rawQuery(qry, null);
 
@@ -921,13 +936,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         res.close();
         BigDecimal bigdecSumPayment = BigDecimal.valueOf(sumPayment);
-        BigDecimal bigdecSumChange = BigDecimal.valueOf(sumChange); 
-        BigDecimal collections = bigdecSumPayment.subtract(bigdecSumChange); 
+        BigDecimal bigdecSumChange = BigDecimal.valueOf(sumChange);
+        BigDecimal collections = bigdecSumPayment.subtract(bigdecSumChange);
         BigDecimal supposedEndShiftAmount = collections.add(shiftStartAmount);
 
-        if(supposedEndShiftAmount.compareTo(BigDecimal.ZERO) <= 0)
+        if (supposedEndShiftAmount.compareTo(BigDecimal.ZERO) <= 0)
             supposedEndShiftAmount = new BigDecimal("0.0");
 
-        return supposedEndShiftAmount; 
+        return supposedEndShiftAmount;
     }
 }
