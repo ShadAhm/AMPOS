@@ -21,7 +21,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             "EMP_CODE TEXT primary key, " +
             "EMP_NAME TEXT," +
             "EMP_PASSWORD TEXT," +
-            "EMP_LVL boolean," +
+            "EMP_LVL int," +
             "POS_ALLOW boolean," +
             "VIEW_COST_ALLOW boolean," +
             "EMP_GROUP_CODE TEXT," +
