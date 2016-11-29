@@ -68,5 +68,4 @@
         android:id="@+id/buttonSettings"
         android:onClick="onSettingsClick"
         android:layout_weight="1" />
-
 </LinearLayout>

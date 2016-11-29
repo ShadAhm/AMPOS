@@ -45,7 +45,7 @@ public class DeclareShiftMoneyActivity extends Activity {
 
             if(latestOpenShift == null)
             {
-                showMessage("This shouldn't happen", "This shouldn't happen");
+                showMessage("Unknown open shift", "");
                 return; // this shouldnt actually happen
             }
 
