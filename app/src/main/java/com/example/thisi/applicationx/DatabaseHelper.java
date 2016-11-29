@@ -745,6 +745,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return false;
     }
 
+    public boolean loginAdminEmployee(SQLiteDatabase db, String username, String password) {
+        Cursor res = db.rawQuery("SELECT * FROM " + EMPLOYEE_TABLE_NAME + " WHERE EMP_CODE = '" + username + "' AND EMP_PASSWORD = '" + password + "' AND EMP_LVL >= 7;", null);
+        return res.getCount() > 0;
+    }
+
     public boolean thereExistSuspends() {
         SQLiteDatabase db = this.getReadableDatabase();
 

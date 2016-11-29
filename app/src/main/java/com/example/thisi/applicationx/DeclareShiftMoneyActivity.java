@@ -61,28 +61,95 @@ public class DeclareShiftMoneyActivity extends Activity {
             BigDecimal correctAmount = myDb.supposedEndShiftMoney(db, latestOpenShift.SHIFT_START_AMT, latestOpenShift.SHIFT_NUMBER, latestOpenShift.BUS_DATE, posNo);
 
             if(enteredAmount.compareTo(correctAmount) == 0) {
-                // TODO : update shift set to close 
-
-                ContentValues cvals = new ContentValues();
-                cvals.put("SHIFT_STATUS", "C");
-                cvals.put("SHIFT_END_AMT", enteredAmount.doubleValue());
-                db.update("shift_master", cvals, "ID = " + latestOpenShift.ID, null);
-
-                db.setTransactionSuccessful();
-                finish(); 
-                Intent intent = new Intent(this, MainMenuActivity.class);
-                startActivity(intent);
+                endShift(db, latestOpenShift); 
             }
             else {
-                showMessage("Amount incorrect", "We have detected a different amount, please recalculate.");
+                giveUserOverrideOption(db, latestOpenShift); 
             }
-
         } catch (SQLiteException e) {
             e.printStackTrace();
         } finally {
             db.endTransaction();
             db.close();
         }
+    }
+
+    private void endShift(SQLiteDatabase db, Shift_Master latestOpenShift) {
+        ContentValues cvals = new ContentValues();
+        cvals.put("SHIFT_STATUS", "C");
+        cvals.put("SHIFT_END_AMT", enteredAmount.doubleValue());
+        db.update("shift_master", cvals, "ID = " + latestOpenShift.ID, null);
+
+        db.setTransactionSuccessful();
+        finish(); 
+        Intent intent = new Intent(this, MainMenuActivity.class);
+        startActivity(intent);
+    }
+
+    private void giveUserOverrideOption(SQLiteDatabase db, Shift_Master latestOpenShift) {
+        AlertDialog.Builder builderLogin = new AlertDialog.Builder(this);
+                View veo = LayoutInflater.from(DeclareShiftMoneyActivity.this).inflate(R.layout.activity_logindialog, null); 
+                
+                EditText tusername = (EditText)veo.findViewById(R.id.editTextUsername);
+                EditText tpassword = (EditText)veo.findViewById(R.id.editTextPassword);                
+
+                builderLogin.setView(veo); 
+                builderLogin.setTitle("Login as Admin");
+                
+                builderLogin.setPositiveButton("OK",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog,
+                                    int which) {
+
+                                String u = tusername.getText().toString();
+                                String p = tpassword.getText().toString(); 
+
+                                if(db.loginAdminEmployee(db, u, p)) {
+                                    endShift(db, latestOpenShift); 
+                                }
+                                else {
+                                    Toast.makeText(getActivity(), "Authentication failed", Toast.LENGTH_LONG).show();
+                                }
+
+                                dialog.dismiss();
+                            }
+                        });
+                builderLogin.setNegativeButton("Cancel",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog,
+                                    int which) {
+                                dialog.dismiss();
+                            }
+                        });
+
+                AlertDialog alertLogin = builderLogin.create();
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setCancelable(false);
+                builder.setTitle("Amount incorrect");
+                builder.setMessage("We have detected a different amount, please recalculate.");
+                builder.setPositiveButton("OK",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog,
+                                    int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                builder.setNegativeButton("Override",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog,
+                                    int which) {
+                                dialog.dismiss();
+                                alertLogin.show(); 
+                            }
+                        });
+
+                AlertDialog alert = builder.create();
+                alert.show(); 
     }
 
     public void onDeclareShiftMoneyCancel(View view) {
