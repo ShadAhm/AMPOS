@@ -18,7 +18,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/buttonDayend"
-        android:onClick="onUploadDataClick"
+        android:onClick="onDayendClick"
         android:layout_weight="1" />
 
     <Button

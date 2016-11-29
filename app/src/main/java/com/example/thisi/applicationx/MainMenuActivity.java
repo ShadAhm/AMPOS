@@ -103,32 +103,65 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
 
     public void onDownloadDataClick(View view) {
         SharedPreferences prefs = this.getSharedPreferences("com.example.thisi.applicationx", Context.MODE_PRIVATE);
-        String serverConne = prefs.getString("serverconnection", "http://175.136.237.81:8030/Service1.svc");
+        String serverConne = prefs.getString("serverconnection", null);
 
-        DownloadDataService dds = new DownloadDataService(this, serverConne, this.getApplicationContext());
+        if(serverConne != null) {
+            DownloadDataService dds = new DownloadDataService(this, serverConne, this.getApplicationContext());
 
-        try {
-            dds.DownloadDataAsync();
-        } catch (Exception e) {
-            showMessage("Error", e.getMessage());
+            try {
+                dds.DownloadDataAsync();
+            } catch (Exception e) {
+                showMessage("Error", e.getMessage());
+            }
+        }
+        else {
+            showMessage("Error", "Could not find server. Please go to Settings and ensure the server connection is correct.")
         }
     }
 
     public void onUploadDataClick(View view) {
         SharedPreferences prefs = this.getSharedPreferences("com.example.thisi.applicationx", Context.MODE_PRIVATE);
-        String serverConne = prefs.getString("serverconnection", "http://175.136.237.81:8030/Service1.svc");
+        String serverConne = prefs.getString("serverconnection", null);
 
-        UploadDataService uds = new UploadDataService(this, serverConne, this.getApplicationContext());
+        if(serverConne != null) {
+            UploadDataService uds = new UploadDataService(this, serverConne, this.getApplicationContext());
 
-        if (!thereExistSuspends()) {
-            try {
-                uds.UploadDataAsync();
-            } catch (Exception e) {
-                showMessage("Error", e.getMessage());
+            if (!thereExistSuspends()) {
+                try {
+                    uds.UploadDataAsync();
+                } catch (Exception e) {
+                    showMessage("Error", e.getMessage());
+                }
+            } else {
+                showMessage("Error", "There are still orders on-hold");
             }
-        } else {
-            showMessage("Error", "There are still orders on-hold");
         }
+        else {
+            showMessage("Error", "Could not find server. Please go to Settings and ensure the server connection is correct.")
+        }
+    }
+
+    public void onDayendClick(View view) {
+        if (!thereExistSuspends()) {
+                SQLiteDatabase db = mydb.getReadableDatabase();
+                db.beginTransaction();
+                try {
+                    POS_Control pctrl = mydb.getPOSControl(db);
+                    pctrl.DAYEND = true;
+                    mydb.deleteAndInsertPOSControl(db, pctrl);
+                    db.setTransactionSuccessful();
+
+                    this.recreate();
+                } catch (SQLiteException e) {
+                    e.printStackTrace();
+                    showMessage("Error", e.getMessage());
+                } finally {
+                    db.endTransaction();
+                    db.close();
+                }
+            } else {
+                showMessage("Error", "There are still orders on-hold");
+            }
     }
 
     @Override
@@ -195,23 +228,7 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
 
     @Override
     public void UploadDataFinished(String methodName, Object Data) {
-
         if(Data == "success") {
-            SQLiteDatabase db = mydb.getReadableDatabase();
-            db.beginTransaction();
-            try {
-                POS_Control pctrl = mydb.getPOSControl(db);
-                pctrl.DAYEND = true;
-
-                mydb.deleteAndInsertPOSControl(db, pctrl);
-                db.setTransactionSuccessful();
-            } catch (SQLiteException e) {
-                e.printStackTrace();
-            } finally {
-                db.endTransaction();
-                db.close();
-            }
-
             showMessage("Success", "Data has been synced to the server");
         }
         else {
