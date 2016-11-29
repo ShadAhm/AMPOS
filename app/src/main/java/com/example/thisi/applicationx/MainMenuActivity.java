@@ -152,6 +152,7 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
                     mydb.deleteAndInsertPOSControl(db, pctrl);
                     db.setTransactionSuccessful();
 
+                    finish(); 
                     this.recreate();
                 } catch (SQLiteException e) {
                     e.printStackTrace();
@@ -193,6 +194,7 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
         else {
             showMessage("Failed to sync data", "Please try again later");
         }
+        finish(); 
         this.recreate();
     }
 
@@ -245,7 +247,7 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
     @Override
     public void UploadDataEndedRequest() {
         uploadProgress.dismiss();
-
+        finish(); 
         this.recreate();
     }
 
