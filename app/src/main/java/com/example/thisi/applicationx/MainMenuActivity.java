@@ -354,10 +354,10 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
                     break;
                 case "alreadyDayend" :
                     showMessage("Day Ended", "Dayend has already been performed for today.");
-                    enableButtons(false, false, false, false, true, false, true, true);
+                    enableButtons(false, false, false, false, true, true, true, true);
                     break; 
                 case "noOpenShift" :
-                    enableButtons(false, true, true, false, true, true, true, true);
+                    enableButtons(false, true, true, false, true, false, true, true);
                     break;
             }
         }
