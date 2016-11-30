@@ -167,6 +167,12 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
     }
 
     @Override
+    public void onBackPressed() {
+        return;
+    }
+
+
+    @Override
     public void Wsdl2CodeStartedRequest() {
         enableButtons(
                 false,
