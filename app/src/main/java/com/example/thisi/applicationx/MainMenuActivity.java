@@ -194,8 +194,6 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
         else {
             showMessage("Failed to sync data", "Please try again later");
         }
-        finish(); 
-        this.recreate();
     }
 
     @Override
@@ -247,7 +245,6 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
     @Override
     public void UploadDataEndedRequest() {
         uploadProgress.dismiss();
-        finish(); 
         this.recreate();
     }
 
