@@ -9,7 +9,7 @@
     android:paddingTop="10dp">
 
         <TextView
-            android:text="This action requires permission from an Admin user"
+            android:text="This action requires permission from an Administrator"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/textView3" />
@@ -18,7 +18,7 @@
             android:id="@+id/editTextUsername"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Username/ID"
+            android:hint="Admin Username/ID"
             android:inputType="textPersonName" />
         <EditText
             android:id="@+id/editTextPassword"

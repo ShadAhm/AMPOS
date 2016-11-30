@@ -750,7 +750,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         db.beginTransaction();
         try {
-            Cursor res = db.rawQuery("SELECT * FROM " + EMPLOYEE_TABLE_NAME + " WHERE EMP_CODE = '" + username + "' AND EMP_PASSWORD = '" + password + "' AND EMP_LVL >= 7;", null);
+            Cursor res = db.rawQuery("SELECT * FROM " + EMPLOYEE_TABLE_NAME + " WHERE EMP_CODE = '" + username + "' AND EMP_PASSWORD = '" + password + "' AND EMP_LVL >= 9;", null);
 
             db.setTransactionSuccessful();
 
