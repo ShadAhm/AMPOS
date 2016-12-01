@@ -49,6 +49,7 @@
                 android:layout_weight="1"
                 android:onClick="selfDestruct"
                 android:text="Cancel" />
+
         </LinearLayout>
 
         <RelativeLayout
@@ -60,16 +61,22 @@
             android:gravity="right">
 
             <Button
-                android:id="@+id/refreshButton"
+                android:onClick="printOrder1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:onClick="onRefresh"
-                android:background="@null"
-                android:text="Refresh"
-                android:textSize="10sp"
-                android:textColor="@android:color/holo_blue_dark"
-                android:gravity="right|center_vertical" />
+                android:text="Test Print" />
+
+            <!--<Button-->
+                <!--android:id="@+id/refreshButton"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_weight="1"-->
+                <!--android:onClick="onRefresh"-->
+                <!--android:background="@null"-->
+                <!--android:text="Refresh"-->
+                <!--android:textSize="10sp"-->
+                <!--android:textColor="@android:color/holo_blue_dark"-->
+                <!--android:gravity="right|center_vertical" />-->
         </RelativeLayout>
     </LinearLayout>
 </ScrollView>

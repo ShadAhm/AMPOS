@@ -28,4 +28,5 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.google.android.gms:play-services-appindexing:8.4.0'
     compile files('libs/ksoap2-android-assembly-3.6.2-jar-with-dependencies.jar')
+    compile files('libs/regoPrintLibV3.0.05.jar')
 }
