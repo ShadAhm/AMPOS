@@ -63,7 +63,7 @@ public class ApplicationContext extends Application {
 	}
 
 	public int getPrintway() {
-		return printmode.getValue();
+		return 0;
 	}
 
 	public boolean getlabel() {

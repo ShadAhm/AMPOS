@@ -20,17 +20,28 @@ import android.app.AlertDialog;
 public class MainActivity 
 extends AppCompatActivity implements IWsdl2CodeEvents {
     DatabaseHelper myDb;
+    public ApplicationContext context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        context = (ApplicationContext) getApplicationContext();
         myDb = DatabaseHelper.getHelper(this);
 
         if(!myDb.thereExistEmployees()) {
                 DownloadEmployees();
         }
+    }
+
+    public void printOrder1(View view) {
+        context.getObject().CON_PageStart(context.getState(),false,0,0);
+        context.getObject().ASCII_CtrlAlignType(context.getState(),
+                preDefiniation.AlignType.AT_CENTER.getValue());
+        context.getObject().ASCII_PrintString(context.getState(),0,
+                1,0, 0, 0, "��ӭ����  ", "gb2312");
+        context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);;
+        context.getObject().CON_PageEnd(context.getState(),context.getPrintway());
     }
 
     public void onLogin(View view) {
