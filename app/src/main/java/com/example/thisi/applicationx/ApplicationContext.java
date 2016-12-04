@@ -7,7 +7,7 @@ import android.app.Application;
 public class ApplicationContext extends Application {
 	private regoPrinter printer;
 	private int myState = 0;
-	private String printName="RG-MTP58B";
+	private String printName="RG-E487";//"RG-MTP58B";
 	private int alignTypetext;
 
 	private TransferMode printmode = TransferMode.TM_NONE;

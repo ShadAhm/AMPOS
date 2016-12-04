@@ -107,6 +107,7 @@ public class ConnectAvtivity extends Activity {
             } else {
                 DevCtrl.PowerOffMTDevice();
             }
+
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
