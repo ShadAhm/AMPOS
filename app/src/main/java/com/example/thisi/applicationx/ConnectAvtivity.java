@@ -56,8 +56,8 @@ public class ConnectAvtivity extends Activity {
             mBconnect = false;
         } else {
             if (state > 0) {
-                Toast.makeText(ConnectAvtivity.this, R.string.mes_consuccess,
-                        Toast.LENGTH_SHORT).show();
+//                Toast.makeText(ConnectAvtivity.this, R.string.mes_consuccess,
+//                        Toast.LENGTH_SHORT).show();
 
                 mBconnect = true;
 
@@ -68,7 +68,7 @@ public class ConnectAvtivity extends Activity {
                 startActivity(intent);
 
             } else {
-                Toast.makeText(ConnectAvtivity.this, R.string.mes_confail,
+                Toast.makeText(ConnectAvtivity.this, R.string.mes_confail + ". Please restart app.",
                         Toast.LENGTH_SHORT).show();
                 mBconnect = false;
             }
@@ -79,11 +79,11 @@ public class ConnectAvtivity extends Activity {
 
     private void modelJudgmen() {
         state = context.getObject().CON_ConnectDevices("RG-E487", "/dev/ttyMT1:115200", 200);
-        Toast.makeText(
-                this,
-                "" + android.os.Build.MODEL + " release:"
-                        + android.os.Build.VERSION.RELEASE, Toast.LENGTH_LONG)
-                .show();
+//        Toast.makeText(
+//                this,
+//                "" + android.os.Build.MODEL + " release:"
+//                        + android.os.Build.VERSION.RELEASE, Toast.LENGTH_LONG)
+//                .show();
 
         if (android.os.Build.VERSION.RELEASE.equals("5.1")) {
             DevCtrl = new DeviceControl(DeviceControl.powerPathKT);

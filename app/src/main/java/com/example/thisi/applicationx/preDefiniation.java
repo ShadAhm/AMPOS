@@ -30,7 +30,7 @@ public class preDefiniation {
 		AT_RIGHT(2);
 		private int iValue;
 
-		private AlignType(int value) {
+		AlignType(int value) {
 			iValue = value;
 		}
 
@@ -77,7 +77,7 @@ public class preDefiniation {
 		VT_BOTTOM(2);
 		private int iValue;
 
-		private ValignType(int value) {
+		ValignType(int value) {
 			iValue = value;
 		}
 
@@ -172,7 +172,7 @@ public class preDefiniation {
 		BT_DATAMATIC(1);
 		
 		private int iValue;
-		private BarcodeType(int value) {
+		BarcodeType(int value) {
 			iValue = value;
 		}
 		public int getValue() {
@@ -251,7 +251,7 @@ public class preDefiniation {
 		RA_270(270);
 		private int iValue;
 
-		private RotatAngle(int value) {
+		RotatAngle(int value) {
 			iValue = value;
 		}
 
@@ -311,7 +311,7 @@ public class preDefiniation {
 		PS_OK(3);
 		private int iValue;
 
-		private PrinterStatus(int value) {
+		PrinterStatus(int value) {
 			iValue = value;
 		}
 
@@ -342,7 +342,7 @@ public class preDefiniation {
 		BH_BLEW(2);
 		private int iValue;
 
-		private Barcode1DHRI(int value) {
+		Barcode1DHRI(int value) {
 			iValue = value;
 		}
 
@@ -390,7 +390,7 @@ public class preDefiniation {
 		
 		private int iValue;
 
-		private TransferMode(int value) {
+		TransferMode(int value) {
 			iValue = value;
 		}
 

@@ -92,7 +92,7 @@ public class Employee implements KvmSerializable {
                 EMP_GROUP_NAME = o.toString();
                 break;
             case 8:
-                IsActive = Boolean.getBoolean(o.toString());;
+                IsActive = Boolean.getBoolean(o.toString());
                 break;
             default:
                 break;

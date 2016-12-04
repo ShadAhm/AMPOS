@@ -21,6 +21,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -37,21 +38,20 @@ public class PaymentActivity extends Activity {
     private static String newProductsCodes;
     private static String default_price_field;
     private static String price_grp_code;
-
     private static BigDecimal total;
-    private static BigDecimal paidAmount;
     private static BigDecimal changeAmount;
-
     private static Boolean isPaymentComplete;
-
     private static ArrayList<PaymentMade> paymentsMade;
-
     // from settings :
     private static String companyCode;
     private static String posNo;
     private static String outletCode;
-
+    public ApplicationContext context;
+    public int state;
+    public boolean mBconnect = false;
     DatabaseHelper dataHelper;
+    private DeviceControl DevCtrl;
+    private boolean isTT43 = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +59,7 @@ public class PaymentActivity extends Activity {
         setContentView(R.layout.activity_payment);
 
         Bundle b = getIntent().getExtras();
-        initializeVariables(b); 
+        initializeVariables(b);
 
         addFilterToTextBox();
 
@@ -69,12 +69,13 @@ public class PaymentActivity extends Activity {
     }
 
     private void initializeVariables(Bundle b) {
+        context = (ApplicationContext) getApplicationContext();
+
         customer_code = b.getString("customer_code");
         newProductsCodes = b.getString("newproductscodes");
         price_grp_code = b.getString("price_grp_code");
 
         total = new BigDecimal("0.0");
-        paidAmount = new BigDecimal("0.0");
 
         paymentsMade = new ArrayList<PaymentMade>();
 
@@ -82,7 +83,7 @@ public class PaymentActivity extends Activity {
 
         SharedPreferences prefs = this.getSharedPreferences("com.example.thisi.applicationx", Context.MODE_PRIVATE);
         default_price_field = prefs.getString("defaultprice", "PRICE_01");
-        posNo = prefs.getString("posnumber", null);    
+        posNo = prefs.getString("posnumber", null);
         companyCode = prefs.getString("companycode", null);
         outletCode = prefs.getString("outletcode", "BE221-00"); // todo remove this shit
     }
@@ -150,7 +151,7 @@ public class PaymentActivity extends Activity {
                             "LEFT JOIN customer ON customer.price_grp_code = price_group.price_grp_code   " +
                             "LEFT JOIN price_group ON price_group.prod_code = product_master.prod_code   " +
                             "WHERE product_master.prod_code = '" + newProdCode + "' " +
-                            "AND customer.customer_code = '" + this.customer_code + "' ";
+                            "AND customer.customer_code = '" + customer_code + "' ";
 
                     Cursor cursor1 = db.rawQuery(selectFromPriceGroup, null);
                     int cursor1RowCount = cursor1.getCount();
@@ -271,9 +272,9 @@ public class PaymentActivity extends Activity {
                         "IsNewInDevice " +
                         ") " +
                         "SELECT  " +
-                        "'" + this.companyCode + "', " +
-                        "'" + this.outletCode + "', " +
-                        "'" + this.posNo + "', " +
+                        "'" + companyCode + "', " +
+                        "'" + outletCode + "', " +
+                        "'" + posNo + "', " +
                         "'" + Integer.toString(currentShift.SHIFT_NUMBER) + "', " +
                         "null, " +
                         "'S', " +
@@ -408,7 +409,6 @@ public class PaymentActivity extends Activity {
                 }
 
                 changeAmount = cumPayment.subtract(total);
-                paidAmount = cumPayment;
 
                 TextView textViewChange = (TextView) findViewById(R.id.textViewChange);
                 textViewChange.setText(df.format(changeAmount));
@@ -420,8 +420,9 @@ public class PaymentActivity extends Activity {
 
             editTextPayment.setText(null);
         } else {
-            // Print
             insertPaymentsIntoDb();
+            Toast.makeText(this, "Printing receipt", Toast.LENGTH_LONG).show();
+            printOrder1();
         }
     }
 
@@ -502,10 +503,10 @@ public class PaymentActivity extends Activity {
                         "IsNewInDevice" +
                         ") " +
                         "SELECT  " +
-                        "'" + this.companyCode + "', " +
-                        "'" + this.outletCode + "', " +
+                        "'" + companyCode + "', " +
+                        "'" + outletCode + "', " +
                         "'011', " +
-                        "'" + this.posNo + "', " +
+                        "'" + posNo + "', " +
                         "'" + Integer.toString(shift_number) + "', " +
                         "'" + rcp_id + "', " +
                         "'S', " +
@@ -553,7 +554,7 @@ public class PaymentActivity extends Activity {
         String ssql = "";
 
         String todaysDateInString = new SimpleDateFormat("yyyyMMdd").format(new Date());
-        String todaysTimeInString = new SimpleDateFormat("HHmm").format(new Date());        
+        String todaysTimeInString = new SimpleDateFormat("HHmm").format(new Date());
 
         for (int i = 0; i < paymentsMade.size(); i++) {
 
@@ -576,7 +577,7 @@ public class PaymentActivity extends Activity {
             }
 
             String changeAmountInsertString = "0.00";
-            int lastItemIndex = paymentsMade.size() - 1; 
+            int lastItemIndex = paymentsMade.size() - 1;
             if(i == lastItemIndex) {
                 changeAmountInsertString = changeAmount.toString();
             }
@@ -612,10 +613,10 @@ public class PaymentActivity extends Activity {
                     "IsNewInDevice " +
                     ") " +
                     "VALUES " +
-                    "('" + this.companyCode + "', " +
-                    "'" + this.outletCode + "', " +
+                    "('" + companyCode + "', " +
+                    "'" + outletCode + "', " +
                     "'011', " +
-                    "'" + this.posNo + "', " +
+                    "'" + posNo + "', " +
                     "'" + Integer.toString(shiftNo) + "', " +
                     "'" + rcp_id + "', " +
                     "'S', " +
@@ -688,7 +689,7 @@ public class PaymentActivity extends Activity {
                 "SELECT  " +
                 "suspend.COMPANY_CODE, " +
                 "suspend.OUTLET_CODE, " +
-                "'" + this.posNo + "', " +
+                "'" + posNo + "', " +
                 "suspend.POS_NO, " +
                 "suspend.SHIFT_NO, " +
                 "'" + rcp_id + "', " +
@@ -754,7 +755,7 @@ public class PaymentActivity extends Activity {
         }
 
         String todaysDateInString = new SimpleDateFormat("yyyyMMdd").format(new Date());
-        String todaysTimeInString = new SimpleDateFormat("HHmm").format(new Date());  
+        String todaysTimeInString = new SimpleDateFormat("HHmm").format(new Date());
         String ssql = "INSERT INTO header ( " +
                 " COMPANY_CODE, " +
                 "OUTLET_CODE, " +
@@ -798,9 +799,9 @@ public class PaymentActivity extends Activity {
                 "IsNewInDevice" +
                 ") " +
                 "VALUES (" +
-                "'" + this.companyCode + "', " +
-                "'" + this.outletCode + "', " +
-                "'" + this.posNo + "', " +
+                "'" + companyCode + "', " +
+                "'" + outletCode + "', " +
+                "'" + posNo + "', " +
                 "'011', " +
                 "'1', " +
                 "?, " +
@@ -822,7 +823,7 @@ public class PaymentActivity extends Activity {
                 "null, " +
                 "null, " +
                 "'" + todaysDateInString + "', " + // modified date
-                "'" + this.posNo + "', " +
+                "'" + posNo + "', " +
                 "0, " +
                 "0, " +
                 "null, " +
@@ -856,28 +857,102 @@ public class PaymentActivity extends Activity {
         return returnTotal;
     }
 
-    public void showMessage(String title, String message) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setCancelable(true);
-        builder.setTitle(title);
-        builder.setMessage(message);
-
-        builder.show();
+    public void printOrder1() {
+        connect();
+        context.getObject().CON_PageStart(context.getState(),false,0,0);
+        context.getObject().ASCII_CtrlAlignType(context.getState(),
+                preDefiniation.AlignType.AT_CENTER.getValue());
+        context.getObject().ASCII_PrintString(context.getState(),0,
+                1,0, 0, 0, "Fuck you", "gb2312");
+        context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
+        context.getObject().ASCII_PrintString(context.getState(),0,
+                0, 0, 0, 0, "Stupid fucking device", "gb2312");
+        context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
+        context.getObject().ASCII_PrintString(context.getState(),0,
+                0, 0, 0, 0, "With this stupid fucking printer", "gb2312");
+        context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
+        context.getObject().ASCII_PrintString(context.getState(),0,
+                0, 0, 0, 0, "2016-04-12", "gb2312");
+        context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
+        context.getObject().ASCII_PrintString(context.getState(),0,
+                0, 0, 0, 0, "----------------------------",
+                "gb2312");
+        context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
+        context.getObject().ASCII_PrintString(context.getState(),0,
+                0, 1, 0, 0, "What a piece of shit",
+                "gb2312");
+        context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
+        context.getObject().ASCII_PrintString(context.getState(),0,
+                0, 0, 0,
+                0,"           2.00", "gb2312");
+        context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
+        context.getObject().ASCII_PrintString(context.getState(),0,
+                0, 0, 0, 0, "----------------------------",
+                "gb2312");
+        context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
+        context.getObject().ASCII_CtrlReset(context.getState());
+        context.getObject().ASCII_CtrlCutPaper(context.getState(), 66, 0);
+        context.getObject().CON_PageEnd(context.getState(),context.getPrintway());
     }
 
+    public void connect() {
+        // /dev/ttyMT1:115200 //kt45
+        // /dev/ttyG1:115200 //tt43
+        modelJudgmen();
+        if (mBconnect) {
+            context.getObject().CON_CloseDevices(context.getState());
+            mBconnect = false;
+        } else {
+            if (state > 0) {
+                Toast.makeText(this, R.string.mes_consuccess,
+                        Toast.LENGTH_SHORT).show();
+
+                mBconnect = true;
+                context.setState(state);
+                context.setName("RG-E48");
+
+            } else {
+                Toast.makeText(this, R.string.mes_confail,
+                        Toast.LENGTH_SHORT).show();
+                mBconnect = false;
+            }
+        }
+    }
+
+    private void modelJudgmen() {
+        state = context.getObject().CON_ConnectDevices("RG-E487", "/dev/ttyMT1:115200", 200);
+        Toast.makeText(
+                this,
+                "" + android.os.Build.MODEL + " release:"
+                        + android.os.Build.VERSION.RELEASE, Toast.LENGTH_LONG)
+                .show();
+
+        if (android.os.Build.VERSION.RELEASE.equals("5.1")) {
+            DevCtrl = new DeviceControl(DeviceControl.powerPathKT);
+            DevCtrl.setGpio(94);
+            isTT43 = false;
+            try {
+                DevCtrl.PowerOnMTDevice();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+
     public class PaymentMade {
+        private int paymentType;
+        private BigDecimal price;
+
         public PaymentMade(int paymentType, BigDecimal price) {
             this.paymentType = paymentType;
             this.price = price;
         }
 
-        private int paymentType;
-
         public int getPaymentType() {
             return this.paymentType;
         }
-
-        private BigDecimal price;
 
         public BigDecimal getPrice() {
             return this.price;

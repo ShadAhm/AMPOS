@@ -74,7 +74,8 @@ public class Service1 {
             @Override
             protected void onPreExecute() {
                 eventHandler.Wsdl2CodeStartedRequest();
-            };
+            }
+
             @Override
             protected String doInBackground(Void... params) {
                 return SQLExecScalar(sQL, headers);
@@ -148,7 +149,8 @@ public class Service1 {
             @Override
             protected void onPreExecute() {
                 eventHandler.Wsdl2CodeStartedRequest();
-            };
+            }
+
             @Override
             protected Void doInBackground(Void... params) {
                 SQLExec(sQL, headers);
@@ -202,7 +204,8 @@ public class Service1 {
             @Override
             protected void onPreExecute() {
                 eventHandler.Wsdl2CodeStartedRequest();
-            };
+            }
+
             @Override
             protected Void doInBackground(Void... params) {
                 SQLResult(sQL, headers);
@@ -275,11 +278,9 @@ public class Service1 {
                 }
             }
         }catch (Exception e) {
-            if (eventHandler != null)
-                eventHandler.Wsdl2CodeFinishedWithException(e);
             e.printStackTrace();
+            return null;
         }
-
         return null;
     }
 }

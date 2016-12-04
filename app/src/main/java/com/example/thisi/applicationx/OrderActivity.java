@@ -64,8 +64,8 @@ public class OrderActivity extends Activity {
     private void initializeVariables(Bundle b) {
         this.crossableProducts = new CrossableProducts(); 
 
-        this.customer_code = b.getString("customer_code");
-        this.price_group_code = b.getString("price_group_code");
+        customer_code = b.getString("customer_code");
+        price_group_code = b.getString("price_group_code");
 
         SharedPreferences prefs = this.getSharedPreferences("com.example.thisi.applicationx", Context.MODE_PRIVATE);
         default_price_field = prefs.getString("defaultprice", "PRICE_01");
@@ -293,7 +293,7 @@ public class OrderActivity extends Activity {
                 "LEFT JOIN customer ON customer.price_grp_code = price_group.price_grp_code   " +
                 "LEFT JOIN price_group ON price_group.prod_code = product_master.prod_code   " +
                 "WHERE product_master.prod_code = '" + productCode + "' " +
-                "AND customer.customer_code = '" + this.customer_code + "' ";
+                "AND customer.customer_code = '" + customer_code + "' ";
 
         Cursor cursor1 = db.rawQuery(selectFromPriceGroup, null);
         int cursor1RowCount = cursor1.getCount();

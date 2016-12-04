@@ -194,6 +194,7 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
 
     @Override
     public void Wsdl2CodeFinished(String methodName, Object Data) {
+        this.recreate();
         if(Data == "success") {
             showMessage("Success", "Data has been synced to the server");
         }
@@ -378,11 +379,8 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
             String companyCode = _sp.getString("companycode", null);
             String serverConne = _sp.getString("serverconnection", null);
 
-            if (default_price_field == null || posNo == null || companyCode == null || serverConne == null
-                    || default_price_field.trim().isEmpty() || posNo.trim().isEmpty() || companyCode.trim().isEmpty() || serverConne.trim().isEmpty()) {
-                return false;
-            }
-            return true;
+            return !(default_price_field == null || posNo == null || companyCode == null || serverConne == null
+                    || default_price_field.trim().isEmpty() || posNo.trim().isEmpty() || companyCode.trim().isEmpty() || serverConne.trim().isEmpty());
         }
     }
 }
