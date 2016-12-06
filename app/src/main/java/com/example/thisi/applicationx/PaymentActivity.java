@@ -17,6 +17,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -393,8 +394,6 @@ public class PaymentActivity extends Activity {
             textViewAmtPaid.setBackgroundColor(Color.parseColor("#99ff99"));
 
             if (cumPayment.compareTo(total) >= 0) { // payments made more than total
-                Toast.makeText(getApplicationContext(), "Payment complete", Toast.LENGTH_SHORT).show();
-
                 editTextPayment.setEnabled(false);
 
                 Button btnHoldOrder = (Button) findViewById(R.id.buttonHoldOrder);
@@ -421,12 +420,34 @@ public class PaymentActivity extends Activity {
             editTextPayment.setText(null);
         } else {
             insertPaymentsIntoDb();
-            Toast.makeText(this, "Printing receipt", Toast.LENGTH_LONG).show();
-            printOrder1();
+
+            Toast.makeText(this, "Payment complete", Toast.LENGTH_SHORT).show();
+
+            Button btnHoldOrder = (Button) findViewById(R.id.buttonHoldOrder);
+            btnHoldOrder.setVisibility(View.GONE);
+
+            Button btnPrintReceipt = (Button)findViewById(R.id.buttonPrintReceipt);
+            btnPrintReceipt.setVisibility(View.VISIBLE);
+
+            LinearLayout lap = (LinearLayout)findViewById(R.id.linearLayoutConfirmAndCancel);
+            lap.setVisibility(View.GONE);
+
+            Button btnContinue = (Button)findViewById(R.id.buttonContinue);
+            btnContinue.setVisibility(View.VISIBLE);
         }
     }
 
-    private void insertPaymentsIntoDb() {
+    public void onPrintReceipt(View view) {
+        printReceipt();
+    }
+
+    public void onContinue(View view) {
+        finish();
+        Intent intent = new Intent(this, EnterCustomerCodeActivity.class);
+        startActivity(intent);
+    }
+
+        private void insertPaymentsIntoDb() {
         SQLiteDatabase db = dataHelper.getReadableDatabase();
         db.beginTransaction();
         try {
@@ -448,10 +469,6 @@ public class PaymentActivity extends Activity {
         } finally {
             db.endTransaction();
             db.close();
-
-            finish();
-            Intent intent = new Intent(this, EnterCustomerCodeActivity.class);
-            startActivity(intent);
         }
     }
 
@@ -857,7 +874,7 @@ public class PaymentActivity extends Activity {
         return returnTotal;
     }
 
-    public void printOrder1() {
+    public void printReceipt() {
         connect();
         context.getObject().CON_PageStart(context.getState(),false,0,0);
         context.getObject().ASCII_CtrlAlignType(context.getState(),
@@ -904,9 +921,6 @@ public class PaymentActivity extends Activity {
             mBconnect = false;
         } else {
             if (state > 0) {
-                Toast.makeText(this, R.string.mes_consuccess,
-                        Toast.LENGTH_SHORT).show();
-
                 mBconnect = true;
                 context.setState(state);
                 context.setName("RG-E48");
@@ -921,11 +935,6 @@ public class PaymentActivity extends Activity {
 
     private void modelJudgmen() {
         state = context.getObject().CON_ConnectDevices("RG-E487", "/dev/ttyMT1:115200", 200);
-        Toast.makeText(
-                this,
-                "" + android.os.Build.MODEL + " release:"
-                        + android.os.Build.VERSION.RELEASE, Toast.LENGTH_LONG)
-                .show();
 
         if (android.os.Build.VERSION.RELEASE.equals("5.1")) {
             DevCtrl = new DeviceControl(DeviceControl.powerPathKT);
