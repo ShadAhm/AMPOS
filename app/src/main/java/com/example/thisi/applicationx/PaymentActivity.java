@@ -43,6 +43,9 @@ public class PaymentActivity extends Activity {
     private static BigDecimal changeAmount;
     private static Boolean isPaymentComplete;
     private static ArrayList<PaymentMade> paymentsMade;
+
+    private static String thisRcpId; 
+
     // from settings :
     private static String companyCode;
     private static String posNo;
@@ -81,6 +84,8 @@ public class PaymentActivity extends Activity {
         total = new BigDecimal("0.0");
 
         paymentsMade = new ArrayList<PaymentMade>();
+
+        thisRcpId = null; 
 
         isPaymentComplete = false;
 
@@ -449,7 +454,7 @@ public class PaymentActivity extends Activity {
         startActivity(intent);
     }
 
-        private void insertPaymentsIntoDb() {
+    private void insertPaymentsIntoDb() {
         SQLiteDatabase db = dataHelper.getReadableDatabase();
         db.beginTransaction();
         try {
@@ -464,6 +469,8 @@ public class PaymentActivity extends Activity {
             int op = db.delete("suspend", "customer_code == '" + customer_code + "'",null);
 
             db.setTransactionSuccessful();
+
+            this.thisRcpId = rcp_id; 
         } catch (SQLiteException e) {
             e.printStackTrace();
         } catch (SQLException e) {
@@ -878,6 +885,9 @@ public class PaymentActivity extends Activity {
 
     public void printReceipt() {
         connect();
+
+        
+
         context.getObject().CON_PageStart(context.getState(),false,0,0);
         context.getObject().ASCII_CtrlAlignType(context.getState(),
                 preDefiniation.AlignType.AT_CENTER.getValue());
