@@ -47,6 +47,8 @@ public class PaymentActivity extends Activity {
     private static String companyCode;
     private static String posNo;
     private static String outletCode;
+
+    // printer stuff
     public ApplicationContext context;
     public int state;
     public boolean mBconnect = false;
