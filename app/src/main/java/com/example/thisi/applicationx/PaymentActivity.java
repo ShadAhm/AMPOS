@@ -959,7 +959,7 @@ public class PaymentActivity extends Activity {
             context.getObject().ASCII_CtrlAlignType(context.getState(),
                     preDefiniation.AlignType.AT_LEFT.getValue());
             context.getObject().ASCII_PrintString(context.getState(),0,
-                    0 ,0, 0, 0, "GRAND TOTAL:  " + grandtotalll, "gb2312");
+                    0 ,0, 0, 0, "GRAND TOTAL:  " + bdGrandTotalll.toString(), "gb2312");
             context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
         }
     }
@@ -1036,15 +1036,13 @@ public class PaymentActivity extends Activity {
 
         SimpleDateFormat sdfTime = new SimpleDateFormat("HH:mm:ss");//dd/MM/yyyy
         Date nowTime = new Date();
-        String strTime = sdfDate.format(nowTime);
+        String strTime = sdfTime.format(nowTime);
 
         context.getObject().ASCII_CtrlAlignType(context.getState(),
                 preDefiniation.AlignType.AT_LEFT.getValue());
         context.getObject().ASCII_PrintString(context.getState(),0,
                 0 ,0, 0, 0, "Time:  " + strTime, "gb2312");
         context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
-
-
 
         context.getObject().ASCII_CtrlAlignType(context.getState(),
                 preDefiniation.AlignType.AT_LEFT.getValue());
