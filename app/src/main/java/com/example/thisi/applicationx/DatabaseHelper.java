@@ -77,11 +77,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             "PROD_GRP_04 TEXT," +
             "PROD_GRP_05 TEXT," +
             "PROD_DISC_GRP TEXT," +
-            "TAX_01	boolean," +
-            "TAX_02	boolean," +
-            "TAX_03	boolean," +
-            "TAX_04	boolean," +
-            "TAX_05	boolean," +
+            "TAX_01	INTEGER," +
+            "TAX_02	INTEGER," +
+            "TAX_03	INTEGER," +
+            "TAX_04	INTEGER," +
+            "TAX_05	INTEGER," +
             "PRICE_01 numeric(18, 2)," +
             "PRICE_02 numeric(18, 2)," +
             "PRICE_03 numeric(18, 2)," +
@@ -554,6 +554,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put("SHIFT_NO", Susp.SHIFT_NO);
         contentValues.put("RCP_NO", Susp.RCP_NO);
         contentValues.put("TRANS_TYPE", Susp.TRANS_TYPE);
+        contentValues.put("BUS_DATE", Susp.BUS_DATE);
+        contentValues.put("TRANS_DATE", Susp.TRANS_DATE);
         contentValues.put("TRANS_TIME", Susp.TRANS_TIME);
         contentValues.put("ROW_NUMBER", Susp.ROW_NUMBER);
         contentValues.put("PROD_CODE", Susp.PROD_CODE);
@@ -589,6 +591,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put("IS_MULTIPLEUOM", Susp.IS_MULTIPLEUOM);
         contentValues.put("RECALL_BY", Susp.RECALL_BY);
         contentValues.put("APPROVE_BY", Susp.APPROVE_BY);
+        contentValues.put("MODIFIED_DATE", Susp.MODIFIED_DATE);
         contentValues.put("MODIFIED_ID", Susp.MODIFIED_ID);
         contentValues.put("CUSTOMER_CODE", Susp.CUSTOMER_CODE);
         contentValues.put("TAXCODE", Susp.TAXCODE);
@@ -944,5 +947,97 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             supposedEndShiftAmount = new BigDecimal("0.0");
 
         return supposedEndShiftAmount;
+    }
+
+    public Product_Master getProductByProductCode(SQLiteDatabase db, String productCode) {
+        String ssql = "SELECT  * FROM product_master WHERE prod_code == '" + productCode + "' LIMIT 1"; 
+
+        Cursor res = db.rawQuery(ssql, null);
+
+        if (res.getCount() > 0) {
+            res.moveToFirst();
+
+            Product_Master prodMas = new Product_Master();
+            prodMas.PROD_CODE = res.getString(res.getColumnIndex("PROD_CODE")); 
+            prodMas.PRODUCT_SHORT_NAME = res.getString(res.getColumnIndex("PRODUCT_SHORT_NAME")); 
+            prodMas.PROD_NAME = res.getString(res.getColumnIndex("PROD_NAME")); 
+            prodMas.PROD_TYPE_CODE = res.getString(res.getColumnIndex("PROD_TYPE_CODE")); 
+            prodMas.BARCODE = res.getString(res.getColumnIndex("BARCODE")); 
+            prodMas.PROD_GRP_01 = res.getString(res.getColumnIndex("PROD_GRP_01")); 
+            prodMas.PROD_GRP_02 = res.getString(res.getColumnIndex("PROD_GRP_02")); 
+            prodMas.PROD_GRP_03 = res.getString(res.getColumnIndex("PROD_GRP_03")); 
+            prodMas.PROD_GRP_04 = res.getString(res.getColumnIndex("PROD_GRP_04")); 
+            prodMas.PROD_GRP_05 = res.getString(res.getColumnIndex("PROD_GRP_05")); 
+            prodMas.PROD_DISC_GRP = res.getString(res.getColumnIndex("PROD_DISC_GRP")); 
+            prodMas.TAX_01 = res.getInt(res.getColumnIndex("TAX_01")); 
+            prodMas.TAX_02 = res.getInt(res.getColumnIndex("TAX_02")); 
+            prodMas.TAX_03 = res.getInt(res.getColumnIndex("TAX_03")); 
+            prodMas.TAX_04 = res.getInt(res.getColumnIndex("TAX_04")); 
+            prodMas.TAX_05 = res.getInt(res.getColumnIndex("TAX_05")); 
+            prodMas.PRICE_01 = new BigDecimal(res.getDouble(res.getColumnIndex("PRICE_01")));
+            prodMas.PRICE_02 = new BigDecimal(res.getDouble(res.getColumnIndex("PRICE_02")));
+            prodMas.PRICE_03 = new BigDecimal(res.getDouble(res.getColumnIndex("PRICE_03")));
+            prodMas.PRICE_04 = new BigDecimal(res.getDouble(res.getColumnIndex("PRICE_04")));
+            prodMas.PRICE_05 = new BigDecimal(res.getDouble(res.getColumnIndex("PRICE_05")));
+            prodMas.PRICE_06 = new BigDecimal(res.getDouble(res.getColumnIndex("PRICE_06")));
+            prodMas.PRICE_07 = new BigDecimal(res.getDouble(res.getColumnIndex("PRICE_07")));
+            prodMas.PRICE_08 = new BigDecimal(res.getDouble(res.getColumnIndex("PRICE_08")));
+            prodMas.PRICE_09 = new BigDecimal(res.getDouble(res.getColumnIndex("PRICE_09")));
+            prodMas.PRICE_10 = new BigDecimal(res.getDouble(res.getColumnIndex("PRICE_10")));
+            prodMas.COST = new BigDecimal(res.getDouble(res.getColumnIndex("COST")));
+            prodMas.AVERAGE_COST = new BigDecimal(res.getDouble(res.getColumnIndex("AVERAGE_COST")));
+            prodMas.DISPLAY_ORDER = res.getInt(res.getColumnIndex("DISPLAY_ORDER")); 
+            prodMas.POS_DISPLAY = res.getInt(res.getColumnIndex("POS_DISPLAY")); 
+            prodMas.ALLOW_ZERO_PRICE = res.getInt(res.getColumnIndex("ALLOW_ZERO_PRICE")); 
+            prodMas.IsActive = res.getInt(res.getColumnIndex("IsActive")); 
+            prodMas.ACTIVE_PERIOD = res.getInt(res.getColumnIndex("ACTIVE_PERIOD")); 
+            prodMas.ACTIVE_DATE = res.getString(res.getColumnIndex("ACTIVE_DATE")); 
+            prodMas.EXPIRE_DATE = res.getString(res.getColumnIndex("EXPIRE_DATE")); 
+            prodMas.STOCK_UOM = res.getString(res.getColumnIndex("STOCK_UOM")); 
+            prodMas.PURCH_UOM = res.getString(res.getColumnIndex("PURCH_UOM")); 
+            prodMas.USAGE_UOM = res.getString(res.getColumnIndex("USAGE_UOM")); 
+            prodMas.PURCH_CONV = new BigDecimal(res.getDouble(res.getColumnIndex("PURCH_CONV")));
+            prodMas.USAGE_CONV = new BigDecimal(res.getDouble(res.getColumnIndex("USAGE_CONV")));
+            prodMas.IsBOM = res.getInt(res.getColumnIndex("IsBOM")); 
+            prodMas.IsSERIAL = res.getInt(res.getColumnIndex("IsSERIAL")); 
+            prodMas.ALLOW_DISC = res.getInt(res.getColumnIndex("ALLOW_DISC")); 
+            prodMas.MULTIPLE_DISC = res.getInt(res.getColumnIndex("MULTIPLE_DISC")); 
+            prodMas.MULTIPLE_UOM = res.getInt(res.getColumnIndex("MULTIPLE_UOM")); 
+            prodMas.TICKET_TYPE = res.getString(res.getColumnIndex("TICKET_TYPE")); 
+            prodMas.STAFF_DISCOUNT_CODE = res.getString(res.getColumnIndex("STAFF_DISCOUNT_CODE")); 
+            prodMas.SUPPLIER_CODE = res.getString(res.getColumnIndex("SUPPLIER_CODE")); 
+            prodMas.BARCODE_01 = res.getString(res.getColumnIndex("BARCODE_01")); 
+            prodMas.BARCODE_02 = res.getString(res.getColumnIndex("BARCODE_02")); 
+            prodMas.BARCODE_03 = res.getString(res.getColumnIndex("BARCODE_03")); 
+            prodMas.BARCODE_04 = res.getString(res.getColumnIndex("BARCODE_04")); 
+            prodMas.BARCODE_05 = res.getString(res.getColumnIndex("BARCODE_05")); 
+            prodMas.BARCODE_06 = res.getString(res.getColumnIndex("BARCODE_06")); 
+            prodMas.BARCODE_07 = res.getString(res.getColumnIndex("BARCODE_07")); 
+            prodMas.BARCODE_08 = res.getString(res.getColumnIndex("BARCODE_08")); 
+            prodMas.BARCODE_09 = res.getString(res.getColumnIndex("BARCODE_09")); 
+            prodMas.BARCODE_10 = res.getString(res.getColumnIndex("BARCODE_10")); 
+            prodMas.PRICE_PERCENTAGE_01 = new BigDecimal(res.getDouble(res.getColumnIndex("PRICE_PERCENTAGE_01")));
+            prodMas.PRICE_PERCENTAGE_02 = new BigDecimal(res.getDouble(res.getColumnIndex("PRICE_PERCENTAGE_02")));
+            prodMas.PRICE_PERCENTAGE_03 = new BigDecimal(res.getDouble(res.getColumnIndex("PRICE_PERCENTAGE_03")));
+            prodMas.PRICE_PERCENTAGE_04 = new BigDecimal(res.getDouble(res.getColumnIndex("PRICE_PERCENTAGE_04")));
+            prodMas.PRICE_PERCENTAGE_05 = new BigDecimal(res.getDouble(res.getColumnIndex("PRICE_PERCENTAGE_05")));
+            prodMas.PRICE_PERCENTAGE_06 = new BigDecimal(res.getDouble(res.getColumnIndex("PRICE_PERCENTAGE_06")));
+            prodMas.PRICE_PERCENTAGE_07 = new BigDecimal(res.getDouble(res.getColumnIndex("PRICE_PERCENTAGE_07")));
+            prodMas.PRICE_PERCENTAGE_08 = new BigDecimal(res.getDouble(res.getColumnIndex("PRICE_PERCENTAGE_08")));
+            prodMas.PRICE_PERCENTAGE_09 = new BigDecimal(res.getDouble(res.getColumnIndex("PRICE_PERCENTAGE_09")));
+            prodMas.PRICE_PERCENTAGE_10 = new BigDecimal(res.getDouble(res.getColumnIndex("PRICE_PERCENTAGE_10")));
+            prodMas.STOCK_TAKE_INTERIM = res.getString(res.getColumnIndex("STOCK_TAKE_INTERIM")); 
+            prodMas.MODIFIED_DATE = res.getString(res.getColumnIndex("MODIFIED_DATE")); 
+            prodMas.MODIFIED_ID = res.getString(res.getColumnIndex("MODIFIED_ID")); 
+            prodMas.IMG_PATH = res.getString(res.getColumnIndex("IMG_PATH")); 
+            prodMas.TAXCODE = res.getString(res.getColumnIndex("TAXCODE")); 
+
+            res.close();
+
+            return prodMas;
+        } else {
+            return null;
+        }
+
     }
 }

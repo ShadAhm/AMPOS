@@ -213,6 +213,10 @@ public class PaymentActivity extends Activity {
     }
 
     public void onHoldOrder(View view) {
+        holdOrderNew(); 
+    }
+
+    private void holdOrderNew() {
         SQLiteDatabase db = dataHelper.getReadableDatabase();
         try {
             if (newProductsCodes != null && !newProductsCodes.isEmpty()) {
@@ -224,120 +228,74 @@ public class PaymentActivity extends Activity {
                 Shift_Master currentShift = dataHelper.lookForOpenShiftsAtDate(db, todaysDateInString);
 
                 for (int i = 0; i < newProductsCodesArray.length; i++) {
-                    String ssql = "INSERT INTO suspend ( " +
-                        "COMPANY_CODE, " +
-                        "OUTLET_CODE, " +
-                        "POS_NO, " +
-                        "SHIFT_NO, " +
-                        "RCP_NO, " +
-                        "TRANS_TYPE, " +
-                        "BUS_DATE, " +
-                        "TRANS_DATE, " +
-                        "TRANS_TIME, " +
-                        "ROW_NUMBER, " +
-                        "PROD_CODE, " +
-                        "BARCODE, " +
-                        "PROD_NAME, " +
-                        "PROD_SHORT_NAME, " +
-                        "PROD_TYPE_CODE, " +
-                        "USAGE_UOM, " +
-                        "UOM_CONV, " +
-                        "QUANTITY, " +
-                        "PRICE_LVL_CODE, " +
-                        "UNIT_PRICE, " +
-                        "TOTAL_PRICE, " +
-                        "BOM_PARENT, " +
-                        "TAX_01, " +
-                        "TAX_02, " +
-                        "TAX_03, " +
-                        "TAX_04, " +
-                        "TAX_05, " +
-                        "ALLOW_DISC, " +
-                        "MULTIPLE_DISC, " +
-                        "DISCOUNT_CODE, " +
-                        "ITEM_DISCOUNT_AMOUNT, " +
-                        "TOTAL_DICOUNT_CODE, " +
-                        "TOTAL_DISCOUNT_AMOUNT, " +
-                        "TICKET_SURCHARGE, " +
-                        "STAFF_DISCOUNT_CODE, " +
-                        "STAFF_DISCOUNT, " +
-                        "SUSPEND_NUMBER, " +
-                        "IsRECALL, " +
-                        "IS_UPSALES, " +
-                        "UPSALES_CONV, " +
-                        "IS_MULTIPLEUOM, " +
-                        "RECALL_BY, " +
-                        "APPROVE_BY, " +
-                        "MODIFIED_DATE, " +
-                        "MODIFIED_ID, " +
-                        "CUSTOMER_CODE, " +
-                        "TAXCODE, " +
-                        "COST, " +
-                        "PRICE_GRP_CODE, " +
-                        "TABLE_NO, " +
-                        "PROMOSOURCECODE, " +
-                        "PROMOCHANGEPRICE, " +
-                        "IsNewInDevice " +
-                        ") " +
-                        "SELECT  " +
-                        "'" + companyCode + "', " +
-                        "'" + outletCode + "', " +
-                        "'" + posNo + "', " +
-                        "'" + Integer.toString(currentShift.SHIFT_NUMBER) + "', " +
-                        "null, " +
-                        "'S', " +
-                        "'" + todaysDateInString + "', " + // bus date
-                        "'" + todaysDateInString + "', " + // trans date
-                        "'" + todaysTimeInString + "', " + // trans time
-                        "null, " +
-                        "PROD_CODE, " +
-                        "BARCODE, " +
-                        "PROD_NAME, " +
-                        "PRODUCT_SHORT_NAME, " +
-                        "PROD_TYPE_CODE, " +
-                        "null, " +
-                        "null, " +
-                        "1,  " +
-                        "null, " +
-                        "null, " +
-                        "null, " +
-                        "null, " +
-                        "null, " +
-                        "null, " +
-                        "null, " +
-                        "null, " +
-                        "null, " +
-                        "ALLOW_DISC, " +
-                        "MULTIPLE_DISC, " +
-                        "null, " +
-                        "null, " +
-                        "null, " +
-                        "null, " +
-                        "null, " +
-                        "STAFF_DISCOUNT_CODE, " +
-                        "null, " +
-                        "null, " +
-                        "null, " +
-                        "null, " +
-                        "null, " +
-                        "null, " +
-                        "null, " +
-                        "null, " +
-                        "'" + todaysDateInString + "', " + // modified date
-                        "null, " +
-                        "?, " +
-                        "TAXCODE, " +
-                        "COST, " +
-                        "?, " +
-                        "null, " +
-                        "null, " +
-                        "null, " +
-                        "1 " +
-                        "FROM product_master " +
-                        "WHERE PROD_CODE = '" + newProductsCodesArray[i].toString() + "' ";
+                    Product_Master productMastar = dataHelper.getProductByProductCode(db, newProductsCodesArray[i]);
 
-                        String[] objs = new String[]{customer_code, price_grp_code};
-                        db.execSQL(ssql, objs);
+                    BigDecimal tax = new BigDecimal("0.0"); 
+                    if(productMastar.TAX_01 == 1) {
+                        if(productMastar.TAXCODE.equalsIgnoreCase("SR")) {
+                            BigDecimal taxRate = new BigDecimal("0.6"); 
+                            tax = productMastar.multiply(taxRate).setScale(2, RoundingMode.CEILING); 
+                        }
+                        else if (productMastar.TAXCODE.equalsIgnoreCase("ZRL")) {
+                            // 0 
+                        }
+                    }
+
+                    Suspend sus = new Suspend(); 
+                    sus.COMPANY_CODE = this.companyCode;
+                    sus.OUTLET_CODE = this.outletCode;
+                    sus.POS_NO = this.posNo;
+                    sus.SHIFT_NO = Integer.toString(currentShift.SHIFT_NUMBER);
+                    sus.RCP_NO = null;
+                    sus.TRANS_TYPE = "S";
+                    sus.BUS_DATE = todaysDateInString;
+                    sus.TRANS_DATE = todaysDateInString;
+                    sus.TRANS_TIME = todaysTimeInString;
+                    sus.ROW_NUMBER = i + 1;
+                    sus.PROD_CODE = productMastar.PROD_CODE;
+                    sus.BARCODE = productMastar.BARCODE;
+                    sus.PROD_NAME = productMastar.PROD_NAME;
+                    sus.PROD_SHORT_NAME = productMastar.PROD_SHORT_NAME;
+                    sus.PROD_TYPE_CODE = productMastar.PROD_TYPE_CODE;
+                    sus.USAGE_UOM = null;
+                    sus.UOM_CONV = BigDecimal.ZERO;
+                    sus.QUANTITY = 1;
+                    sus.PRICE_LVL_CODE = null;
+                    sus.UNIT_PRICE = BigDecimal.ZERO; // we recalculate this next time
+                    sus.TOTAL_PRICE = BigDecimal.ZERO;
+                    sus.BOM_PARENT = null;
+                    sus.TAX_01 = BigDecimal.ZERO;
+                    sus.TAX_02 = BigDecimal.ZERO;
+                    sus.TAX_03 = BigDecimal.ZERO;
+                    sus.TAX_04 = BigDecimal.ZERO;
+                    sus.TAX_05 = BigDecimal.ZERO;
+                    sus.ALLOW_DISC = productMastar.ALLOW_DISC;
+                    sus.MULTIPLE_DISC = productMastar.MULTIPLE_DISC;
+                    sus.DISCOUNT_CODE = null;
+                    sus.ITEM_DISCOUNT_AMOUNT = BigDecimal.ZERO;
+                    sus.TOTAL_DICOUNT_CODE = null;
+                    sus.TOTAL_DISCOUNT_AMOUNT = BigDecimal.ZERO;
+                    sus.TICKET_SURCHARGE = BigDecimal.ZERO;
+                    sus.STAFF_DISCOUNT_CODE = productMastar.STAFF_DISCOUNT_CODE;
+                    sus.STAFF_DISCOUNT = BigDecimal.ZERO;
+                    sus.SUSPEND_NUMBER = null;
+                    sus.IsRECALL = false;
+                    sus.IS_UPSALES = false;
+                    sus.UPSALES_CONV = BigDecimal.ZERO;
+                    sus.IS_MULTIPLEUOM = false;
+                    sus.RECALL_BY = null;
+                    sus.APPROVE_BY = null;
+                    sus.MODIFIED_DATE = todaysDateInString;
+                    sus.MODIFIED_ID = null;
+                    sus.CUSTOMER_CODE = this.customer_code;
+                    sus.TAXCODE = productMastar.TAXCODE;
+                    sus.COST = productMastar.COST;
+                    sus.PRICE_GRP_CODE = null;
+                    sus.TABLE_NO = null;
+                    sus.PROMOSOURCECODE = null;
+                    sus.PROMOCHANGEPRICE = BigDecimal.ZERO;
+
+                    dataHelper.insertSuspend(db, sus); 
                 }
 
                 db.beginTransaction();
@@ -549,11 +507,11 @@ public class PaymentActivity extends Activity {
                         "null, " +
                         "coalesce(price_group.price, product_master." + default_price_field + ") as UNIT_PRICE, " +
                         "coalesce(price_group.price, product_master." + default_price_field + ") as TOTAL_PRICE, " +
-                        "product_master.TAX_01, " +
-                        "product_master.TAX_02, " +
-                        "product_master.TAX_03, " +
-                        "product_master.TAX_04, " +
-                        "product_master.TAX_05, " +
+                        "0, " +
+                        "0, " + // TAX_02
+                        "0, " + // TAX_03
+                        "0, " +
+                        "0, " +
                         "null, " +
                         "null, " +
                         "null, " +
@@ -573,6 +531,8 @@ public class PaymentActivity extends Activity {
 
                 db.execSQL(ssql);
             }
+
+
         }
     }
 

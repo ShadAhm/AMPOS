@@ -1,7 +1,7 @@
 package com.example.thisi.applicationx;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.util.String;
 
 public class Suspend {
     public String COMPANY_CODE;
@@ -10,8 +10,8 @@ public class Suspend {
     public String SHIFT_NO;
     public String RCP_NO;
     public String TRANS_TYPE;
-    public Date	BUS_DATE;
-    public Date	TRANS_DATE;
+    public String	BUS_DATE;
+    public String	TRANS_DATE;
     public String TRANS_TIME;
     public int ROW_NUMBER;
     public String PROD_CODE;
@@ -47,7 +47,7 @@ public class Suspend {
     public boolean IS_MULTIPLEUOM;
     public String RECALL_BY;
     public String APPROVE_BY;
-    public Date	MODIFIED_DATE;
+    public String MODIFIED_DATE;
     public String MODIFIED_ID;
     public String CUSTOMER_CODE;
     public String TAXCODE;
