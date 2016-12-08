@@ -38,37 +38,53 @@ extends AppCompatActivity implements IWsdl2CodeEvents {
     }
 
     public void onLogin(View view) {
+        SharedPreferences prefs = this.getSharedPreferences("com.example.thisi.applicationx", Context.MODE_PRIVATE);
+        prefs.edit().putString("empcode", null).apply();
+        prefs.edit().putString("empname", null).apply();
+
         EditText usernameTextbox = (EditText) findViewById(R.id.editText);
         EditText passwordTextbox = (EditText) findViewById(R.id.editText2);
 
         String username = usernameTextbox.getText().toString();
         String password = passwordTextbox.getText().toString();
 
-        boolean loginOk = myDb.loginEmployee(username, password);
+        Employee loginOk = myDb.loginEmployee(username, password);
 
-        Intent intent = new Intent(this, MainMenuActivity.class);
-        
-        if (!loginOk) {
+        if(username.equals("@sys")) {
+            Intent intent = new Intent(this, MainMenuActivity.class);
+            intent.putExtra("isSys", true);
+            finish();
+            startActivity(intent);
+        }
+        else if (loginOk == null) {
             showMessage("Error", "Invalid username or password");
             return; 
         }
+        else {
+            prefs.edit().putString("empcode", loginOk.EMP_CODE).apply();
+            prefs.edit().putString("empname", loginOk.EMP_NAME).apply();
 
-        finish();
-        startActivity(intent);
+            Intent intent = new Intent(this, MainMenuActivity.class);
+            finish();
+            startActivity(intent);
+        }
     }
 
     private void DownloadEmployees() {
         SharedPreferences prefs = this.getSharedPreferences("com.example.thisi.applicationx", Context.MODE_PRIVATE);
-        String serverConne = prefs.getString("serverconnection", "http://175.136.237.81:8030/Service1.svc");
+        String serverConne = prefs.getString("serverconnection", null);
 
-        DownloadDataService dds = new DownloadDataService(this, serverConne, this.getApplicationContext());
+        if(serverConne != null) {
+            DownloadDataService dds = new DownloadDataService(this, serverConne, this.getApplicationContext());
 
-        try {
-            dds.DownloadEmployeesAsync();
+            try {
+                dds.DownloadEmployeesAsync();
+            } catch (Exception e) {
+                showMessage("Error", e.getMessage());
+            }
         }
-        catch(Exception e)
-        {
-            showMessage("Error", e.getMessage());
+        else {
+            showMessage("No server connection", "Please login as Sys and enter a server address in Settings");
         }
     }
 

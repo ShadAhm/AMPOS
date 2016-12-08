@@ -15,7 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:name=".ApplicationContext"
-        android:manageSpaceActivity=".MainActivity"
+
         >
         <uses-permission android:name="android.permission.INTERNET"/>
         <activity android:name=".ConnectAvtivity" android:noHistory="true" android:windowSoftInputMode="stateHidden">

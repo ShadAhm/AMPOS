@@ -77,7 +77,7 @@ public class Product_Master {
     public double PRICE_PERCENTAGE_09;
     public double PRICE_PERCENTAGE_10;
     public String STOCK_TAKE_INTERIM;
-    public Date MODIFIED_DATE;
+    public String MODIFIED_DATE;
     public String MODIFIED_ID;
     public String IMG_PATH;
     public String TAXCODE;

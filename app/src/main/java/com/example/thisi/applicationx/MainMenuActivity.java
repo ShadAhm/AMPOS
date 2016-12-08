@@ -38,7 +38,16 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
         mydb = DatabaseHelper.getHelper(this);
 
         enableButtons(false, false, false, false, false, false, false, false);
-        checkShiftsLongOperation();
+
+        Bundle b = getIntent().getExtras();
+        boolean isSys = b.getBoolean("isSys", false);
+
+        if(!isSys) {
+            checkShiftsLongOperation();
+        }
+        else {
+            enableButtons(false, false, false, false, false, false, true, true);
+        }
     }
 
     private void enableButtons(boolean enableOrder, boolean enableDayend, boolean enableStartShift, boolean enableEndShift, boolean enableDownload, boolean enableUpload, boolean enableLogout, boolean enableSettings) {

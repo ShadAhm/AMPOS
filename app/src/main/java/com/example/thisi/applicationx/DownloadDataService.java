@@ -197,7 +197,16 @@ public class DownloadDataService extends Service1 {
                 prod.PROD_GRP_04 = pii.getProperty(8).toString();
                 prod.PROD_GRP_05 = pii.getProperty(9).toString();
                 prod.PROD_DISC_GRP = pii.getProperty(10).toString();
-                prod.TAX_01 = Boolean.getBoolean(pii.getProperty(11).toString());
+
+                String taxohone = pii.getProperty(11).toString();
+                if(taxohone.equalsIgnoreCase("true")
+                        || taxohone.equalsIgnoreCase("1")) {
+                    prod.TAX_01 = true;
+                }
+                else {
+                    prod.TAX_01 = false;
+                }
+
                 prod.TAX_02 = Boolean.getBoolean(pii.getProperty(12).toString());
                 prod.TAX_03 = Boolean.getBoolean(pii.getProperty(13).toString());
                 prod.TAX_04 = Boolean.getBoolean(pii.getProperty(14).toString());
@@ -271,7 +280,7 @@ public class DownloadDataService extends Service1 {
             for (int i = 0; i < employees.length; i++) {
                 SoapObject pii = (SoapObject) soap.getProperty(i);
                 Employee employee = new Employee();
-                employee.EMP_CODE = Integer.parseInt(pii.getProperty(0).toString());
+                employee.EMP_CODE = pii.getProperty(0).toString();
                 employee.EMP_NAME = pii.getProperty(1).toString();
                 employee.EMP_PASSWORD = pii.getProperty(2).toString();
                 employee.EMP_LVL = Integer.parseInt(pii.getProperty(3).toString());

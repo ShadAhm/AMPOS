@@ -471,11 +471,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put("PROD_GRP_04", prod.PROD_GRP_04);
         contentValues.put("PROD_GRP_05", prod.PROD_GRP_05);
         contentValues.put("PROD_DISC_GRP", prod.PROD_DISC_GRP);
-        contentValues.put("TAX_01", prod.TAX_01);
-        contentValues.put("TAX_02", prod.TAX_02);
-        contentValues.put("TAX_03", prod.TAX_03);
-        contentValues.put("TAX_04", prod.TAX_04);
-        contentValues.put("TAX_05", prod.TAX_05);
+        contentValues.put("TAX_01", (prod.TAX_01 ? 1 : 0));
+        contentValues.put("TAX_02", prod.TAX_02 ? 1 : 0);
+        contentValues.put("TAX_03", prod.TAX_03 ? 1 : 0);
+        contentValues.put("TAX_04", prod.TAX_04 ? 1 : 0);
+        contentValues.put("TAX_05", prod.TAX_05 ? 1 : 0);
         contentValues.put("PRICE_01", prod.PRICE_01.doubleValue());
         contentValues.put("PRICE_02", prod.PRICE_02.doubleValue());
         contentValues.put("PRICE_03", prod.PRICE_03.doubleValue());
@@ -728,24 +728,31 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return result > -1;
     }
 
-    public boolean loginEmployee(String username, String password) {
+    public Employee loginEmployee(String username, String password) {
         SQLiteDatabase db = this.getReadableDatabase();
 
         db.beginTransaction();
         try {
             Cursor res = db.rawQuery("SELECT * FROM " + EMPLOYEE_TABLE_NAME + " WHERE EMP_CODE = '" + username + "' AND EMP_PASSWORD = '" + password + "';", null);
-
             db.setTransactionSuccessful();
 
-            return res.getCount() > 0;
+            if(res.getCount() > 0) {
+                Employee employee = new Employee();
+                employee.EMP_CODE = res.getString(res.getColumnIndex("EMP_CODE"));
+                employee.EMP_NAME = res.getString(res.getColumnIndex("EMP_NAME"));
+
+                return employee;
+            }
+            else {
+                return null;
+            }
         } catch (SQLiteException e) {
             e.printStackTrace();
         } finally {
             db.endTransaction();
             db.close();
         }
-
-        return false;
+        return null;
     }
 
     public boolean loginAdminEmployee(String username, String password) {
@@ -949,6 +956,28 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return supposedEndShiftAmount;
     }
 
+    public Price_Group getPriceGrpByProductAndCustomerCode(SQLiteDatabase db, String customerCode, String productCode) {
+        String ssql = "SELECT customer.* FROM price_group " +
+                "JOIN customer ON price_group.PRICE_GRP_CODE = customer.PRICE_GRP_CODE " +
+                "WHERE customer.CUSTOMER_CODE = '" + customerCode + "' AND " +
+                "price_group.PROD_CODE = '" + productCode + "'";
+
+        Cursor res = db.rawQuery(ssql, null);
+
+        if (res.getCount() > 0) {
+            res.moveToFirst();
+
+            Price_Group pg = new Price_Group();
+            pg.PRICE = new BigDecimal(res.getDouble(res.getColumnIndex("PRICE")));;
+
+            res.close();
+
+            return pg;
+        } else {
+            return null;
+        }
+    }
+
     public Product_Master getProductByProductCode(SQLiteDatabase db, String productCode) {
         String ssql = "SELECT  * FROM product_master WHERE prod_code == '" + productCode + "' LIMIT 1"; 
 
@@ -969,11 +998,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             prodMas.PROD_GRP_04 = res.getString(res.getColumnIndex("PROD_GRP_04")); 
             prodMas.PROD_GRP_05 = res.getString(res.getColumnIndex("PROD_GRP_05")); 
             prodMas.PROD_DISC_GRP = res.getString(res.getColumnIndex("PROD_DISC_GRP")); 
-            prodMas.TAX_01 = res.getInt(res.getColumnIndex("TAX_01")); 
-            prodMas.TAX_02 = res.getInt(res.getColumnIndex("TAX_02")); 
-            prodMas.TAX_03 = res.getInt(res.getColumnIndex("TAX_03")); 
-            prodMas.TAX_04 = res.getInt(res.getColumnIndex("TAX_04")); 
-            prodMas.TAX_05 = res.getInt(res.getColumnIndex("TAX_05")); 
+            prodMas.TAX_01 = res.getInt(res.getColumnIndex("TAX_01")) != 0 ? true : false;
+            prodMas.TAX_02 = res.getInt(res.getColumnIndex("TAX_02")) != 0 ? true : false;
+            prodMas.TAX_03 = res.getInt(res.getColumnIndex("TAX_03")) != 0 ? true : false;
+            prodMas.TAX_04 = res.getInt(res.getColumnIndex("TAX_04")) != 0 ? true : false;
+            prodMas.TAX_05 = res.getInt(res.getColumnIndex("TAX_05")) != 0 ? true : false;
             prodMas.PRICE_01 = new BigDecimal(res.getDouble(res.getColumnIndex("PRICE_01")));
             prodMas.PRICE_02 = new BigDecimal(res.getDouble(res.getColumnIndex("PRICE_02")));
             prodMas.PRICE_03 = new BigDecimal(res.getDouble(res.getColumnIndex("PRICE_03")));
@@ -987,22 +1016,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             prodMas.COST = new BigDecimal(res.getDouble(res.getColumnIndex("COST")));
             prodMas.AVERAGE_COST = new BigDecimal(res.getDouble(res.getColumnIndex("AVERAGE_COST")));
             prodMas.DISPLAY_ORDER = res.getInt(res.getColumnIndex("DISPLAY_ORDER")); 
-            prodMas.POS_DISPLAY = res.getInt(res.getColumnIndex("POS_DISPLAY")); 
-            prodMas.ALLOW_ZERO_PRICE = res.getInt(res.getColumnIndex("ALLOW_ZERO_PRICE")); 
-            prodMas.IsActive = res.getInt(res.getColumnIndex("IsActive")); 
-            prodMas.ACTIVE_PERIOD = res.getInt(res.getColumnIndex("ACTIVE_PERIOD")); 
-            prodMas.ACTIVE_DATE = res.getString(res.getColumnIndex("ACTIVE_DATE")); 
-            prodMas.EXPIRE_DATE = res.getString(res.getColumnIndex("EXPIRE_DATE")); 
+//            prodMas.POS_DISPLAY = res.getInt(res.getColumnIndex("POS_DISPLAY"));
+//            prodMas.ALLOW_ZERO_PRICE = res.getInt(res.getColumnIndex("ALLOW_ZERO_PRICE"));
+//            prodMas.IsActive = res.getInt(res.getColumnIndex("IsActive"));
+//            prodMas.ACTIVE_PERIOD = res.getInt(res.getColumnIndex("ACTIVE_PERIOD"));
+//            prodMas.ACTIVE_DATE = res.getString(res.getColumnIndex("ACTIVE_DATE"));
+//            prodMas.EXPIRE_DATE = res.getString(res.getColumnIndex("EXPIRE_DATE"));
             prodMas.STOCK_UOM = res.getString(res.getColumnIndex("STOCK_UOM")); 
             prodMas.PURCH_UOM = res.getString(res.getColumnIndex("PURCH_UOM")); 
             prodMas.USAGE_UOM = res.getString(res.getColumnIndex("USAGE_UOM")); 
-            prodMas.PURCH_CONV = new BigDecimal(res.getDouble(res.getColumnIndex("PURCH_CONV")));
-            prodMas.USAGE_CONV = new BigDecimal(res.getDouble(res.getColumnIndex("USAGE_CONV")));
-            prodMas.IsBOM = res.getInt(res.getColumnIndex("IsBOM")); 
-            prodMas.IsSERIAL = res.getInt(res.getColumnIndex("IsSERIAL")); 
-            prodMas.ALLOW_DISC = res.getInt(res.getColumnIndex("ALLOW_DISC")); 
-            prodMas.MULTIPLE_DISC = res.getInt(res.getColumnIndex("MULTIPLE_DISC")); 
-            prodMas.MULTIPLE_UOM = res.getInt(res.getColumnIndex("MULTIPLE_UOM")); 
+//            prodMas.PURCH_CONV = new BigDecimal(res.getDouble(res.getColumnIndex("PURCH_CONV")));
+//            prodMas.USAGE_CONV = new BigDecimal(res.getDouble(res.getColumnIndex("USAGE_CONV")));
+//            prodMas.IsBOM = res.getInt(res.getColumnIndex("IsBOM"));
+//            prodMas.IsSERIAL = res.getInt(res.getColumnIndex("IsSERIAL"));
+//            prodMas.ALLOW_DISC = res.getInt(res.getColumnIndex("ALLOW_DISC"));
+//            prodMas.MULTIPLE_DISC = res.getInt(res.getColumnIndex("MULTIPLE_DISC"));
+//            prodMas.MULTIPLE_UOM = res.getInt(res.getColumnIndex("MULTIPLE_UOM"));
             prodMas.TICKET_TYPE = res.getString(res.getColumnIndex("TICKET_TYPE")); 
             prodMas.STAFF_DISCOUNT_CODE = res.getString(res.getColumnIndex("STAFF_DISCOUNT_CODE")); 
             prodMas.SUPPLIER_CODE = res.getString(res.getColumnIndex("SUPPLIER_CODE")); 
@@ -1016,16 +1045,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             prodMas.BARCODE_08 = res.getString(res.getColumnIndex("BARCODE_08")); 
             prodMas.BARCODE_09 = res.getString(res.getColumnIndex("BARCODE_09")); 
             prodMas.BARCODE_10 = res.getString(res.getColumnIndex("BARCODE_10")); 
-            prodMas.PRICE_PERCENTAGE_01 = new BigDecimal(res.getDouble(res.getColumnIndex("PRICE_PERCENTAGE_01")));
-            prodMas.PRICE_PERCENTAGE_02 = new BigDecimal(res.getDouble(res.getColumnIndex("PRICE_PERCENTAGE_02")));
-            prodMas.PRICE_PERCENTAGE_03 = new BigDecimal(res.getDouble(res.getColumnIndex("PRICE_PERCENTAGE_03")));
-            prodMas.PRICE_PERCENTAGE_04 = new BigDecimal(res.getDouble(res.getColumnIndex("PRICE_PERCENTAGE_04")));
-            prodMas.PRICE_PERCENTAGE_05 = new BigDecimal(res.getDouble(res.getColumnIndex("PRICE_PERCENTAGE_05")));
-            prodMas.PRICE_PERCENTAGE_06 = new BigDecimal(res.getDouble(res.getColumnIndex("PRICE_PERCENTAGE_06")));
-            prodMas.PRICE_PERCENTAGE_07 = new BigDecimal(res.getDouble(res.getColumnIndex("PRICE_PERCENTAGE_07")));
-            prodMas.PRICE_PERCENTAGE_08 = new BigDecimal(res.getDouble(res.getColumnIndex("PRICE_PERCENTAGE_08")));
-            prodMas.PRICE_PERCENTAGE_09 = new BigDecimal(res.getDouble(res.getColumnIndex("PRICE_PERCENTAGE_09")));
-            prodMas.PRICE_PERCENTAGE_10 = new BigDecimal(res.getDouble(res.getColumnIndex("PRICE_PERCENTAGE_10")));
+//            prodMas.PRICE_PERCENTAGE_01 = new BigDecimal(res.getDouble(res.getColumnIndex("PRICE_PERCENTAGE_01")));
+//            prodMas.PRICE_PERCENTAGE_02 = new BigDecimal(res.getDouble(res.getColumnIndex("PRICE_PERCENTAGE_02")));
+//            prodMas.PRICE_PERCENTAGE_03 = new BigDecimal(res.getDouble(res.getColumnIndex("PRICE_PERCENTAGE_03")));
+//            prodMas.PRICE_PERCENTAGE_04 = new BigDecimal(res.getDouble(res.getColumnIndex("PRICE_PERCENTAGE_04")));
+//            prodMas.PRICE_PERCENTAGE_05 = new BigDecimal(res.getDouble(res.getColumnIndex("PRICE_PERCENTAGE_05")));
+//            prodMas.PRICE_PERCENTAGE_06 = new BigDecimal(res.getDouble(res.getColumnIndex("PRICE_PERCENTAGE_06")));
+//            prodMas.PRICE_PERCENTAGE_07 = new BigDecimal(res.getDouble(res.getColumnIndex("PRICE_PERCENTAGE_07")));
+//            prodMas.PRICE_PERCENTAGE_08 = new BigDecimal(res.getDouble(res.getColumnIndex("PRICE_PERCENTAGE_08")));
+//            prodMas.PRICE_PERCENTAGE_09 = new BigDecimal(res.getDouble(res.getColumnIndex("PRICE_PERCENTAGE_09")));
+//            prodMas.PRICE_PERCENTAGE_10 = new BigDecimal(res.getDouble(res.getColumnIndex("PRICE_PERCENTAGE_10")));
             prodMas.STOCK_TAKE_INTERIM = res.getString(res.getColumnIndex("STOCK_TAKE_INTERIM")); 
             prodMas.MODIFIED_DATE = res.getString(res.getColumnIndex("MODIFIED_DATE")); 
             prodMas.MODIFIED_ID = res.getString(res.getColumnIndex("MODIFIED_ID")); 
@@ -1038,6 +1067,5 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         } else {
             return null;
         }
-
     }
 }

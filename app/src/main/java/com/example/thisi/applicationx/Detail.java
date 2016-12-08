@@ -16,8 +16,8 @@ public class Detail {
     public String SHIFT_NO;
     public String RCP_NO;
     public String TRANS_TYPE;
-    public Date BUS_DATE;
-    public Date TRANS_DATE;
+    public String BUS_DATE;
+    public String TRANS_DATE;
     public String TRANS_TIME;
     public int ROW_NUMBER;
     public String PROD_CODE;

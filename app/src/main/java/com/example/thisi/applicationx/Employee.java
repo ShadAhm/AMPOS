@@ -10,7 +10,7 @@ import java.util.Hashtable;
  */
 
 public class Employee implements KvmSerializable {
-    public int EMP_CODE;
+    public String EMP_CODE;
     public String EMP_NAME;
     public String EMP_PASSWORD;
     public int EMP_LVL;
@@ -22,7 +22,7 @@ public class Employee implements KvmSerializable {
 
     public Employee(){}
 
-    public Employee(int EMP_CODE,
+    public Employee(String EMP_CODE,
                         String EMP_NAME,
                         String EMP_PASSWORD,
                         int EMP_LVL,
@@ -68,7 +68,7 @@ public class Employee implements KvmSerializable {
     public void setProperty(int i, Object o) {
         switch(i) {
             case 0:
-                EMP_CODE = Integer.parseInt(o.toString());
+                EMP_CODE = o.toString();
                 break;
             case 1:
                 EMP_NAME = o.toString();

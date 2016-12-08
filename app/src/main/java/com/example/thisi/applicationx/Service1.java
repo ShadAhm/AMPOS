@@ -33,7 +33,7 @@ public class Service1 {
 
     public String NAMESPACE ="http://tempuri.org/";
     public String url="";
-    public int timeOut = 180;
+    public int timeOut = 10000;
     public IWsdl2CodeEvents eventHandler;
     public WS_Enums.SoapProtocolVersion soapVersion;
 

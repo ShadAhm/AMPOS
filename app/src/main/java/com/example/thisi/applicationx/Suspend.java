@@ -1,7 +1,6 @@
 package com.example.thisi.applicationx;
 
 import java.math.BigDecimal;
-import java.util.String;
 
 public class Suspend {
     public String COMPANY_CODE;

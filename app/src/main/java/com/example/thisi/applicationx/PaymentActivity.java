@@ -23,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -229,25 +230,49 @@ public class PaymentActivity extends Activity {
 
                 for (int i = 0; i < newProductsCodesArray.length; i++) {
                     Product_Master productMastar = dataHelper.getProductByProductCode(db, newProductsCodesArray[i]);
+                    Price_Group priceGrp = dataHelper.getPriceGrpByProductAndCustomerCode(db, this.customer_code, newProductsCodesArray[i]);
 
-                    BigDecimal tax = new BigDecimal("0.0"); 
-                    if(productMastar.TAX_01 == 1) {
+                    BigDecimal priice = new BigDecimal("0.0");
+                    if(priceGrp == null) {
+                        switch (default_price_field) {
+                            case "PRICE_01":  priice = productMastar.PRICE_01;
+                                break;
+                            case "PRICE_02":  priice = productMastar.PRICE_02;
+                                break;
+                            case "PRICE_03":  priice = productMastar.PRICE_03;
+                                break;
+                            case "PRICE_04":  priice = productMastar.PRICE_04;
+                                break;
+                            case "PRICE_05":  priice = productMastar.PRICE_05;
+                                break;
+                            case "PRICE_06":  priice = productMastar.PRICE_06;
+                                break;
+                            case "PRICE_07":  priice = productMastar.PRICE_07;
+                                break;
+                            case "PRICE_08":  priice = productMastar.PRICE_08;
+                                break;
+                            case "PRICE_09":  priice = productMastar.PRICE_09;
+                                break;
+                            case "PRICE_10":  priice = productMastar.PRICE_10;
+                                break;
+                        }
+                    }
+                    else {
+                        if(priceGrp.PRICE != null) {
+                            priice = priceGrp.PRICE;
+                        }
+                    }
+
+                    BigDecimal tax = new BigDecimal("0.0");
+                    if(productMastar.TAX_01) {
                         if(productMastar.TAXCODE.equalsIgnoreCase("SR")) {
-                            BigDecimal taxRate = new BigDecimal("0.6"); 
-                            tax = productMastar.UNIT_PRICE.multiply(taxRate).setScale(2, RoundingMode.CEILING); 
+                            BigDecimal taxRate = new BigDecimal("0.06");
+                            tax = priice.multiply(taxRate).setScale(2, RoundingMode.CEILING);
                         }
                         else if (productMastar.TAXCODE.equalsIgnoreCase("ZRL")) {
-                            // 0 
+                            // 0
                         }
                     }
-
-                    Price_Group priceGrp = dataHelper.getPriceGrpByProductAndCustomerCode(db, this.customer_code, newProductsCodesArray[i]); 
-
-                    if(priceGrp != null) {
-                        // read from defualt price 
-                    }
-
-
 
                     Suspend sus = new Suspend(); 
                     sus.COMPANY_CODE = this.companyCode;
@@ -263,16 +288,16 @@ public class PaymentActivity extends Activity {
                     sus.PROD_CODE = productMastar.PROD_CODE;
                     sus.BARCODE = productMastar.BARCODE;
                     sus.PROD_NAME = productMastar.PROD_NAME;
-                    sus.PROD_SHORT_NAME = productMastar.PROD_SHORT_NAME;
+                    sus.PROD_SHORT_NAME = productMastar.PRODUCT_SHORT_NAME;
                     sus.PROD_TYPE_CODE = productMastar.PROD_TYPE_CODE;
                     sus.USAGE_UOM = null;
                     sus.UOM_CONV = BigDecimal.ZERO;
-                    sus.QUANTITY = 1;
+                    sus.QUANTITY = new BigDecimal("1");
                     sus.PRICE_LVL_CODE = null;
-                    sus.UNIT_PRICE = BigDecimal.ZERO; // we recalculate this next time
-                    sus.TOTAL_PRICE = BigDecimal.ZERO;
+                    sus.UNIT_PRICE = priice; // we recalculate this next time
+                    sus.TOTAL_PRICE = priice;
                     sus.BOM_PARENT = null;
-                    sus.TAX_01 = BigDecimal.ZERO;
+                    sus.TAX_01 = tax;
                     sus.TAX_02 = BigDecimal.ZERO;
                     sus.TAX_03 = BigDecimal.ZERO;
                     sus.TAX_04 = BigDecimal.ZERO;
@@ -429,8 +454,9 @@ public class PaymentActivity extends Activity {
 
             String rcp_id = insertHeader(db);
             insertDetailFromSuspend(db, rcp_id);
-            insertDetailFromProducts(db, rcp_id, currentShift.SHIFT_NUMBER);
+            insertDetailFromProducts1(db, rcp_id, currentShift.SHIFT_NUMBER);
             insertPayment(db, rcp_id, currentShift.SHIFT_NUMBER);
+            updateHeader(db, rcp_id);
 
             int op = db.delete("suspend", "customer_code == '" + customer_code + "'",null);
 
@@ -439,15 +465,35 @@ public class PaymentActivity extends Activity {
             this.thisRcpId = rcp_id; 
         } catch (SQLiteException e) {
             e.printStackTrace();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
+        }
+        finally {
             db.endTransaction();
             db.close();
         }
     }
 
-    private void insertDetailFromProducts(SQLiteDatabase db, String rcp_id, int shift_number) {
+    private void updateHeader(SQLiteDatabase db, String rcp_id) {
+        Cursor res = db.rawQuery("SELECT TOTAL(TOTAL_PRICE) as TOTALPRICE, TOTAL(TAX_01) as TOTALTAX FROM DETAIL WHERE RCP_NO = '" + rcp_id + "';", null);
+
+        String totPrice = "0.01";
+        String totTax = "0.01";
+        if (res.getCount() > 0) {
+            res.moveToFirst();
+
+            totPrice = res.getString(res.getColumnIndex("TOTALPRICE"));
+            totTax = res.getString(res.getColumnIndex("TOTALTAX"));
+
+            res.close();
+        }
+
+        String ssql = "UPDATE HEADER SET SALES_AMOUNT = " + totPrice + " WHERE RCP_NO = '" + rcp_id + "'";
+        String ssql1 = "UPDATE HEADER SET TOTAL_TAX = " + totTax + " WHERE RCP_NO = '" + rcp_id + "'";
+
+        db.execSQL(ssql);
+        db.execSQL(ssql1);
+    }
+
+    private void insertDetailFromProducts1(SQLiteDatabase db, String rcp_id, int shift_number) {
         if (newProductsCodes != null && !newProductsCodes.isEmpty()) {
             String[] newProductsCodesArray = newProductsCodes.split(";");
 
@@ -455,89 +501,90 @@ public class PaymentActivity extends Activity {
             String todaysTimeInString = new SimpleDateFormat("HHmm").format(new Date());
 
             for (int i = 0; i < newProductsCodesArray.length; i++) {
-                String ssql = "INSERT INTO detail ( " +
-                        "COMPANY_CODE, " +
-                        "OUTLET_CODE, " +
-                        "EMP_CODE, " +
-                        "POS_NO, " +
-                        "SHIFT_NO, " +
-                        "RCP_NO, " +
-                        "TRANS_TYPE, " +
-                        "BUS_DATE, " +
-                        "TRANS_DATE, " +
-                        "TRANS_TIME, " +
-                        "ROW_NUMBER, " +
-                        "PROD_CODE, " +
-                        "PROD_NAME, " +
-                        "PROD_TYPE_CODE, " +
-                        "USAGE_UOM, " +
-                        "QUANTITY, " +
-                        "UOM_CONV, " +
-                        "PRICE_LVL_CODE, " +
-                        "UNIT_PRICE, " +
-                        "TOTAL_PRICE, " +
-                        "TAX_01, " +
-                        "TAX_02, " +
-                        "TAX_03, " +
-                        "TAX_04, " +
-                        "TAX_05, " +
-                        "DISCOUNT_CODE, " +
-                        "ITEM_DISCOUNT_AMOUNT, " +
-                        "TOTAL_DISCOUNT_CODE, " +
-                        "TOTAL_DISCOUNT_AMOUNT, " +
-                        "TICKET_SURCHARGE, " +
-                        "STAFF_DISCOUNT_CODE, " +
-                        "STAFF_DISCOUNT, " +
-                        "BARCODE, " +
-                        "TAXCODE, " +
-                        "COST, " +
-                        "ToSAP, " +
-                        "IsNewInDevice" +
-                        ") " +
-                        "SELECT  " +
-                        "'" + companyCode + "', " +
-                        "'" + outletCode + "', " +
-                        "'011', " +
-                        "'" + posNo + "', " +
-                        "'" + Integer.toString(shift_number) + "', " +
-                        "'" + rcp_id + "', " +
-                        "'S', " +
-                        "'" + todaysDateInString + "', " + // bus date
-                        "'" + todaysDateInString + "', " + // trans date
-                        "'" + todaysTimeInString + "', " + // trans time
-                        "null, " +
-                        "product_master.PROD_CODE, " +
-                        "product_master.PROD_NAME, " +
-                        "product_master.PROD_TYPE_CODE, " +
-                        "null, " +
-                        "1, " +
-                        "null, " +
-                        "null, " +
-                        "coalesce(price_group.price, product_master." + default_price_field + ") as UNIT_PRICE, " +
-                        "coalesce(price_group.price, product_master." + default_price_field + ") as TOTAL_PRICE, " +
-                        "0, " +
-                        "0, " + // TAX_02
-                        "0, " + // TAX_03
-                        "0, " +
-                        "0, " +
-                        "null, " +
-                        "null, " +
-                        "null, " +
-                        "null, " +
-                        "null, " +
-                        "product_master.STAFF_DISCOUNT_CODE, " +
-                        "null, " +
-                        "product_master.BARCODE, " +
-                        "product_master.TAXCODE, " +
-                        "product_master.COST, " +
-                        "0," +
-                        "1 " +
-                        "FROM product_master  " +
-                        "LEFT JOIN price_group ON price_group.prod_code = product_master.prod_code  " +
-                        "LEFT JOIN customer ON customer.price_grp_code = price_group.price_grp_code  " +
-                        "WHERE product_master.prod_code ='" + newProductsCodesArray[i] + "';  ";
+                Product_Master productMastar = dataHelper.getProductByProductCode(db, newProductsCodesArray[i]);
+                Price_Group priceGrp = dataHelper.getPriceGrpByProductAndCustomerCode(db, this.customer_code, newProductsCodesArray[i]);
 
-                db.execSQL(ssql);
+                BigDecimal priice = new BigDecimal("0.0");
+                if(priceGrp == null) {
+                    switch (default_price_field) {
+                        case "PRICE_01":  priice = productMastar.PRICE_01;
+                            break;
+                        case "PRICE_02":  priice = productMastar.PRICE_02;
+                            break;
+                        case "PRICE_03":  priice = productMastar.PRICE_03;
+                            break;
+                        case "PRICE_04":  priice = productMastar.PRICE_04;
+                            break;
+                        case "PRICE_05":  priice = productMastar.PRICE_05;
+                            break;
+                        case "PRICE_06":  priice = productMastar.PRICE_06;
+                            break;
+                        case "PRICE_07":  priice = productMastar.PRICE_07;
+                            break;
+                        case "PRICE_08":  priice = productMastar.PRICE_08;
+                            break;
+                        case "PRICE_09":  priice = productMastar.PRICE_09;
+                            break;
+                        case "PRICE_10":  priice = productMastar.PRICE_10;
+                            break;
+                    }
+                }
+                else {
+                    if(priceGrp.PRICE != null) {
+                        priice = priceGrp.PRICE;
+                    }
+                }
+
+                BigDecimal tax = new BigDecimal("0.0");
+                if(productMastar.TAX_01) {
+                    if(productMastar.TAXCODE.equalsIgnoreCase("SR")) {
+                        BigDecimal taxRate = new BigDecimal("0.06");
+                        tax = priice.multiply(taxRate).setScale(2, RoundingMode.CEILING);
+                    }
+                    else if (productMastar.TAXCODE.equalsIgnoreCase("ZRL")) {
+                        // 0
+                    }
+                }
+
+                Detail detl = new Detail();
+                detl.COMPANY_CODE = companyCode;
+                detl.OUTLET_CODE = outletCode;
+                detl.EMP_CODE = "fromlogin";
+                detl.POS_NO = posNo;
+                detl.SHIFT_NO = Integer.toString(shift_number);
+                detl.RCP_NO = rcp_id;
+                detl.TRANS_TYPE = "S";
+                detl.BUS_DATE = todaysDateInString;
+                detl.TRANS_DATE = todaysDateInString;
+                detl.TRANS_TIME = todaysTimeInString;
+                detl.ROW_NUMBER = i;
+                detl.PROD_CODE = productMastar.PROD_CODE;
+                detl.PROD_NAME = productMastar.PROD_NAME;
+                detl.PROD_TYPE_CODE = productMastar.PROD_TYPE_CODE;
+                detl.USAGE_UOM = productMastar.USAGE_UOM;
+                detl.QUANTITY = BigDecimal.ONE;
+                detl.UOM_CONV = BigDecimal.ZERO;
+                detl.PRICE_LVL_CODE = null;
+                detl.UNIT_PRICE = priice;
+                detl.TOTAL_PRICE = priice;
+                detl.TAX_01 = tax;
+                detl.TAX_02 = BigDecimal.ZERO;
+                detl.TAX_03 = BigDecimal.ZERO;
+                detl.TAX_04 = BigDecimal.ZERO;
+                detl.TAX_05 = BigDecimal.ZERO;
+                detl.DISCOUNT_CODE = null;
+                detl.ITEM_DISCOUNT_AMOUNT = BigDecimal.ZERO;
+                detl.TOTAL_DISCOUNT_CODE = null;
+                detl.TOTAL_DISCOUNT_AMOUNT = BigDecimal.ZERO;
+                detl.TICKET_SURCHARGE = BigDecimal.ZERO;
+                detl.STAFF_DISCOUNT_CODE = productMastar.STAFF_DISCOUNT_CODE;
+                detl.STAFF_DISCOUNT = BigDecimal.ZERO;
+                detl.BARCODE = productMastar.BARCODE;
+                detl.TAXCODE = productMastar.TAXCODE;
+                detl.COST = productMastar.COST;
+                detl.ToSAP = false;
+
+                dataHelper.insertDetail(db, detl);
             }
         }
     }
@@ -697,8 +744,8 @@ public class PaymentActivity extends Activity {
                 "suspend.QUANTITY, " +
                 "suspend.UOM_CONV, " +
                 "null, " +
-                "coalesce(price_group.price, product_master." + default_price_field + ") as unit_price, " +
-                "coalesce(price_group.price, product_master." + default_price_field + ") as total_price, " +
+                "suspend.unit_price, " +
+                "suspend.total_price, " +
                 "suspend.TAX_01, " +
                 "suspend.TAX_02, " +
                 "suspend.TAX_03, " +
@@ -717,10 +764,7 @@ public class PaymentActivity extends Activity {
                 "0, " +
                 "1 " +
                 "FROM suspend " +
-                "LEFT JOIN price_group ON suspend.price_grp_code = price_group.price_grp_code " +
-                "AND suspend.prod_code = price_group.prod_code  " +
-                "LEFT JOIN customer ON suspend.customer_code = customer.customer_code  " +
-                "JOIN product_master ON suspend.prod_code = product_master.prod_code  " +
+                "JOIN customer ON suspend.customer_code = customer.customer_code  " +
                 "WHERE customer.customer_code = '" + customer_code + "'";
 
         db.execSQL(ssql);
@@ -851,43 +895,175 @@ public class PaymentActivity extends Activity {
 
     public void printReceipt() {
         connect();
-
-        
-
         context.getObject().CON_PageStart(context.getState(),false,0,0);
-        context.getObject().ASCII_CtrlAlignType(context.getState(),
-                preDefiniation.AlignType.AT_CENTER.getValue());
-        context.getObject().ASCII_PrintString(context.getState(),0,
-                1,0, 0, 0, "Fuck you", "gb2312");
-        context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
-        context.getObject().ASCII_PrintString(context.getState(),0,
-                0, 0, 0, 0, "Stupid fucking device", "gb2312");
-        context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
-        context.getObject().ASCII_PrintString(context.getState(),0,
-                0, 0, 0, 0, "With this stupid fucking printer", "gb2312");
-        context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
-        context.getObject().ASCII_PrintString(context.getState(),0,
-                0, 0, 0, 0, "2016-04-12", "gb2312");
-        context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
-        context.getObject().ASCII_PrintString(context.getState(),0,
-                0, 0, 0, 0, "----------------------------",
-                "gb2312");
-        context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
-        context.getObject().ASCII_PrintString(context.getState(),0,
-                0, 1, 0, 0, "What a piece of shit",
-                "gb2312");
-        context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
-        context.getObject().ASCII_PrintString(context.getState(),0,
-                0, 0, 0,
-                0,"           2.00", "gb2312");
-        context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
-        context.getObject().ASCII_PrintString(context.getState(),0,
-                0, 0, 0, 0, "----------------------------",
-                "gb2312");
-        context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
+
+        printReceiptPart1();
+        printReceiptPart2();
+
+        SQLiteDatabase db = dataHelper.getReadableDatabase();
+        db.beginTransaction();
+        try {
+            printReceiptItems(db);
+            printReceiptTotal(db);
+            db.setTransactionSuccessful();
+        } catch (SQLiteException e) {
+            e.printStackTrace();
+        } finally {
+            db.endTransaction();
+            db.close();
+        }
+
         context.getObject().ASCII_CtrlReset(context.getState());
         context.getObject().ASCII_CtrlCutPaper(context.getState(), 66, 0);
         context.getObject().CON_PageEnd(context.getState(),context.getPrintway());
+    }
+
+    private void printReceiptTotal(SQLiteDatabase db) {
+        Cursor res = db.rawQuery("SELECT * FROM header WHERE RCP_NO = '" + thisRcpId + "';", null);
+
+        if (res.getCount() > 0) {
+            res.moveToFirst();
+
+            String grandtotalll = res.getString(res.getColumnIndex("SALES_AMOUNT"));
+            String taxx = res.getString(res.getColumnIndex("TOTAL_TAX"));
+
+            res.close();
+
+            BigDecimal bdGrandTotalll = new BigDecimal(grandtotalll).setScale(2, RoundingMode.HALF_UP);
+            BigDecimal bdTaxx = new BigDecimal(taxx).setScale(2, RoundingMode.HALF_UP);
+            BigDecimal bdTotalll = bdGrandTotalll.subtract(bdTaxx).setScale(2, RoundingMode.HALF_UP);
+
+            String totalll = bdTotalll.toString();
+
+            context.getObject().ASCII_CtrlAlignType(context.getState(),
+                    preDefiniation.AlignType.AT_LEFT.getValue());
+            context.getObject().ASCII_PrintString(context.getState(),0,
+                    0 ,0, 0, 0, "Total:  " + bdTotalll.toString(), "gb2312");
+            context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
+
+            context.getObject().ASCII_CtrlAlignType(context.getState(),
+                    preDefiniation.AlignType.AT_LEFT.getValue());
+            context.getObject().ASCII_PrintString(context.getState(),0,
+                    0 ,0, 0, 0, "GST:  " + bdTaxx.toString(), "gb2312");
+            context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
+
+            context.getObject().ASCII_CtrlAlignType(context.getState(),
+                    preDefiniation.AlignType.AT_LEFT.getValue());
+            context.getObject().ASCII_PrintString(context.getState(),0,
+                    0, 0, 0, 0, "--------------------------------",
+                    "gb2312");
+            context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
+
+            context.getObject().ASCII_CtrlAlignType(context.getState(),
+                    preDefiniation.AlignType.AT_LEFT.getValue());
+            context.getObject().ASCII_PrintString(context.getState(),0,
+                    0 ,0, 0, 0, "GRAND TOTAL:  " + grandtotalll, "gb2312");
+            context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
+        }
+    }
+
+    private void printReceiptItems(SQLiteDatabase db) {
+        Cursor res = db.rawQuery("SELECT * FROM detail WHERE RCP_NO = '" + thisRcpId + "';", null);
+
+        while(res.moveToNext()) {
+            String quantity = res.getString(res.getColumnIndex("QUANTITY"));
+            String prodname = res.getString(res.getColumnIndex("PROD_NAME"));
+            String pricet = res.getString(res.getColumnIndex("TOTAL_PRICE"));
+
+            BigDecimal bdPricet = new BigDecimal(pricet).setScale(2, RoundingMode.HALF_UP);
+
+            context.getObject().ASCII_CtrlAlignType(context.getState(),
+                    preDefiniation.AlignType.AT_LEFT.getValue());
+            context.getObject().ASCII_PrintString(context.getState(),0,
+                    0 ,0, 0, 0, quantity + "x  " + prodname, "gb2312");
+            context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
+
+            context.getObject().ASCII_CtrlAlignType(context.getState(),
+                    preDefiniation.AlignType.AT_RIGHT.getValue());
+            context.getObject().ASCII_PrintString(context.getState(),0,
+                    0 ,0, 0, 0, bdPricet.toString(), "gb2312");
+            context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
+        }
+
+        res.close();
+
+        context.getObject().ASCII_CtrlAlignType(context.getState(),
+                preDefiniation.AlignType.AT_LEFT.getValue());
+        context.getObject().ASCII_PrintString(context.getState(),0,
+                0, 0, 0, 0, "--------------------------------",
+                "gb2312");
+        context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
+    }
+
+    private void printReceiptPart1() {
+        context.getObject().ASCII_CtrlAlignType(context.getState(),
+                preDefiniation.AlignType.AT_CENTER.getValue());
+        context.getObject().ASCII_PrintString(context.getState(),0,
+                0 ,0, 0, 0, "Becon Enterprise Sdn Bhd", "gb2312");
+        context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
+        context.getObject().ASCII_CtrlAlignType(context.getState(),
+                preDefiniation.AlignType.AT_LEFT.getValue());
+        context.getObject().ASCII_PrintString(context.getState(),0,
+                0, 0, 0, 0, "11, 13, 15, Jalan Juruanalisis U1/35", "gb2312");
+        context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
+        context.getObject().ASCII_PrintString(context.getState(),0,
+                0, 0, 0, 0, "Hicom Glenmarie Industrial Park", "gb2312");
+        context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
+        context.getObject().ASCII_PrintString(context.getState(),0,
+                0, 0, 0, 0, "--------------------------------",
+                "gb2312");
+        context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
+    }
+
+    private void printReceiptPart2() {
+        context.getObject().ASCII_CtrlAlignType(context.getState(),
+                preDefiniation.AlignType.AT_CENTER.getValue());
+        context.getObject().ASCII_PrintString(context.getState(),0,
+                0 ,0, 0, 0, "TAX INVOICE", "gb2312");
+        context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
+
+        SimpleDateFormat sdfDate = new SimpleDateFormat("dd-MM-yyyy");//dd/MM/yyyy
+        Date now = new Date();
+        String strDate = sdfDate.format(now);
+
+        context.getObject().ASCII_CtrlAlignType(context.getState(),
+                preDefiniation.AlignType.AT_LEFT.getValue());
+        context.getObject().ASCII_PrintString(context.getState(),0,
+                0 ,0, 0, 0, "Date:  " + strDate, "gb2312");
+        context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
+
+        SimpleDateFormat sdfTime = new SimpleDateFormat("HH:mm:ss");//dd/MM/yyyy
+        Date nowTime = new Date();
+        String strTime = sdfDate.format(nowTime);
+
+        context.getObject().ASCII_CtrlAlignType(context.getState(),
+                preDefiniation.AlignType.AT_LEFT.getValue());
+        context.getObject().ASCII_PrintString(context.getState(),0,
+                0 ,0, 0, 0, "Time:  " + strTime, "gb2312");
+        context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
+
+        context.getObject().ASCII_CtrlAlignType(context.getState(),
+                preDefiniation.AlignType.AT_LEFT.getValue());
+        context.getObject().ASCII_PrintString(context.getState(),0,
+                0 ,0, 0, 0, "Emp:  Lock Bin Dog", "gb2312");
+        context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
+
+        context.getObject().ASCII_CtrlAlignType(context.getState(),
+                preDefiniation.AlignType.AT_LEFT.getValue());
+        context.getObject().ASCII_PrintString(context.getState(),0,
+                0 ,0, 0, 0, "POS:  " + posNo, "gb2312");
+        context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
+
+        context.getObject().ASCII_CtrlAlignType(context.getState(),
+                preDefiniation.AlignType.AT_LEFT.getValue());
+        context.getObject().ASCII_PrintString(context.getState(),0,
+                0 ,0, 0, 0, "RCP No:  " + thisRcpId, "gb2312");
+        context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
+
+        context.getObject().ASCII_PrintString(context.getState(),0,
+                0, 0, 0, 0, "--------------------------------",
+                "gb2312");
+        context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
     }
 
     public void connect() {
@@ -925,8 +1101,6 @@ public class PaymentActivity extends Activity {
             }
         }
     }
-
-
 
     public class PaymentMade {
         private int paymentType;
