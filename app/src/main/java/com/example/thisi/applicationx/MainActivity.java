@@ -50,8 +50,8 @@ extends AppCompatActivity implements IWsdl2CodeEvents {
 
         Employee loginOk = myDb.loginEmployee(username, password);
 
-        if(username.equals("@sys")) {
-            Intent intent = new Intent(this, MainMenuActivity.class);
+        if(username.equals("@@sys")) {
+            Intent intent = new Intent(this, SettingsActivity.class);
             intent.putExtra("isSys", true);
             finish();
             startActivity(intent);
@@ -84,7 +84,7 @@ extends AppCompatActivity implements IWsdl2CodeEvents {
             }
         }
         else {
-            showMessage("No server connection", "Please login as Sys and enter a server address in Settings");
+            showMessage("No server connection", "Please login as @@sys and enter a server address in Settings");
         }
     }
 

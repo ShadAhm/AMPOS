@@ -736,11 +736,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             Cursor res = db.rawQuery("SELECT * FROM " + EMPLOYEE_TABLE_NAME + " WHERE EMP_CODE = '" + username + "' AND EMP_PASSWORD = '" + password + "';", null);
             db.setTransactionSuccessful();
 
-            if(res.getCount() > 0) {
+            if(res.moveToFirst()) {
                 Employee employee = new Employee();
                 employee.EMP_CODE = res.getString(res.getColumnIndex("EMP_CODE"));
                 employee.EMP_NAME = res.getString(res.getColumnIndex("EMP_NAME"));
 
+                res.close();
                 return employee;
             }
             else {

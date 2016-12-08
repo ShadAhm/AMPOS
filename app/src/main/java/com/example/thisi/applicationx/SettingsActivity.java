@@ -91,8 +91,18 @@ public class SettingsActivity extends Activity implements AdapterView.OnItemSele
 
     public void onCancelClick(View view)
     {
-        Intent intent = new Intent(this, MainMenuActivity.class);
-        startActivity(intent);
+        Bundle b = getIntent().getExtras();
+        boolean isSys = b.getBoolean("isSys", false);
+
+        if(!isSys) {
+            Intent intent = new Intent(this, MainMenuActivity.class);
+            startActivity(intent);
+        }
+        else {
+            finish();
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+        }
     }
 
     public void onItemSelected(AdapterView<?> parent, View view,
