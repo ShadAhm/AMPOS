@@ -234,12 +234,20 @@ public class PaymentActivity extends Activity {
                     if(productMastar.TAX_01 == 1) {
                         if(productMastar.TAXCODE.equalsIgnoreCase("SR")) {
                             BigDecimal taxRate = new BigDecimal("0.6"); 
-                            tax = productMastar.multiply(taxRate).setScale(2, RoundingMode.CEILING); 
+                            tax = productMastar.UNIT_PRICE.multiply(taxRate).setScale(2, RoundingMode.CEILING); 
                         }
                         else if (productMastar.TAXCODE.equalsIgnoreCase("ZRL")) {
                             // 0 
                         }
                     }
+
+                    Price_Group priceGrp = dataHelper.getPriceGrpByProductAndCustomerCode(db, this.customer_code, newProductsCodesArray[i]); 
+
+                    if(priceGrp != null) {
+                        // read from defualt price 
+                    }
+
+
 
                     Suspend sus = new Suspend(); 
                     sus.COMPANY_CODE = this.companyCode;
