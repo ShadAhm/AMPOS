@@ -51,6 +51,8 @@ public class PaymentActivity extends Activity {
     private static String companyCode;
     private static String posNo;
     private static String outletCode;
+    private static String empCode;
+    private static String empName;
 
     // printer stuff
     public ApplicationContext context;
@@ -94,7 +96,9 @@ public class PaymentActivity extends Activity {
         default_price_field = prefs.getString("defaultprice", "PRICE_01");
         posNo = prefs.getString("posnumber", null);
         companyCode = prefs.getString("companycode", null);
-        outletCode = prefs.getString("outletcode", "BE221-00"); // todo remove this shit
+        outletCode = prefs.getString("outletcode", null);
+        empCode = prefs.getString("empcode", "EMPNULL");
+        empName = prefs.getString("empname", "EMPLOYEENULL");
     }
 
     private void setEnterKeyListenerToPaymentTextbox() {
@@ -549,7 +553,7 @@ public class PaymentActivity extends Activity {
                 Detail detl = new Detail();
                 detl.COMPANY_CODE = companyCode;
                 detl.OUTLET_CODE = outletCode;
-                detl.EMP_CODE = "fromlogin";
+                detl.EMP_CODE = empCode;
                 detl.POS_NO = posNo;
                 detl.SHIFT_NO = Integer.toString(shift_number);
                 detl.RCP_NO = rcp_id;
@@ -654,7 +658,7 @@ public class PaymentActivity extends Activity {
                     "VALUES " +
                     "('" + companyCode + "', " +
                     "'" + outletCode + "', " +
-                    "'011', " +
+                    "'" + empCode + "', " +
                     "'" + posNo + "', " +
                     "'" + Integer.toString(shiftNo) + "', " +
                     "'" + rcp_id + "', " +
@@ -728,7 +732,7 @@ public class PaymentActivity extends Activity {
                 "SELECT  " +
                 "suspend.COMPANY_CODE, " +
                 "suspend.OUTLET_CODE, " +
-                "'" + posNo + "', " +
+                "'" + empCode + "', " +
                 "suspend.POS_NO, " +
                 "suspend.SHIFT_NO, " +
                 "'" + rcp_id + "', " +
@@ -837,8 +841,8 @@ public class PaymentActivity extends Activity {
                 "VALUES (" +
                 "'" + companyCode + "', " +
                 "'" + outletCode + "', " +
+                "'" + empCode + "', " +
                 "'" + posNo + "', " +
-                "'011', " +
                 "'1', " +
                 "?, " +
                 "'S', " +
@@ -932,8 +936,6 @@ public class PaymentActivity extends Activity {
             BigDecimal bdGrandTotalll = new BigDecimal(grandtotalll).setScale(2, RoundingMode.HALF_UP);
             BigDecimal bdTaxx = new BigDecimal(taxx).setScale(2, RoundingMode.HALF_UP);
             BigDecimal bdTotalll = bdGrandTotalll.subtract(bdTaxx).setScale(2, RoundingMode.HALF_UP);
-
-            String totalll = bdTotalll.toString();
 
             context.getObject().ASCII_CtrlAlignType(context.getState(),
                     preDefiniation.AlignType.AT_LEFT.getValue());
@@ -1042,10 +1044,12 @@ public class PaymentActivity extends Activity {
                 0 ,0, 0, 0, "Time:  " + strTime, "gb2312");
         context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
 
+
+
         context.getObject().ASCII_CtrlAlignType(context.getState(),
                 preDefiniation.AlignType.AT_LEFT.getValue());
         context.getObject().ASCII_PrintString(context.getState(),0,
-                0 ,0, 0, 0, "Emp:  Lock Bin Dog", "gb2312");
+                0 ,0, 0, 0, "Emp:  " + empName, "gb2312");
         context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
 
         context.getObject().ASCII_CtrlAlignType(context.getState(),
