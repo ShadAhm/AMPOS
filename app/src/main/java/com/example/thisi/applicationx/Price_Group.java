@@ -8,6 +8,6 @@ public class Price_Group {
     public String PRICE_GRP_NAME;
     public String PROD_CODE;
     public BigDecimal PRICE;
-    public Date MODIFIED_DATE;
-    public Date MODIFIED_ID;
+    public String MODIFIED_DATE;
+    public String MODIFIED_ID;
 }
