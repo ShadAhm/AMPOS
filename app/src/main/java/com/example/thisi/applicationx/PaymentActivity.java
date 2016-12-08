@@ -531,8 +531,6 @@ public class PaymentActivity extends Activity {
 
                 db.execSQL(ssql);
             }
-
-
         }
     }
 
