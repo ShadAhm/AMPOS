@@ -151,15 +151,13 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
                     pctrl.DAYEND = true;
                     mydb.deleteAndInsertPOSControl(db, pctrl);
                     db.setTransactionSuccessful();
-
-                    finish(); 
-                    this.recreate();
                 } catch (SQLiteException e) {
                     e.printStackTrace();
                     showMessage("Error", e.getMessage());
                 } finally {
                     db.endTransaction();
                     db.close();
+                    checkShiftsLongOperation();
                 }
             } else {
                 showMessage("Error", "There are still orders on-hold");
@@ -194,12 +192,26 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
 
     @Override
     public void Wsdl2CodeFinished(String methodName, Object Data) {
-        this.recreate();
-        if(Data == "success") {
-            showMessage("Success", "Data has been synced to the server");
+        checkShiftsLongOperation();
+
+        DownloadDataResult ddr = new DownloadDataResult();
+        if(DownloadDataResult.class.isInstance(Data)) {
+           ddr = DownloadDataResult.class.cast(Data);
+        }
+
+        if(ddr != null && ddr.isSuccessful) {
+            if(ddr.productsDownloaded > 0 || ddr.priceGroupsDownloaded > 0 || ddr.customersDownloaded > 0) {
+                showMessage("Success", "Data has been synced to the server. \n\n" +
+                        "Customers : " + ddr.customersDownloaded + " \n" +
+                        "Products : " + ddr.productsDownloaded + " \n" +
+                        "Price Groups : " + ddr.priceGroupsDownloaded + " ");
+            }
+            else {
+                showMessage("No data retrieved", "This may be due to network connection, or timeout issues. Please try again later.");
+            }
         }
         else {
-            showMessage("Failed to sync data", "Please try again later");
+            showMessage("Error", "Please try again later (error: " + ddr.message + ")");
         }
     }
 
@@ -251,8 +263,9 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
 
     @Override
     public void UploadDataEndedRequest() {
+        checkShiftsLongOperation();
+
         uploadProgress.dismiss();
-        this.recreate();
     }
 
     public boolean thereExistSuspends() {

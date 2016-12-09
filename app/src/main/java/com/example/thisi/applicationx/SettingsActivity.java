@@ -92,7 +92,10 @@ public class SettingsActivity extends Activity implements AdapterView.OnItemSele
     public void onCancelClick(View view)
     {
         Bundle b = getIntent().getExtras();
-        boolean isSys = b.getBoolean("isSys", false);
+        boolean isSys = false;
+        if(b != null) {
+            isSys = b.getBoolean("isSys", false);
+        }
 
         if(!isSys) {
             Intent intent = new Intent(this, MainMenuActivity.class);

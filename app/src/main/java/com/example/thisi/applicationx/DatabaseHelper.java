@@ -327,16 +327,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public static final String POS_CONTROL_TABLE_NAME = "POS_control";
     public static final String POS_CONTROL_TABLE_CREATE = "CREATE TABLE " + POS_CONTROL_TABLE_NAME + "( " +
-            "COMPANY_CODE TEXT NOT NULL,  " +
-            "OUTLET_CODE TEXT NOT NULL,  " +
-            "POS_NO TEXT NOT NULL,  " +
-            "BUS_DATE TEXT NOT NULL, " +
+            "COMPANY_CODE TEXT, " +
+            "OUTLET_CODE TEXT,  " +
+            "POS_NO TEXT,  " +
+            "BUS_DATE TEXT, " +
             "SHIFT_NUMBER INT,  " +
             "EMP_CD TEXT, " +
             "LAST_RCP TEXT,  " +
             "LAST_SUSPEND_NUMBER TEXT,  " +
-            "REPRINT_COUNT INT NOT NULL,  " +
-            "DAYEND INT NOT NULL  " +
+            "REPRINT_COUNT INT,  " +
+            "DAYEND INT " +
             ");";
 
     public static final String SHIFT_MASTER_TABLE_NAME = "SHIFT_MASTER";
@@ -820,8 +820,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DELETE FROM POS_Control");
 
         ContentValues contentValues = new ContentValues();
-        contentValues.put("COMPANY_CODE", pctrl.COMPANY_CODE);
-        contentValues.put("OUTLET_CODE", pctrl.OUTLET_CODE);
+        contentValues.put("COMPANY_CODE", pctrl.COMPANY_CODE != null ? pctrl.COMPANY_CODE : "defnull");
+        contentValues.put("OUTLET_CODE", pctrl.OUTLET_CODE != null ? pctrl.OUTLET_CODE : "defnull");
         contentValues.put("POS_NO", pctrl.POS_NO);
         contentValues.put("BUS_DATE", pctrl.BUS_DATE);
         contentValues.put("SHIFT_NUMBER", pctrl.SHIFT_NUMBER);

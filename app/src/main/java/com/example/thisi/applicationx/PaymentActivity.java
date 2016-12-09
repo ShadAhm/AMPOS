@@ -160,7 +160,7 @@ public class PaymentActivity extends Activity {
 
                 for (String newProdCode : newProductsCodesArray) {
                     String selectFromPriceGroup =
-                    "SELECT product_master.prod_name, price_group.price, customer.customer_code, product_master.price_01 FROM product_master   " +
+                    "SELECT product_master.prod_name, price_group.price, customer.customer_code, product_master." + default_price_field + " FROM product_master   " +
                             "LEFT JOIN customer ON customer.price_grp_code = price_group.price_grp_code   " +
                             "LEFT JOIN price_group ON price_group.prod_code = product_master.prod_code   " +
                             "WHERE product_master.prod_code = '" + newProdCode + "' " +
@@ -1001,16 +1001,36 @@ public class PaymentActivity extends Activity {
         context.getObject().ASCII_CtrlAlignType(context.getState(),
                 preDefiniation.AlignType.AT_CENTER.getValue());
         context.getObject().ASCII_PrintString(context.getState(),0,
-                0 ,0, 0, 0, "Becon Enterprise Sdn Bhd", "gb2312");
-        context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
-        context.getObject().ASCII_CtrlAlignType(context.getState(),
-                preDefiniation.AlignType.AT_LEFT.getValue());
-        context.getObject().ASCII_PrintString(context.getState(),0,
-                0, 0, 0, 0, "11, 13, 15, Jalan Juruanalisis U1/35", "gb2312");
+                0 ,0, 0, 0, "DIAMOND PUBLIC", "gb2312");
         context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
         context.getObject().ASCII_PrintString(context.getState(),0,
-                0, 0, 0, 0, "Hicom Glenmarie Industrial Park", "gb2312");
+                0 ,0, 0, 0, "TUBE ICE TRADING", "gb2312");
         context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
+        context.getObject().ASCII_PrintString(context.getState(),0,
+                0, 0, 0, 0, "(001500992-V)", "gb2312");
+        context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
+        context.getObject().ASCII_PrintString(context.getState(),0,
+                0, 0, 0, 0, "(GST No. 001022943232)", "gb2312");
+        context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
+        context.getObject().ASCII_PrintString(context.getState(),0,
+                0, 0, 0, 0, "38, Jalan Kati Fu 9/F", "gb2312");
+        context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
+        context.getObject().ASCII_PrintString(context.getState(),0,
+                0, 0, 0, 0, "Taman Medan Mas", "gb2312");
+        context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
+
+        context.getObject().ASCII_PrintString(context.getState(),0,
+                0, 0, 0, 0, "Kg.Baru Seri Sg. Buloh", "gb2312");
+        context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
+
+        context.getObject().ASCII_PrintString(context.getState(),0,
+                0, 0, 0, 0, "4060 Shah Alam, Selangor", "gb2312");
+        context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
+
+        context.getObject().ASCII_PrintString(context.getState(),0,
+                0, 0, 0, 0, "Tel:012-2126307, 014-3376307", "gb2312");
+        context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
+
         context.getObject().ASCII_PrintString(context.getState(),0,
                 0, 0, 0, 0, "--------------------------------",
                 "gb2312");
@@ -1024,7 +1044,7 @@ public class PaymentActivity extends Activity {
                 0 ,0, 0, 0, "TAX INVOICE", "gb2312");
         context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
 
-        SimpleDateFormat sdfDate = new SimpleDateFormat("dd-MM-yyyy");//dd/MM/yyyy
+        SimpleDateFormat sdfDate = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");//dd/MM/yyyy
         Date now = new Date();
         String strDate = sdfDate.format(now);
 
@@ -1032,16 +1052,6 @@ public class PaymentActivity extends Activity {
                 preDefiniation.AlignType.AT_LEFT.getValue());
         context.getObject().ASCII_PrintString(context.getState(),0,
                 0 ,0, 0, 0, "Date:  " + strDate, "gb2312");
-        context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
-
-        SimpleDateFormat sdfTime = new SimpleDateFormat("HH:mm:ss");//dd/MM/yyyy
-        Date nowTime = new Date();
-        String strTime = sdfTime.format(nowTime);
-
-        context.getObject().ASCII_CtrlAlignType(context.getState(),
-                preDefiniation.AlignType.AT_LEFT.getValue());
-        context.getObject().ASCII_PrintString(context.getState(),0,
-                0 ,0, 0, 0, "Time:  " + strTime, "gb2312");
         context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
 
         context.getObject().ASCII_CtrlAlignType(context.getState(),

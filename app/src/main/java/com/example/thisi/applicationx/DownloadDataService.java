@@ -2,12 +2,15 @@ package com.example.thisi.applicationx;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 
 import org.ksoap2.serialization.SoapObject;
 
 import java.math.BigDecimal;
+import java.net.HttpURLConnection;
 import java.net.InetAddress;
+import java.net.URL;
 
 /**
  * Created by thisi on 11/5/2016.
@@ -23,40 +26,43 @@ public class DownloadDataService extends Service1 {
     }
 
     public void DownloadDataAsync() throws Exception {
-        new AsyncTask<Void, Void, Object>() {
+        new AsyncTask<Void, Void, DownloadDataResult>() {
             @Override
             protected void onPreExecute() {
                 eventHandler.Wsdl2CodeStartedRequest();
             }
 
             @Override
-            protected Object doInBackground(Void... params) {
-                Object o = null;
+            protected DownloadDataResult doInBackground(Void... params) {
+                DownloadDataResult ddr = new DownloadDataResult();
                 SQLiteDatabase db = dataHelper.getReadableDatabase();
                 db.beginTransaction();
 
                 try {
                     DeleteExistingData(db);
-                    DownloadCustomers(db);
-                    DownloadProduct_Master(db);
-                    DownloadPrice_Group(db);
-
+                    int customersDownloaded = DownloadCustomers(db);
+                    int productsDownloaded = DownloadProduct_Master(db);
+                    int priceGroupsDownloaded = DownloadPrice_Group(db);
                     db.setTransactionSuccessful();
-                    o = "success";
 
+                    ddr.isSuccessful = true;
+                    ddr.customersDownloaded = customersDownloaded;
+                    ddr.productsDownloaded = productsDownloaded;
+                    ddr.priceGroupsDownloaded = priceGroupsDownloaded;
+                    ddr.message = "Successfully downloaded data";
                 } catch (Exception e) {
                     e.printStackTrace();
-                    o = "failure";
+                    ddr.isSuccessful = false;
+                    ddr.message = e.getMessage();
                 } finally {
                     db.endTransaction();
                     db.close();
+                    return ddr;
                 }
-
-                return o;
             }
 
             @Override
-            protected void onPostExecute(Object result) {
+            protected void onPostExecute(DownloadDataResult result) {
                 eventHandler.Wsdl2CodeEndedRequest();
                 if (result != null) {
                     eventHandler.Wsdl2CodeFinished("SQLResult", result);
@@ -140,7 +146,7 @@ public class DownloadDataService extends Service1 {
                 dataHelper.insertCustomer(db, custs[i]);
             }
 
-            return 0;
+            return custs.length;
         }
         return 0;
     }
@@ -157,7 +163,7 @@ public class DownloadDataService extends Service1 {
                 dataHelper.insertProductMaster(db, prods[i]);
             }
 
-            return 0;
+            return prods.length;
         }
         return 0;
     }
@@ -174,7 +180,7 @@ public class DownloadDataService extends Service1 {
             for (int i = 0; i < pgroups.length; i++) {
                 dataHelper.insertprice_group(db, pgroups[i]);
             }
-            return 0;
+            return pgroups.length;
         }
         return 0;
     }

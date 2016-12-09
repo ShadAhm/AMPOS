@@ -1,5 +1,6 @@
 package com.example.thisi.applicationx;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -36,7 +37,7 @@ extends AppCompatActivity implements IWsdl2CodeEvents {
                 DownloadEmployees();
         }
     }
-
+    ProgressDialog downloadProgress;
     public void onLogin(View view) {
         SharedPreferences prefs = this.getSharedPreferences("com.example.thisi.applicationx", Context.MODE_PRIVATE);
         prefs.edit().putString("empcode", null).apply();
@@ -117,17 +118,14 @@ extends AppCompatActivity implements IWsdl2CodeEvents {
     @Override
     public void Wsdl2CodeStartedRequest() {
         enableDisableControls(false);
+        downloadProgress = new ProgressDialog(this);
+        downloadProgress.setCancelable(false); // disable dismiss by tapping outside of the dialog
+        downloadProgress.show();
     }
 
     @Override
     public void Wsdl2CodeFinished(String methodName, Object Data) {
-        if(Data == "success") {
-            enableDisableControls(true);
-        }
-        else {
-            showMessage("System unavailable", "Please hit Refresh and try again later");
-            enableDisableControls(false);
-        }
+        downloadProgress.dismiss();
     }
 
     @Override
@@ -137,7 +135,7 @@ extends AppCompatActivity implements IWsdl2CodeEvents {
 
     @Override
     public void Wsdl2CodeEndedRequest() {
-
+        enableDisableControls(true);
     }
 
     private void enableDisableControls(boolean enable) {

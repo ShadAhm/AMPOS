@@ -289,7 +289,7 @@ public class OrderActivity extends Activity {
             crossableProducts.addToList(productCode);
         }
 
-        String selectFromPriceGroup = "SELECT product_master.prod_name, price_group.price, customer.customer_code, product_master.price_01 FROM product_master   " +
+        String selectFromPriceGroup = "SELECT product_master.prod_name, price_group.price, customer.customer_code, product_master." + default_price_field + " FROM product_master   " +
                 "LEFT JOIN customer ON customer.price_grp_code = price_group.price_grp_code   " +
                 "LEFT JOIN price_group ON price_group.prod_code = product_master.prod_code   " +
                 "WHERE product_master.prod_code = '" + productCode + "' " +
@@ -374,6 +374,7 @@ public class OrderActivity extends Activity {
     }
 
     private void reDrawTable() {
+        latest_row_after_suspend_inserts = 0;
         TableLayout tableLayout = (TableLayout) findViewById(R.id.tablelayout);
         tableLayout.removeAllViews();
 
