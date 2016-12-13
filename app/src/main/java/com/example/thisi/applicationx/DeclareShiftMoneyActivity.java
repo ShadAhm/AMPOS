@@ -52,14 +52,17 @@ public class DeclareShiftMoneyActivity extends Activity {
             }
 
             EditText textDeclareShiftMoney = (EditText) findViewById(R.id.textDeclareShiftMoney);
+
+            String shiftmoney = "0";
             if (textDeclareShiftMoney.getText() == null || textDeclareShiftMoney.getText().toString() == null || textDeclareShiftMoney.getText().toString().isEmpty())
-                return;
+                shiftmoney = "0";
+            else
+                shiftmoney = textDeclareShiftMoney.getText().toString();
 
             SharedPreferences prefs = this.getSharedPreferences("com.example.thisi.applicationx", Context.MODE_PRIVATE);
             String posNo = prefs.getString("posnumber", null);
 
-            String floatAmount = textDeclareShiftMoney.getText().toString();
-            BigDecimal enteredAmount = new BigDecimal(floatAmount);
+            BigDecimal enteredAmount = new BigDecimal(shiftmoney);
             BigDecimal correctAmount = myDb.supposedEndShiftMoney(db, latestOpenShift.SHIFT_START_AMT, latestOpenShift.SHIFT_NUMBER, latestOpenShift.BUS_DATE, posNo);
 
             if (enteredAmount.compareTo(correctAmount) == 0) {

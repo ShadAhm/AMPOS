@@ -30,7 +30,7 @@ public class EnterFloatAmountActivity extends Activity {
         addFilterToTextBox();
     }
 
-   private void addFilterToTextBox() {
+    private void addFilterToTextBox() {
         EditText txtFloatAmount = (EditText) findViewById(R.id.textFloatAmount);
         txtFloatAmount.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(10, 2)});
     }
@@ -46,14 +46,16 @@ public class EnterFloatAmountActivity extends Activity {
             int newShiftNo = 1;
             if(latestShift != null)
             {
-                newShiftNo = latestShift.SHIFT_NUMBER + 1; 
+                newShiftNo = latestShift.SHIFT_NUMBER + 1;
             }
 
             EditText txtFloatAmount = (EditText) findViewById(R.id.textFloatAmount);
-            if (txtFloatAmount.getText() == null || txtFloatAmount.getText().toString() == null || txtFloatAmount.getText().toString().isEmpty())
-                return;
 
-            String floatAmount = txtFloatAmount.getText().toString();
+            String floatAmount = "0";
+            if (txtFloatAmount.getText() == null || txtFloatAmount.getText().toString() == null || txtFloatAmount.getText().toString().isEmpty())
+                floatAmount = "0";
+            else
+                floatAmount = txtFloatAmount.getText().toString();
 
             BigDecimal bd = new BigDecimal(floatAmount);
 
@@ -63,13 +65,13 @@ public class EnterFloatAmountActivity extends Activity {
             String outletCode = prefs.getString("outletcode", "errorUndefined");
 
             Shift_Master newShift = new Shift_Master();
-            newShift.COMPANY_CODE = companyCode; 
+            newShift.COMPANY_CODE = companyCode;
             newShift.OUTLET_CODE = outletCode;
-            newShift.POS_NO = posNo; 
-            newShift.BUS_DATE = todaysDateInString; 
-            newShift.SHIFT_NUMBER = newShiftNo; 
-            newShift.SHIFT_STATUS = "O"; 
-            newShift.SHIFT_START_AMT = bd; 
+            newShift.POS_NO = posNo;
+            newShift.BUS_DATE = todaysDateInString;
+            newShift.SHIFT_NUMBER = newShiftNo;
+            newShift.SHIFT_STATUS = "O";
+            newShift.SHIFT_START_AMT = bd;
             newShift.SHIFT_END_AMT = new BigDecimal("0.00");
 
             myDb.insertShiftMaster(db, newShift);
@@ -77,8 +79,8 @@ public class EnterFloatAmountActivity extends Activity {
             db.setTransactionSuccessful();
 
             Toast.makeText(getApplicationContext(), "Shift started", Toast.LENGTH_SHORT).show();
-            
-            finish(); 
+
+            finish();
             Intent intent = new Intent(this, MainMenuActivity.class);
             startActivity(intent);
         } catch (SQLiteException e) {
@@ -90,7 +92,7 @@ public class EnterFloatAmountActivity extends Activity {
     }
 
     public void onEnterFloatAmountCancel(View view) {
-        finish(); 
+        finish();
         Intent intent = new Intent(this, MainMenuActivity.class);
         startActivity(intent);
     }
