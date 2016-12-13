@@ -36,7 +36,7 @@ public class OrderActivity extends Activity {
     final String evenRowColor = "#E0FFFF";
     final String oddRowColor = "#00EEEE";
 
-    CrossableProducts crossableProducts; 
+    CrossableProducts crossableProducts;
 
     DatabaseHelper dataHelper;
 
@@ -48,13 +48,13 @@ public class OrderActivity extends Activity {
         setEnterKeyListenerToProductCodeTextbox();
 
         Bundle b = getIntent().getExtras();
-        initializeVariables(b); 
+        initializeVariables(b);
 
         addSuspendProductsToView();
 
         String newProductsCodes = b.getString("new_products_codes");
         if(newProductsCodes != null && newProductsCodes != "") {
-            crossableProducts.addSemicolonDelimitedToList(newProductsCodes); 
+            crossableProducts.addSemicolonDelimitedToList(newProductsCodes);
             addNewProductMastersToView();
         }
 
@@ -62,17 +62,17 @@ public class OrderActivity extends Activity {
     }
 
     private void initializeVariables(Bundle b) {
-        this.crossableProducts = new CrossableProducts(); 
+        this.crossableProducts = new CrossableProducts();
 
         customer_code = b.getString("customer_code");
         price_group_code = b.getString("price_group_code");
 
         SharedPreferences prefs = this.getSharedPreferences("com.example.thisi.applicationx", Context.MODE_PRIVATE);
         default_price_field = prefs.getString("defaultprice", "PRICE_01");
-        posNo = prefs.getString("posnumber", null);    
+        posNo = prefs.getString("posnumber", null);
         companyCode = prefs.getString("companycode", null);
 
-        latest_row_after_suspend_inserts = 0; 
+        latest_row_after_suspend_inserts = 0;
 
         dataHelper = DatabaseHelper.getHelper(this);
 
@@ -83,7 +83,7 @@ public class OrderActivity extends Activity {
             onOrderErrorCantContinue(errorCantContinueType.COMCODE);
         }
         else if (default_price_field == null || default_price_field.isEmpty()) {
-            onOrderErrorCantContinue(errorCantContinueType.DEFAULTPRICE); 
+            onOrderErrorCantContinue(errorCantContinueType.DEFAULTPRICE);
         }
     }
 
@@ -91,22 +91,22 @@ public class OrderActivity extends Activity {
         Button buttonPayment = (Button) findViewById(R.id.buttonPayment);
         buttonPayment.setEnabled(false);
 
-        String whatsNotGood = null; 
+        String whatsNotGood = null;
 
         switch(errType) {
-            case POS : whatsNotGood = "POS number"; 
-                break; 
+            case POS : whatsNotGood = "POS number";
+                break;
             case COMCODE : whatsNotGood = "Company Code";
                 break;
             case DEFAULTPRICE : whatsNotGood = "Default Price";
                 break;
         }
 
-        showMessage("Payment Disabled", "Proceed to Payment has been disabled due to incomplete settings. Go to Settings then select a " + whatsNotGood); 
+        showMessage("Payment Disabled", "Proceed to Payment has been disabled due to incomplete settings. Go to Settings then select a " + whatsNotGood);
     }
 
     private enum errorCantContinueType {
-        POS, 
+        POS,
         COMCODE,
         DEFAULTPRICE
     }
@@ -140,7 +140,7 @@ public class OrderActivity extends Activity {
                     i++;
 
                     // Read columns data
-                    int outlet_id = i; 
+                    int outlet_id = i;
                     String nameColumnValue = cursor.getString(cursor.getColumnIndex("PROD_NAME"));
                     String rmColumnValue = cursor.getString(cursor.getColumnIndex("PRICE"));
 
@@ -237,14 +237,14 @@ public class OrderActivity extends Activity {
 
     private void searchProductCodeFromTextbox(boolean isBarcodeReader) {
         EditText textProductCode = (EditText) findViewById(R.id.textProductCode);
+
         String productcode = textProductCode.getText().toString();
 
         textProductCode.setText(null);
 
-        if (isBarcodeReader) {
-            productcode = productcode.replaceAll("\\n", "");
-            productcode = productcode.replaceAll("\\r", "");
-        }
+        productcode = productcode.trim();
+        productcode = productcode.replaceAll("\\n", "");
+        productcode = productcode.replaceAll("\\r", "");
 
         searchAndAddProductCode(productcode, true);
     }
@@ -289,6 +289,7 @@ public class OrderActivity extends Activity {
             crossableProducts.addToList(productCode);
         }
 
+        // Edited by Eddie 11/12/2016, change the sequence of the sql query
         String selectFromPriceGroup = "SELECT product_master.prod_name, price_group.price, customer.customer_code, product_master." + default_price_field + " FROM product_master   " +
                 "LEFT JOIN customer ON customer.price_grp_code = price_group.price_grp_code   " +
                 "LEFT JOIN price_group ON price_group.prod_code = product_master.prod_code   " +
@@ -369,7 +370,7 @@ public class OrderActivity extends Activity {
     }
 
     private void removeProductFromView(String productCode) {
-        crossableProducts.removeOneFromList(productCode); 
+        crossableProducts.removeOneFromList(productCode);
         reDrawTable();
     }
 

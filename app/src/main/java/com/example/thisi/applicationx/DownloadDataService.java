@@ -329,14 +329,14 @@ public class DownloadDataService extends Service1 {
                 customer.IsWHOLESALES = Boolean.getBoolean(pii.getProperty(14).toString());
                 customer.IsActive = Boolean.getBoolean(pii.getProperty(15).toString());
                 customer.IsMember = Boolean.getBoolean(pii.getProperty(16).toString());
-                customer.BYSMS = Boolean.getBoolean(pii.getProperty(17).toString());
-                customer.BYEMAIL = Boolean.getBoolean(pii.getProperty(18).toString());
-                customer.MODIFIED_ID = pii.getProperty(19).toString();
-                customer.TEMP_CUSTOMER_CODE = pii.getProperty(20).toString();
-                customer.GST_REG_NO = pii.getProperty(21).toString();
-                customer.IsEMPLOYEE = Boolean.getBoolean(pii.getProperty(22).toString());
-                customer.PRICE_GRP_CODE = pii.getProperty(23).toString();
-                customer.Outlet_Code = pii.getProperty(24).toString();
+                customer.BYSMS = Boolean.getBoolean(pii.getProperty(18).toString());
+                customer.BYEMAIL = Boolean.getBoolean(pii.getProperty(19).toString());
+                customer.MODIFIED_ID = pii.getProperty(20).toString();
+                customer.TEMP_CUSTOMER_CODE = pii.getProperty(21).toString();
+                customer.GST_REG_NO = pii.getProperty(22).toString();
+                customer.IsEMPLOYEE = Boolean.getBoolean(pii.getProperty(23).toString());
+                customer.PRICE_GRP_CODE = pii.getProperty(24).toString();
+                customer.Outlet_Code = pii.getProperty(25).toString();
 
                 customers[i] = customer;
             }

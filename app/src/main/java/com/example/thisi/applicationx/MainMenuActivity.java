@@ -123,9 +123,13 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
     public void onUploadDataClick(View view) {
         SharedPreferences prefs = this.getSharedPreferences("com.example.thisi.applicationx", Context.MODE_PRIVATE);
         String serverConne = prefs.getString("serverconnection", null);
+        String posNo = prefs.getString("posnumber", null);
+        String companyCode = prefs.getString("companycode", null);
+        String outletCode = prefs.getString("outletcode", null);
+        String empCode = prefs.getString("empcode", "EMPNULL");
 
         if(serverConne != null) {
-            UploadDataService uds = new UploadDataService(this, serverConne, this.getApplicationContext());
+            UploadDataService uds = new UploadDataService(this, serverConne, this.getApplicationContext(), companyCode, posNo, outletCode, empCode);
 
             if (!thereExistSuspends()) {
                 try {

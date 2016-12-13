@@ -45,7 +45,7 @@ public class PaymentActivity extends Activity {
     private static Boolean isPaymentComplete;
     private static ArrayList<PaymentMade> paymentsMade;
 
-    private static String thisRcpId; 
+    private static String thisRcpId;
 
     // from settings :
     private static String companyCode;
@@ -88,7 +88,7 @@ public class PaymentActivity extends Activity {
 
         paymentsMade = new ArrayList<PaymentMade>();
 
-        thisRcpId = null; 
+        thisRcpId = null;
 
         isPaymentComplete = false;
 
@@ -160,11 +160,11 @@ public class PaymentActivity extends Activity {
 
                 for (String newProdCode : newProductsCodesArray) {
                     String selectFromPriceGroup =
-                    "SELECT product_master.prod_name, price_group.price, customer.customer_code, product_master." + default_price_field + " FROM product_master   " +
-                            "LEFT JOIN customer ON customer.price_grp_code = price_group.price_grp_code   " +
-                            "LEFT JOIN price_group ON price_group.prod_code = product_master.prod_code   " +
-                            "WHERE product_master.prod_code = '" + newProdCode + "' " +
-                            "AND customer.customer_code = '" + customer_code + "' ";
+                            "SELECT product_master.prod_name, price_group.price, customer.customer_code, product_master." + default_price_field + " FROM product_master   " +
+                                    "LEFT JOIN customer ON customer.price_grp_code = price_group.price_grp_code   " +
+                                    "LEFT JOIN price_group ON price_group.prod_code = product_master.prod_code   " +
+                                    "WHERE product_master.prod_code = '" + newProdCode + "' " +
+                                    "AND customer.customer_code = '" + customer_code + "' ";
 
                     Cursor cursor1 = db.rawQuery(selectFromPriceGroup, null);
                     int cursor1RowCount = cursor1.getCount();
@@ -218,7 +218,7 @@ public class PaymentActivity extends Activity {
     }
 
     public void onHoldOrder(View view) {
-        holdOrderNew(); 
+        holdOrderNew();
     }
 
     private void holdOrderNew() {
@@ -278,7 +278,7 @@ public class PaymentActivity extends Activity {
                         }
                     }
 
-                    Suspend sus = new Suspend(); 
+                    Suspend sus = new Suspend();
                     sus.COMPANY_CODE = this.companyCode;
                     sus.OUTLET_CODE = this.outletCode;
                     sus.POS_NO = this.posNo;
@@ -332,7 +332,7 @@ public class PaymentActivity extends Activity {
                     sus.PROMOSOURCECODE = null;
                     sus.PROMOCHANGEPRICE = BigDecimal.ZERO;
 
-                    dataHelper.insertSuspend(db, sus); 
+                    dataHelper.insertSuspend(db, sus);
                 }
 
                 db.beginTransaction();
@@ -369,7 +369,7 @@ public class PaymentActivity extends Activity {
 
             EditText editTextPayment = (EditText) findViewById(R.id.editTextPayment);
 
-            if (editTextPayment.getText() == null || editTextPayment.getText().toString() == null || editTextPayment.getText().toString().isEmpty())
+            if (editTextPayment.getText().toString() == "" || editTextPayment.getText().toString() == null || editTextPayment.getText().toString().isEmpty())
                 return;
 
             String amountPaid = editTextPayment.getText().toString();
@@ -466,7 +466,7 @@ public class PaymentActivity extends Activity {
 
             db.setTransactionSuccessful();
 
-            this.thisRcpId = rcp_id; 
+            this.thisRcpId = rcp_id;
         } catch (SQLiteException e) {
             e.printStackTrace();
         }
@@ -490,10 +490,10 @@ public class PaymentActivity extends Activity {
             res.close();
         }
 
-        String ssql = "UPDATE HEADER SET SALES_AMOUNT = " + totPrice + " WHERE RCP_NO = '" + rcp_id + "'";
+        String ssql0 = "UPDATE HEADER SET SALES_AMOUNT = " + totPrice + " WHERE RCP_NO = '" + rcp_id + "'";
         String ssql1 = "UPDATE HEADER SET TOTAL_TAX = " + totTax + " WHERE RCP_NO = '" + rcp_id + "'";
 
-        db.execSQL(ssql);
+        db.execSQL(ssql0);
         db.execSQL(ssql1);
     }
 
@@ -610,8 +610,9 @@ public class PaymentActivity extends Activity {
                     paymentName = "Cash";
                     break;
                 case 1:
-                    paymentCode = "CARD";
-                    paymentName = "Credit Card";
+                    // Edited by Eddie 11/12/2016, change credit card to credit payment
+                    paymentCode = "CREDIT";
+                    paymentName = "Account";
                     break;
                 default:
                     paymentCode = "CASH";
@@ -677,11 +678,11 @@ public class PaymentActivity extends Activity {
                     "null, " +
                     "" + paymentsMade.get(i).getPrice().toString() + ", " +
                     "" + changeAmountInsertString + ", " +
-                    "" + paymentsMade.get(i).getPrice().toString() + ", " +
+                    "" + total + ", " + // Edited by Eddie 11/12/2016, change the tender to total, initial was same as payment amount
                     "'', " +
                     "null, " +
                     "'" + todaysDateInString + "', " + // bus date
-                    "null, " +
+                    "'" + empCode + ", " + // Edited by Eddie 11/12/2016, make the field become employee code instead of null
                     "0, " +
                     "1); ";
 
@@ -775,6 +776,33 @@ public class PaymentActivity extends Activity {
     }
 
     private String insertHeader(SQLiteDatabase db) {
+
+        // Edited by Eddie 11/12/2016, generate receipt number, begin
+        String receiptNo = "";
+        String queryLastReceiptNo = "SELECT last_rcp FROM pos_control WHERE company_code = '" + companyCode + "' AND outlet_code = '" + outletCode + "';";
+        Cursor curs = db.rawQuery(queryLastReceiptNo, null);
+        receiptNo = curs.getString(curs.getColumnIndex("LAST_RCP"));
+
+        if (receiptNo == null || receiptNo == ""){
+            receiptNo = "0000001";
+        }
+        else if (receiptNo == "9999999") {
+            // ************************************
+            // need to show a message box "Receipt number has run out, please contact system administrator."
+        }
+        else {
+            String tempRcp = String.valueOf(Integer.valueOf(receiptNo) + 1);
+
+            while (tempRcp.length() < 7) {
+                tempRcp = "0" + tempRcp;
+            }
+            receiptNo = tempRcp;
+            curs.close();
+        }
+
+        // Edited by Eddie 11/12/2016, end
+
+        /*
         String uuid = "";
         boolean uuidAlreadyExist = true;
 
@@ -792,12 +820,13 @@ public class PaymentActivity extends Activity {
                 uuidAlreadyExist = false;
                 curs.close();
             }
-        }
+        }*/
+        // Edited by Eddie 11/12/2016, end
 
         String todaysDateInString = new SimpleDateFormat("yyyyMMdd").format(new Date());
         String todaysTimeInString = new SimpleDateFormat("HHmm").format(new Date());
         String ssql = "INSERT INTO header ( " +
-                " COMPANY_CODE, " +
+                "COMPANY_CODE, " +
                 "OUTLET_CODE, " +
                 "EMP_CODE, " +
                 "POS_NO, " +
@@ -880,10 +909,15 @@ public class PaymentActivity extends Activity {
                 "null, " +
                 "1); ";
 
-        String[] objs = new String[]{uuid, total.toString(), customer_code};
+        // Edited by Eddie 11/12/2016, update last receipt number to pos control
+        String updatePOSControl = "UPDATE pos_control SET last_rcp = '" + receiptNo + "', emp_cd = '" + empCode + "' WHERE company_code = '" + companyCode + "' and outlet_code = '" + outletCode + "' and pos_no = '" + posNo + "';";
+        db.execSQL(updatePOSControl);
+        // Edited by Eddie 11/12/2016, end
+
+        String[] objs = new String[]{receiptNo, total.toString(), customer_code}; // Edited by Eddie 11/12/2016, changed uuid to receiptNo
         db.execSQL(ssql, objs);
 
-        return uuid;
+        return receiptNo; // Edited by Eddie 11/12/2016, changed uuid to receiptNo
     }
 
     public BigDecimal getCumulativeTotalPaymentsMade() {
@@ -1133,5 +1167,3 @@ public class PaymentActivity extends Activity {
 
     }
 }
-
-
