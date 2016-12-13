@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -25,14 +26,19 @@ public class EnterCustomerCodeActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_entercustomercode);
-
+        setEnterKeyListenerToProductCodeTextbox();
         myDb = DatabaseHelper.getHelper(this);
     }
 
     public void onCustomerCodeOK(View view) {
+        searchCustomerCode();
+    }
+
+    private void searchCustomerCode() {
         EditText customerCodeTextbox = (EditText)findViewById(R.id.textCustomerCode);
 
-        String custCode = customerCodeTextbox.getText().toString();
+        // Edited by Eddie 11/12/2016, add trim()
+        String custCode = customerCodeTextbox.getText().toString().trim();
 
         String price_grp_code = "";
         boolean ccExist = false;
@@ -89,5 +95,21 @@ public class EnterCustomerCodeActivity extends Activity {
 
         builder.show();
     }
+
+    private void setEnterKeyListenerToProductCodeTextbox() {
+        EditText textProductCode = (EditText) findViewById(R.id.textCustomerCode);
+        textProductCode.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_F5) {
+                    // barcode scanner
+                    searchCustomerCode();
+                    return true;
+                }
+                return false;
+            }
+        });
+    }
+
 
 }
