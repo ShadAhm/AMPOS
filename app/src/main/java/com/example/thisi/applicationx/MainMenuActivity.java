@@ -309,6 +309,7 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
                     String companyCode = _sp.getString("companycode", null);
 
                     POS_Control newPostControl = new POS_Control();
+                    newPostControl.LAST_RCP = "0000000";
                     newPostControl.COMPANY_CODE = companyCode;
                     newPostControl.OUTLET_CODE = companyCode;
                     newPostControl.POS_NO = posNo;

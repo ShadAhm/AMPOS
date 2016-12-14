@@ -10,14 +10,7 @@ import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.TextView;
-
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
-
-/**
- * Created by thisi on 10/24/2016.
- */
+import android.widget.Toast;
 
 public class EnterCustomerCodeActivity extends Activity {
     DatabaseHelper myDb;
@@ -28,31 +21,28 @@ public class EnterCustomerCodeActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_entercustomercode);
         custCodeTextbox = (EditText)findViewById(R.id.textCustomerCode);
-        setEnterKeyListenerToProductCodeTextbox();
+        setEnterKeyListenerToCustomerCodeTextbox();
         myDb = DatabaseHelper.getHelper(this);
     }
 
-    public void onCustomerCodeOK(View view) {
+    public void onCustomerCodeOK(View view) { // Edited by Eddie 14/12/2016,
         searchCustomerCode();
     }
 
     private void searchCustomerCode() {
-        String custCode = custCodeTextbox.getText().toString();
-
-        custCode = custCode.trim();
-        custCode = custCode.replaceAll("\\n", "");
-        custCode = custCode.replaceAll("\\r", "");
+        String customerCode = custCodeTextbox.getText().toString().trim().replaceAll("\\n|\\t|\\r| ","");
 
         String price_grp_code = "";
         boolean ccExist = false;
 
         myDb = DatabaseHelper.getHelper(this);
         SQLiteDatabase db = myDb.getReadableDatabase();
+
         // Start the transaction.
         db.beginTransaction();
 
         try {
-            String selectQuery = "SELECT * FROM customer WHERE CUSTOMER_CODE = '" + custCode + "';";
+            String selectQuery = "SELECT * FROM customer WHERE CUSTOMER_CODE = '" + customerCode + "';"; // Edited by Eddie 14/12/2016, change from custCode > customerCode
 
             Cursor cursor = db.rawQuery(selectQuery, null);
 
@@ -74,12 +64,13 @@ public class EnterCustomerCodeActivity extends Activity {
         }
 
         if(!ccExist) {
-            showMessage("Error", "Customer does not exist!");
+            showMessage("Error", "Customer " + customerCode + " does not exist!");
+            custCodeTextbox.setText(null);
         }
         else {
             finish();
             Intent intent = new Intent(this, OrderActivity.class);
-            intent.putExtra("customer_code", custCode);
+            intent.putExtra("customer_code", customerCode); // Edited by Eddie 14/12/2016, change from custCode > customerCode
             intent.putExtra("price_group_code", price_grp_code);
             startActivity(intent);
         }
@@ -99,15 +90,21 @@ public class EnterCustomerCodeActivity extends Activity {
         builder.show();
     }
 
-    private void setEnterKeyListenerToProductCodeTextbox() {
-        EditText textProductCode = (EditText) findViewById(R.id.textCustomerCode);
-        textProductCode.setOnKeyListener(new View.OnKeyListener() {
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event){
+            final EditText mEditText = (EditText) findViewById(R.id.textCustomerCode);
+            if (!mEditText.hasFocus()) {
+                mEditText.requestFocus();
+                mEditText.onKeyDown(keyCode, event);
+            }
+            return super.onKeyDown(keyCode, event);
+    }
+
+    private void setEnterKeyListenerToCustomerCodeTextbox() {
+        custCodeTextbox.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
-                        (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                //event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_F5) {
-                    // barcode scanner
+                if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
                     searchCustomerCode();
                     return true;
                 }
@@ -115,6 +112,5 @@ public class EnterCustomerCodeActivity extends Activity {
             }
         });
     }
-
 
 }

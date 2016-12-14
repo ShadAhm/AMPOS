@@ -456,13 +456,15 @@ public class PaymentActivity extends Activity {
             String todaysDateInString = new SimpleDateFormat("yyyyMMdd").format(new Date());
             Shift_Master currentShift = dataHelper.lookForOpenShiftsAtDate(db, todaysDateInString);
 
-            String rcp_id = insertHeader(db);
-            insertDetailFromSuspend(db, rcp_id);
-            insertDetailFromProducts1(db, rcp_id, currentShift.SHIFT_NUMBER);
-            insertPayment(db, rcp_id, currentShift.SHIFT_NUMBER);
-            updateHeader(db, rcp_id);
+            String rcp_id = insertHeader(db, currentShift.SHIFT_NUMBER);
 
-            int op = db.delete("suspend", "customer_code == '" + customer_code + "'",null);
+            if(!rcp_id.equalsIgnoreCase("noposcontrol")) {
+                insertDetailFromSuspend(db, rcp_id);
+                insertDetailFromProducts1(db, rcp_id, currentShift.SHIFT_NUMBER);
+                insertPayment(db, rcp_id, currentShift.SHIFT_NUMBER);
+                updateHeader(db, rcp_id);
+                db.delete("suspend", "customer_code == '" + customer_code + "'", null);
+            }
 
             db.setTransactionSuccessful();
 
@@ -682,7 +684,7 @@ public class PaymentActivity extends Activity {
                     "'', " +
                     "null, " +
                     "'" + todaysDateInString + "', " + // bus date
-                    "'" + empCode + ", " + // Edited by Eddie 11/12/2016, make the field become employee code instead of null
+                    "'" + empCode + "', " + // Edited by Eddie 11/12/2016, make the field become employee code instead of null
                     "0, " +
                     "1); ";
 
@@ -775,149 +777,123 @@ public class PaymentActivity extends Activity {
         db.execSQL(ssql);
     }
 
-    private String insertHeader(SQLiteDatabase db) {
-
-        // Edited by Eddie 11/12/2016, generate receipt number, begin
+    private String insertHeader(SQLiteDatabase db, int shiftNo) {
         String receiptNo = "";
-        String queryLastReceiptNo = "SELECT last_rcp FROM pos_control WHERE company_code = '" + companyCode + "' AND outlet_code = '" + outletCode + "';";
-        Cursor curs = db.rawQuery(queryLastReceiptNo, null);
-        receiptNo = curs.getString(curs.getColumnIndex("LAST_RCP"));
+        POS_Control pctrl = dataHelper.getPOSControl(db);
 
-        if (receiptNo == null || receiptNo == ""){
-            receiptNo = "0000001";
-        }
-        else if (receiptNo == "9999999") {
-            // ************************************
-            // need to show a message box "Receipt number has run out, please contact system administrator."
+        if(pctrl != null) {
+            receiptNo = pctrl.LAST_RCP;
+
+            if (receiptNo == null || receiptNo.trim().isEmpty()) {
+                receiptNo = "0000001";
+            } else if (receiptNo == "9999999") {
+                showMessage("Receipt number maxed out", "Please reach the Administrator");
+                receiptNo = "0000001";
+            } else {
+                int tempRcp = Integer.parseInt(receiptNo) + 1;
+                receiptNo = String.format("%03d", tempRcp);
+            }
+
+            String todaysDateInString = new SimpleDateFormat("yyyyMMdd").format(new Date());
+            String todaysTimeInString = new SimpleDateFormat("HHmm").format(new Date());
+            String ssql = "INSERT INTO header ( " +
+                    "COMPANY_CODE, " +
+                    "OUTLET_CODE, " +
+                    "EMP_CODE, " +
+                    "POS_NO, " +
+                    "SHIFT_NO, " +
+                    "RCP_NO, " +
+                    "TRANS_TYPE, " +
+                    "BUS_DATE, " +
+                    "TRANS_DATE, " +
+                    "TRANS_TIME, " +
+                    "SALES_AMOUNT, " +
+                    "TOTAL_TAX, " +
+                    "TOTAL_DISCOUNT, " +
+                    "ROUNDING, " +
+                    "ROUNDING_ADJ, " +
+                    "APPROVAL_ID, " +
+                    "CUSTOMER_CODE, " +
+                    "CUSTOMER_POINT, " +
+                    "REFUND_VOUCHER_CODE, " +
+                    "REFUND_VOUCHER_AMOUNT, " +
+                    "REFUND_VOUCHER_EXPIRE_DATE, " +
+                    "DRAWER_DECLARE_ID, " +
+                    "BOTRANS_NO, " +
+                    "MODIFIED_DATE, " +
+                    "MODIFIED_ID, " +
+                    "ITEM_VOID_COUNT, " +
+                    "REPRINT_COUNT, " +
+                    "ITEM_VOID_AMOUNT, " +
+                    "REPRINT_AMOUNT, " +
+                    "PRICE_LEVEL, " +
+                    "REFUND_POS_NO, " +
+                    "REFUND_RCP_NO, " +
+                    "REFUND_REMARK, " +
+                    "REFUND_RCP_BUS_DATE, " +
+                    "IsFORCE_REFUND, " +
+                    "REPRINTCOUNT, " +
+                    "ToSAP, " +
+                    "MEMBER_IC, " +
+                    "PROTRANS_NO, " +
+                    "IsNewInDevice" +
+                    ") " +
+                    "VALUES (" +
+                    "'" + companyCode + "', " +
+                    "'" + outletCode + "', " +
+                    "'" + empCode + "', " +
+                    "'" + posNo + "', " +
+                    "'1', " +
+                    "?, " +
+                    "'S', " +
+                    "'" + todaysDateInString + "', " + // bus date
+                    "'" + todaysDateInString + "', " + // trans dates
+                    "'" + todaysTimeInString + "', " + // trans time
+                    "?, " +
+                    "0, " +
+                    "0, " +
+                    "0, " +
+                    "0, " +
+                    "null, " +
+                    "?, " +
+                    "0, " +
+                    "null, " +
+                    "null, " +
+                    "null, " +
+                    "null, " +
+                    "null, " +
+                    "'" + todaysDateInString + "', " + // modified date
+                    "'" + posNo + "', " +
+                    "0, " +
+                    "0, " +
+                    "null, " +
+                    "null, " +
+                    "null, " +
+                    "null, " +
+                    "null, " +
+                    "null, " +
+                    "null, " +
+                    "null, " +
+                    "null, " +
+                    "0, " +
+                    "null, " +
+                    "null, " +
+                    "1); ";
+
+            pctrl.LAST_RCP = receiptNo;
+            pctrl.EMP_CD = empCode;
+            pctrl.BUS_DATE = todaysDateInString;
+            pctrl.SHIFT_NUMBER = shiftNo;
+            dataHelper.deleteAndInsertPOSControl(db, pctrl);
+
+            String[] objs = new String[]{receiptNo, total.toString(), customer_code}; // Edited by Eddie 11/12/2016, changed uuid to receiptNo
+            db.execSQL(ssql, objs);
+
+            return receiptNo; // Edited by Eddie 11/12/2016, changed uuid to receiptNo
         }
         else {
-            String tempRcp = String.valueOf(Integer.valueOf(receiptNo) + 1);
-
-            while (tempRcp.length() < 7) {
-                tempRcp = "0" + tempRcp;
-            }
-            receiptNo = tempRcp;
-            curs.close();
+            return "noposcontrol";
         }
-
-        // Edited by Eddie 11/12/2016, end
-
-        /*
-        String uuid = "";
-        boolean uuidAlreadyExist = true;
-
-        while (uuidAlreadyExist) {
-            uuid = UUID.randomUUID().toString().replaceAll("-", "");
-            if (uuid.length() > 10) {
-                uuid = uuid.substring(0, 10);
-            }
-
-            String ssql0 = "SELECT rcp_no FROM header WHERE rcp_no = '" + uuid + "';";
-
-            Cursor curs = db.rawQuery(ssql0, null);
-
-            if (curs.getCount() == 0) {
-                uuidAlreadyExist = false;
-                curs.close();
-            }
-        }*/
-        // Edited by Eddie 11/12/2016, end
-
-        String todaysDateInString = new SimpleDateFormat("yyyyMMdd").format(new Date());
-        String todaysTimeInString = new SimpleDateFormat("HHmm").format(new Date());
-        String ssql = "INSERT INTO header ( " +
-                "COMPANY_CODE, " +
-                "OUTLET_CODE, " +
-                "EMP_CODE, " +
-                "POS_NO, " +
-                "SHIFT_NO, " +
-                "RCP_NO, " +
-                "TRANS_TYPE, " +
-                "BUS_DATE, " +
-                "TRANS_DATE, " +
-                "TRANS_TIME, " +
-                "SALES_AMOUNT, " +
-                "TOTAL_TAX, " +
-                "TOTAL_DISCOUNT, " +
-                "ROUNDING, " +
-                "ROUNDING_ADJ, " +
-                "APPROVAL_ID, " +
-                "CUSTOMER_CODE, " +
-                "CUSTOMER_POINT, " +
-                "REFUND_VOUCHER_CODE, " +
-                "REFUND_VOUCHER_AMOUNT, " +
-                "REFUND_VOUCHER_EXPIRE_DATE, " +
-                "DRAWER_DECLARE_ID, " +
-                "BOTRANS_NO, " +
-                "MODIFIED_DATE, " +
-                "MODIFIED_ID, " +
-                "ITEM_VOID_COUNT, " +
-                "REPRINT_COUNT, " +
-                "ITEM_VOID_AMOUNT, " +
-                "REPRINT_AMOUNT, " +
-                "PRICE_LEVEL, " +
-                "REFUND_POS_NO, " +
-                "REFUND_RCP_NO, " +
-                "REFUND_REMARK, " +
-                "REFUND_RCP_BUS_DATE, " +
-                "IsFORCE_REFUND, " +
-                "REPRINTCOUNT, " +
-                "ToSAP, " +
-                "MEMBER_IC, " +
-                "PROTRANS_NO, " +
-                "IsNewInDevice" +
-                ") " +
-                "VALUES (" +
-                "'" + companyCode + "', " +
-                "'" + outletCode + "', " +
-                "'" + empCode + "', " +
-                "'" + posNo + "', " +
-                "'1', " +
-                "?, " +
-                "'S', " +
-                "'" + todaysDateInString + "', " + // bus date
-                "'" + todaysDateInString + "', " + // trans dates
-                "'" + todaysTimeInString + "', " + // trans time
-                "?, " +
-                "0, " +
-                "0, " +
-                "0, " +
-                "0, " +
-                "null, " +
-                "?, " +
-                "0, " +
-                "null, " +
-                "null, " +
-                "null, " +
-                "null, " +
-                "null, " +
-                "'" + todaysDateInString + "', " + // modified date
-                "'" + posNo + "', " +
-                "0, " +
-                "0, " +
-                "null, " +
-                "null, " +
-                "null, " +
-                "null, " +
-                "null, " +
-                "null, " +
-                "null, " +
-                "null, " +
-                "null, " +
-                "0, " +
-                "null, " +
-                "null, " +
-                "1); ";
-
-        // Edited by Eddie 11/12/2016, update last receipt number to pos control
-        String updatePOSControl = "UPDATE pos_control SET last_rcp = '" + receiptNo + "', emp_cd = '" + empCode + "' WHERE company_code = '" + companyCode + "' and outlet_code = '" + outletCode + "' and pos_no = '" + posNo + "';";
-        db.execSQL(updatePOSControl);
-        // Edited by Eddie 11/12/2016, end
-
-        String[] objs = new String[]{receiptNo, total.toString(), customer_code}; // Edited by Eddie 11/12/2016, changed uuid to receiptNo
-        db.execSQL(ssql, objs);
-
-        return receiptNo; // Edited by Eddie 11/12/2016, changed uuid to receiptNo
     }
 
     public BigDecimal getCumulativeTotalPaymentsMade() {
@@ -1147,7 +1123,14 @@ public class PaymentActivity extends Activity {
             }
         }
     }
+    public void showMessage(String title, String message) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setCancelable(true);
+        builder.setTitle(title);
+        builder.setMessage(message);
 
+        builder.show();
+    }
     public class PaymentMade {
         private int paymentType;
         private BigDecimal price;

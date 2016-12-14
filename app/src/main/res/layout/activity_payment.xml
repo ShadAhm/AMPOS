@@ -108,7 +108,7 @@
             </TableRow>
 
             <TableRow
-                android:id="@+id/tableRow2"
+                android:id="@+id/tableRow4"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="2dp">
@@ -155,10 +155,10 @@
                 android:padding="10dp" />
 
             <RadioButton
-                android:text="Credit Card"
+                android:text="Credit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/radioButtonCreditCard"
+                android:id="@+id/radioButtonCredit"
                 android:layout_weight="1"
                 android:textSize="18sp"
                 android:padding="10dp" />

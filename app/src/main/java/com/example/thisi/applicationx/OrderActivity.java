@@ -446,6 +446,16 @@ public class OrderActivity extends Activity {
         startActivity(intent);
     }
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event){
+        final EditText mEditText = (EditText) findViewById(R.id.textProductCode);
+        if (!mEditText.hasFocus()) {
+            mEditText.requestFocus();
+            mEditText.onKeyDown(keyCode, event);
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
     private void ninePLUs() {
         SQLiteDatabase db = dataHelper.getReadableDatabase();
         // Start the transaction.

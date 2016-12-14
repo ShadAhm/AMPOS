@@ -56,7 +56,6 @@ public class UploadDataService extends Service1 {
                     UploadHeaders(db);
                     UploadDetails(db);
                     UploadPayments(db);
-                    UpdatePOSControl(db);
 
                     db.setTransactionSuccessful();
                     o = "success";
@@ -408,7 +407,6 @@ public class UploadDataService extends Service1 {
                     sb.append(appendStringQueryVar(transTimeColValue));
                     sb.append(",");
 
-                    int rowNumberColValue = cursor.getInt(cursor.getColumnIndex("ROW_NUMBER"));
                     sb.append(Integer.toString(rownumIn));
                     sb.append(",");
 
@@ -459,24 +457,6 @@ public class UploadDataService extends Service1 {
         finally {
             cursor.close();
         }
-    }
-
-    public void UpdatePOSControl(SQLiteDatabase db){
-        String selectQuery = "SELECT * FROM pos_control;";
-
-        Cursor cursor = db.rawQuery(selectQuery, null);
-        int rowCount = cursor.getCount();
-
-        if(rowCount > 0) cursor.moveToFirst();
-
-        String lastRcp = cursor.getString(cursor.getColumnIndex("LAST_RCP"));
-        String lastSuspend = cursor.getString(cursor.getColumnIndex("LAST_SUSPEND_NUMBER"));
-        cursor.close();
-
-        String updateQuery = "UPDATE pos_control SET bus_date = '', shift_number = '', emp_cd = '" + empCode + "', last_rcp = '" + lastRcp + "', last_suspend_number = '" + lastSuspend + "' WHERE company_code = '" + companyCode + "' AND outlet_code = '" + outletCode + "' AND pos_no = '" + posNo + "';";
-
-        super.SQLExec(updateQuery);
-
     }
 
     public String appendStringQueryVar(String str) {
