@@ -797,88 +797,88 @@ public class PaymentActivity extends Activity {
             String todaysDateInString = new SimpleDateFormat("yyyyMMdd").format(new Date());
             String todaysTimeInString = new SimpleDateFormat("HHmm").format(new Date());
             String ssql = "INSERT INTO header ( " +
-                    "COMPANY_CODE, " +
+                    "COMPANY_CODE, " + 
                     "OUTLET_CODE, " +
-                    "EMP_CODE, " +
-                    "POS_NO, " +
-                    "SHIFT_NO, " +
-                    "RCP_NO, " +
-                    "TRANS_TYPE, " +
-                    "BUS_DATE, " +
+                    "EMP_CODE, " + 
+                    "POS_NO, " + 
+                    "SHIFT_NO, " + // line 5
+                    "RCP_NO, " + 
+                    "TRANS_TYPE, " + 
+                    "BUS_DATE, " + 
                     "TRANS_DATE, " +
-                    "TRANS_TIME, " +
+                    "TRANS_TIME, " + // 10
                     "SALES_AMOUNT, " +
-                    "TOTAL_TAX, " +
-                    "TOTAL_DISCOUNT, " +
-                    "ROUNDING, " +
-                    "ROUNDING_ADJ, " +
-                    "APPROVAL_ID, " +
-                    "CUSTOMER_CODE, " +
-                    "CUSTOMER_POINT, " +
-                    "REFUND_VOUCHER_CODE, " +
-                    "REFUND_VOUCHER_AMOUNT, " +
-                    "REFUND_VOUCHER_EXPIRE_DATE, " +
-                    "DRAWER_DECLARE_ID, " +
-                    "BOTRANS_NO, " +
-                    "MODIFIED_DATE, " +
-                    "MODIFIED_ID, " +
-                    "ITEM_VOID_COUNT, " +
+                    "TOTAL_TAX, " + 
+                    "TOTAL_DISCOUNT, " + 
+                    "ROUNDING, " + 
+                    "ROUNDING_ADJ, " + // 15
+                    "APPROVAL_ID, " + 
+                    "CUSTOMER_CODE, " + 
+                    "CUSTOMER_POINT, " + 
+                    "REFUND_VOUCHER_CODE, " + 
+                    "REFUND_VOUCHER_AMOUNT, " + // 20
+                    "REFUND_VOUCHER_EXPIRE_DATE, " + 
+                    "DRAWER_DECLARE_ID, " + 
+                    "BOTRANS_NO, " + 
+                    "MODIFIED_DATE, " + 
+                    "MODIFIED_ID, " + // 25
+                    "ITEM_VOID_COUNT, " + 
                     "REPRINT_COUNT, " +
                     "ITEM_VOID_AMOUNT, " +
                     "REPRINT_AMOUNT, " +
-                    "PRICE_LEVEL, " +
+                    "PRICE_LEVEL, " + // 30
                     "REFUND_POS_NO, " +
                     "REFUND_RCP_NO, " +
                     "REFUND_REMARK, " +
                     "REFUND_RCP_BUS_DATE, " +
-                    "IsFORCE_REFUND, " +
+                    "IsFORCE_REFUND, " + // 35
                     "REPRINTCOUNT, " +
                     "ToSAP, " +
                     "MEMBER_IC, " +
                     "PROTRANS_NO, " +
-                    "IsNewInDevice" +
+                    "IsNewInDevice" + // 40
                     ") " +
                     "VALUES (" +
-                    "'" + companyCode + "', " +
+                    "'" + companyCode + "', " + 
                     "'" + outletCode + "', " +
                     "'" + empCode + "', " +
                     "'" + posNo + "', " +
-                    "'1', " +
+                    "'1', " + // line 5
                     "?, " +
                     "'S', " +
                     "'" + todaysDateInString + "', " + // bus date
                     "'" + todaysDateInString + "', " + // trans dates
-                    "'" + todaysTimeInString + "', " + // trans time
+                    "'" + todaysTimeInString + "', " + // trans time / line 10
                     "?, " +
                     "0, " +
                     "0, " +
                     "0, " +
-                    "0, " +
+                    "0, " + // 15
                     "null, " +
                     "?, " +
                     "0, " +
                     "null, " +
-                    "null, " +
+                    "null, " + // 20
                     "null, " +
                     "null, " +
                     "null, " +
                     "'" + todaysDateInString + "', " + // modified date
-                    "'" + posNo + "', " +
+                    "'" + posNo + "', " + // 25
                     "0, " +
                     "0, " +
                     "null, " +
                     "null, " +
+                    "null, " + // 30
                     "null, " +
                     "null, " +
                     "null, " +
                     "null, " +
-                    "null, " +
-                    "null, " +
+                    "null, " + // 35
                     "null, " +
                     "0, " +
                     "null, " +
                     "null, " +
-                    "1); ";
+                    "1); "; // 40
 
             pctrl.LAST_RCP = receiptNo;
             pctrl.EMP_CD = empCode;

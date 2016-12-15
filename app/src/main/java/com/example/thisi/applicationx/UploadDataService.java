@@ -94,9 +94,9 @@ public class UploadDataService extends Service1 {
                     String rcpNoColValue = cursor.getString(cursor.getColumnIndex("RCP_NO"));
 
                     // Edited by Eddie 11/12/2016, add the filter with company code and outlet code, begin
-                    String deletef = "DELETE FROM payment WHERE company_code = '" + companyCode + "' AND outlet_code = '" + outletCode + "' AND rcp_no = " + rcpNoColValue + "; " +
-                            "DELETE FROM detail WHERE company_code = '" + companyCode + "' AND outlet_code = '" + outletCode + "' AND rcp_no = " + rcpNoColValue + "; " +
-                            "DELETE FROM header WHERE company_code = '" + companyCode + "' AND outlet_code = '" + outletCode + "' AND rcp_no = " + rcpNoColValue + ";";
+                    String deletef = "DELETE FROM payment WHERE company_code = '" + companyCode + "' AND outlet_code = '" + outletCode + "' AND rcp_no = '" + rcpNoColValue + "'; " +
+                            "DELETE FROM detail WHERE company_code = '" + companyCode + "' AND outlet_code = '" + outletCode + "' AND rcp_no = '" + rcpNoColValue + "'; " +
+                            "DELETE FROM header WHERE company_code = '" + companyCode + "' AND outlet_code = '" + outletCode + "' AND rcp_no = '" + rcpNoColValue + "';";
                     // Edited by Eddie 11/12/2016, end
 
                     super.SQLExec(deletef);
