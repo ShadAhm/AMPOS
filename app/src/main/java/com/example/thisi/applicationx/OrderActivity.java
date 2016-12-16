@@ -122,7 +122,7 @@ public class OrderActivity extends Activity {
         db.beginTransaction();
 
         try {
-            String selectQuery = "SELECT suspend.prod_name, price_group.price, customer.customer_code, product_master." + default_price_field + " FROM suspend " +
+            String selectQuery = "SELECT suspend.prod_name, suspend.total_price, customer.customer_code, product_master." + default_price_field + " FROM suspend " +
                     "LEFT JOIN price_group ON suspend.price_grp_code = price_group.price_grp_code " +
                     "AND suspend.prod_code = price_group.prod_code " +
                     "LEFT JOIN customer ON suspend.customer_code = customer.customer_code " +
@@ -142,7 +142,7 @@ public class OrderActivity extends Activity {
                     // Read columns data
                     int outlet_id = i;
                     String nameColumnValue = cursor.getString(cursor.getColumnIndex("PROD_NAME"));
-                    String rmColumnValue = cursor.getString(cursor.getColumnIndex("PRICE"));
+                    String rmColumnValue = cursor.getString(cursor.getColumnIndex("TOTAL_PRICE"));
 
                     if (rmColumnValue == null || rmColumnValue.isEmpty())
                         rmColumnValue = cursor.getString(cursor.getColumnIndex(default_price_field));

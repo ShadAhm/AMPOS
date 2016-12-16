@@ -653,6 +653,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put("SHIFT_NO", deta.SHIFT_NO);
         contentValues.put("RCP_NO", deta.RCP_NO);
         contentValues.put("TRANS_TYPE", deta.TRANS_TYPE);
+        contentValues.put("BUS_DATE", deta.BUS_DATE);
+        contentValues.put("TRANS_DATE", deta.TRANS_DATE);
         contentValues.put("TRANS_TIME", deta.TRANS_TIME);
         contentValues.put("ROW_NUMBER", deta.ROW_NUMBER);
         contentValues.put("PROD_CODE", deta.PROD_CODE);
@@ -875,6 +877,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    public Customer getCustomerByCustomerCode(SQLiteDatabase db, String customerCode) {
+        String qry = "SELECT * FROM customer WHERE CUSTOMER_CODE = '" + customerCode + "'";
+
+        Cursor res = db.rawQuery(qry, null);
+
+        if (res.getCount() > 0) {
+            res.moveToFirst();
+
+            Customer cust = new Customer();
+
+            cust.PRICE_GRP_CODE = res.getString(res.getColumnIndex("PRICE_GRP_CODE"));
+
+            res.close();
+
+            return cust;
+        } else {
+            return null;
+        }
+    }
+
     public Shift_Master lookForOpenShiftsAtDate(SQLiteDatabase db, String todaysDate) {
         String qry = "SELECT * FROM " + SHIFT_MASTER_TABLE_NAME + " " +
                 "WHERE BUS_DATE = '" + todaysDate + "' AND " +
@@ -958,7 +980,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public Price_Group getPriceGrpByProductAndCustomerCode(SQLiteDatabase db, String customerCode, String productCode) {
-        String ssql = "SELECT customer.* FROM price_group " +
+        String ssql = "SELECT customer.*, price_group.PRICE FROM price_group " +
                 "JOIN customer ON price_group.PRICE_GRP_CODE = customer.PRICE_GRP_CODE " +
                 "WHERE customer.CUSTOMER_CODE = '" + customerCode + "' AND " +
                 "price_group.PROD_CODE = '" + productCode + "'";
@@ -969,6 +991,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             res.moveToFirst();
 
             Price_Group pg = new Price_Group();
+
             pg.PRICE = new BigDecimal(res.getDouble(res.getColumnIndex("PRICE")));;
 
             res.close();

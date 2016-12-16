@@ -130,7 +130,7 @@ public class PaymentActivity extends Activity {
         db.beginTransaction();
 
         try {
-            String selectQuery = "SELECT suspend.prod_name, price_group.price, customer.customer_code, product_master." + default_price_field + " FROM suspend " +
+            String selectQuery = "SELECT suspend.prod_name, suspend.total_price, customer.customer_code, product_master." + default_price_field + " FROM suspend " +
                     "LEFT JOIN price_group ON suspend.price_grp_code = price_group.price_grp_code " +
                     "AND suspend.prod_code = price_group.prod_code " +
                     "LEFT JOIN customer ON suspend.customer_code = customer.customer_code " +
@@ -144,7 +144,7 @@ public class PaymentActivity extends Activity {
             if (rowCount > 0) {
                 while (cursor.moveToNext()) {
 
-                    String rmColumnValue = cursor.getString(cursor.getColumnIndex("PRICE"));
+                    String rmColumnValue = cursor.getString(cursor.getColumnIndex("TOTAL_PRICE"));
 
                     if (rmColumnValue == null || rmColumnValue.isEmpty())
                         rmColumnValue = cursor.getString(cursor.getColumnIndex(default_price_field));
@@ -231,6 +231,7 @@ public class PaymentActivity extends Activity {
                 String todaysTimeInString = new SimpleDateFormat("HHmm").format(new Date());
 
                 Shift_Master currentShift = dataHelper.lookForOpenShiftsAtDate(db, todaysDateInString);
+                Customer customer = dataHelper.getCustomerByCustomerCode(db, customer_code);
 
                 for (int i = 0; i < newProductsCodesArray.length; i++) {
                     Product_Master productMastar = dataHelper.getProductByProductCode(db, newProductsCodesArray[i]);
@@ -294,7 +295,7 @@ public class PaymentActivity extends Activity {
                     sus.PROD_NAME = productMastar.PROD_NAME;
                     sus.PROD_SHORT_NAME = productMastar.PRODUCT_SHORT_NAME;
                     sus.PROD_TYPE_CODE = productMastar.PROD_TYPE_CODE;
-                    sus.USAGE_UOM = null;
+                    sus.USAGE_UOM = productMastar.USAGE_UOM;
                     sus.UOM_CONV = BigDecimal.ZERO;
                     sus.QUANTITY = new BigDecimal("1");
                     sus.PRICE_LVL_CODE = null;
@@ -315,6 +316,7 @@ public class PaymentActivity extends Activity {
                     sus.TICKET_SURCHARGE = BigDecimal.ZERO;
                     sus.STAFF_DISCOUNT_CODE = productMastar.STAFF_DISCOUNT_CODE;
                     sus.STAFF_DISCOUNT = BigDecimal.ZERO;
+                    sus.PRICE_GRP_CODE = customer.PRICE_GRP_CODE;
                     sus.SUSPEND_NUMBER = null;
                     sus.IsRECALL = false;
                     sus.IS_UPSALES = false;
@@ -563,13 +565,13 @@ public class PaymentActivity extends Activity {
                 detl.BUS_DATE = todaysDateInString;
                 detl.TRANS_DATE = todaysDateInString;
                 detl.TRANS_TIME = todaysTimeInString;
-                detl.ROW_NUMBER = i;
+                detl.ROW_NUMBER = i + 1;
                 detl.PROD_CODE = productMastar.PROD_CODE;
                 detl.PROD_NAME = productMastar.PROD_NAME;
                 detl.PROD_TYPE_CODE = productMastar.PROD_TYPE_CODE;
                 detl.USAGE_UOM = productMastar.USAGE_UOM;
                 detl.QUANTITY = BigDecimal.ONE;
-                detl.UOM_CONV = BigDecimal.ZERO;
+                detl.UOM_CONV = BigDecimal.ONE;
                 detl.PRICE_LVL_CODE = null;
                 detl.UNIT_PRICE = priice;
                 detl.TOTAL_PRICE = priice;
@@ -791,7 +793,7 @@ public class PaymentActivity extends Activity {
                 receiptNo = "0000001";
             } else {
                 int tempRcp = Integer.parseInt(receiptNo) + 1;
-                receiptNo = String.format("%03d", tempRcp);
+                receiptNo = String.format("%07d", tempRcp); // 7 digit receipt no
             }
 
             String todaysDateInString = new SimpleDateFormat("yyyyMMdd").format(new Date());

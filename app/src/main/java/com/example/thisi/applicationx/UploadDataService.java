@@ -212,9 +212,35 @@ public class UploadDataService extends Service1 {
             if (rowCount > 0) {
                 StringBuilder sb = new StringBuilder();
 
-                sb.append("INSERT INTO detail (COMPANY_CODE,OUTLET_CODE,EMP_CODE,POS_NO,SHIFT_NO,RCP_NO,TRANS_TYPE," +
-                        "BUS_DATE,TRANS_DATE,TRANS_TIME,ROW_NUMBER,PROD_CODE,PROD_NAME,PROD_TYPE_CODE,USAGE_UOM,QUANTITY," +
-                        "UOM_CONV,UNIT_PRICE,TOTAL_PRICE,TAX_01,TAX_02,TAX_03,TAX_04,TAX_05,BARCODE,TAXCODE,COST) ");
+                sb.append("INSERT INTO detail (" +
+                        "COMPANY_CODE," +
+                        "OUTLET_CODE," +
+                        "EMP_CODE," +
+                        "POS_NO," +
+                        "SHIFT_NO," +
+                        "RCP_NO," +
+                        "TRANS_TYPE," +
+                        "BUS_DATE," +
+                        "TRANS_DATE," +
+                        "TRANS_TIME," +
+                        "ROW_NUMBER," +
+                        "PROD_CODE," +
+                        "PROD_NAME," +
+                        "PROD_TYPE_CODE," +
+                        "USAGE_UOM," +
+                        "QUANTITY," +
+                        "UOM_CONV," +
+                        "UNIT_PRICE," +
+                        "TOTAL_PRICE," +
+                        "TAX_01," +
+                        "TAX_02," +
+                        "TAX_03," +
+                        "TAX_04," +
+                        "TAX_05," +
+                        "BARCODE," +
+                        "TAXCODE," +
+                        "COST" +
+                        ") ");
                 sb.append("VALUES ");
 
                 int rownumIn = 1;
@@ -330,7 +356,6 @@ public class UploadDataService extends Service1 {
 
                     double costColValue = cursor.getDouble(cursor.getColumnIndex("COST"));
                     sb.append(Double.toString(costColValue));
-                    sb.append(",");
                     // Edited by Eddie 11/12/2016, End
 
                     sb.append(")");
