@@ -14,41 +14,41 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:name=".ApplicationContext"
+        android:name=".printutil.ApplicationContext"
 
         >
         <uses-permission android:name="android.permission.INTERNET"/>
-        <activity android:name=".ConnectAvtivity" android:noHistory="true" android:windowSoftInputMode="stateHidden">
+        <activity android:name=".activity.ConnectAvtivity" android:noHistory="true" android:windowSoftInputMode="stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity" android:noHistory="true" android:windowSoftInputMode="stateHidden">
+        <activity android:name=".activity.MainActivity" android:noHistory="true" android:windowSoftInputMode="stateHidden">
         </activity>
-        <activity android:name=".MainMenuActivity" android:windowSoftInputMode="stateHidden">
+        <activity android:name=".activity.MainMenuActivity" android:windowSoftInputMode="stateHidden">
 
         </activity>
-        <activity android:name=".EnterCustomerCodeActivity" android:windowSoftInputMode="stateHidden">
+        <activity android:name=".activity.EnterCustomerCodeActivity" android:windowSoftInputMode="stateHidden">
 
         </activity>
-        <activity android:name=".OrderActivity" android:windowSoftInputMode="stateHidden">
+        <activity android:name=".activity.OrderActivity" android:windowSoftInputMode="stateHidden">
 
         </activity>
-        <activity android:name=".SettingsActivity" android:windowSoftInputMode="stateHidden">
+        <activity android:name=".activity.SettingsActivity" android:windowSoftInputMode="stateHidden">
 
         </activity>
-        <activity android:name=".PaymentActivity" android:noHistory="true" android:windowSoftInputMode="stateHidden">
+        <activity android:name=".activity.PaymentActivity" android:noHistory="true" android:windowSoftInputMode="stateHidden">
 
         </activity>
-        <activity android:name=".EnterFloatAmountActivity" android:windowSoftInputMode="stateHidden">
+        <activity android:name=".activity.EnterFloatAmountActivity" android:windowSoftInputMode="stateHidden">
 
         </activity>
-        <activity android:name=".DeclareShiftMoneyActivity" android:windowSoftInputMode="stateHidden">
+        <activity android:name=".activity.DeclareShiftMoneyActivity" android:windowSoftInputMode="stateHidden">
 
         </activity>
-        <activity android:name=".LoginDialogActivity" android:noHistory="true" android:windowSoftInputMode="stateHidden">
+        <activity android:name=".activity.LoginDialogActivity" android:noHistory="true" android:windowSoftInputMode="stateHidden">
 
         </activity>
         <!-- ATTENTION: This was auto-generated to add Google Play services to your project for
