@@ -473,7 +473,10 @@ public class PaymentActivity extends Activity {
 
             if(!rcp_id.equalsIgnoreCase("noposcontrol")) {
                 insertDetailFromSuspend(db, rcp_id);
-                insertDetailFromProducts1(db, rcp_id, currentShift.SHIFT_NUMBER);
+
+                int rowNumStart = dataHelper.getLatestRownumberFromDetail(db, rcp_id);
+
+                insertDetailFromProducts(db, rcp_id, currentShift.SHIFT_NUMBER, rowNumStart);
                 insertPayment(db, rcp_id, currentShift.SHIFT_NUMBER);
                 updateHeader(db, rcp_id);
                 db.delete("suspend", "customer_code == '" + customer_code + "'", null);
@@ -512,7 +515,7 @@ public class PaymentActivity extends Activity {
         db.execSQL(ssql1);
     }
 
-    private void insertDetailFromProducts1(SQLiteDatabase db, String rcp_id, int shift_number) {
+    private void insertDetailFromProducts(SQLiteDatabase db, String rcp_id, int shift_number, int rowNumStart) {
         if (newProductsCodes != null && !newProductsCodes.isEmpty()) {
             String[] newProductsCodesArray = newProductsCodes.split(";");
 
@@ -520,6 +523,8 @@ public class PaymentActivity extends Activity {
             String todaysTimeInString = new SimpleDateFormat("HHmm").format(new Date());
 
             for (int i = 0; i < newProductsCodesArray.length; i++) {
+                int rowNum = rowNumStart + i + 1;
+
                 Product_Master productMastar = dataHelper.getProductByProductCode(db, newProductsCodesArray[i]);
                 Price_Group priceGrp = dataHelper.getPriceGrpByProductAndCustomerCode(db, this.customer_code, newProductsCodesArray[i]);
 
@@ -576,7 +581,7 @@ public class PaymentActivity extends Activity {
                 detl.BUS_DATE = todaysDateInString;
                 detl.TRANS_DATE = todaysDateInString;
                 detl.TRANS_TIME = todaysTimeInString;
-                detl.ROW_NUMBER = i + 1;
+                detl.ROW_NUMBER = rowNum;
                 detl.PROD_CODE = productMastar.PROD_CODE;
                 detl.PROD_NAME = productMastar.PROD_NAME;
                 detl.PROD_TYPE_CODE = productMastar.PROD_TYPE_CODE;

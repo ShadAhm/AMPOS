@@ -908,6 +908,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    public int getLatestRownumberFromDetail(SQLiteDatabase db, String rcp_no) {
+        String qry = "SELECT ROW_NUMBER FROM DETAIL WHERE RCP_NO = '" + rcp_no + "' ORDER BY ROW_NUMBER DESC LIMIT 1";
+
+        Cursor res = db.rawQuery(qry, null);
+
+        int rowNum = 0;
+        if (res.moveToFirst()) {
+            rowNum = res.getInt(res.getColumnIndex("ROW_NUMBER"));
+        }
+
+        res.close();
+        return rowNum;
+    }
+
     public Shift_Master lookForOpenShiftsAtDate(SQLiteDatabase db, String todaysDate) {
         String qry = "SELECT * FROM " + SHIFT_MASTER_TABLE_NAME + " " +
                 "WHERE BUS_DATE = '" + todaysDate + "' AND " +
