@@ -90,7 +90,8 @@ public class OrderActivity extends Activity {
             onOrderErrorCantContinue(errorCantContinueType.DEFAULTPRICE);
         }
     }
-
+    
+    // TODO : change to enum
     private void onOrderErrorCantContinue(errorCantContinueType errType) {
         Button buttonPayment = (Button) findViewById(R.id.buttonPayment);
         buttonPayment.setEnabled(false);
