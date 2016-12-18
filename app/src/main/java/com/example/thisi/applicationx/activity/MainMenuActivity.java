@@ -272,7 +272,6 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
     @Override
     public void UploadDataEndedRequest() {
         checkShiftsLongOperation();
-
         uploadProgress.dismiss();
     }
 
