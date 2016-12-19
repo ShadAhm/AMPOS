@@ -53,6 +53,7 @@ public class UploadDataService extends Service1 {
                     UploadHeaders(db);
                     UploadDetails(db);
                     UploadPayments(db);
+                    UpdatePOSControl(db); 
 
                     db.setTransactionSuccessful();
                     o = "success";
@@ -190,6 +191,33 @@ public class UploadDataService extends Service1 {
                         sb.append(",");
                     }
                 } while (cursor.moveToNext());
+
+                super.SQLExec(sb.toString());
+            }
+        }
+        finally {
+            cursor.close();
+        }
+    }
+
+    private void UpdatePOSControl(SQLiteDatabase db) {
+        String selectQuery = "SELECT * FROM pos_control;";
+
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        try {
+            if (cursor.moveToFirst()) {
+                StringBuilder sb = new StringBuilder();
+
+                // it's easier to just delete and insert rather than to update
+                String deletef = "DELETE FROM POS_CONTROL WHERE COMPANY_CODE = '" + companyCode 
+                    + "' AND OUTLET_CODE = '" + outletCode 
+                    + "' AND POS_NO = '" + rcpNoColValue + "'; ";"
+
+                super.SQLExec(deletef);
+                
+                sb.append("INSERT INTO header (COMPANY_CODE, OUTLET_CODE, EMP_CODE, POS_NO, SHIFT_NO, RCP_NO, TRANS_TYPE, BUS_DATE, TRANS_DATE, TRANS_TIME, SALES_AMOUNT, TOTAL_TAX, CUSTOMER_CODE, REFUND_VOUCHER_AMOUNT, DRAWER_DECLARE_ID, MODIFIED_DATE, MODIFIED_ID, REPRINTCOUNT, PROTRANS_NO) ");
+                sb.append("VALUES ");
 
                 super.SQLExec(sb.toString());
             }
