@@ -22,7 +22,6 @@ import java.math.BigDecimal;
 
 public class DownloadDataService extends Service1 {
     DatabaseHelper dataHelper;
-    IDownloadPosControlEvents dpcEventHandler; 
 
     public DownloadDataService(IWsdl2CodeEvents eventHandler, String url, Context context) {
         super(eventHandler, url);

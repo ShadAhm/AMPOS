@@ -284,7 +284,9 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
         new checkShiftsLongOperationTask(this, prefs).execute();
     }
 
-    public class checkShiftsLongOperationTask extends AsyncTask<Void, Void, String> {
+    public class checkShiftsLongOperationTask 
+        extends AsyncTask<Void, Void, String>
+        implements IWsdl2CodeEvents {
         public MainMenuActivity _ctx;
         public SharedPreferences _sp;
 
@@ -308,29 +310,7 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
                 String todaysDateInString = new SimpleDateFormat("yyyyMMdd").format(new Date());
 
                 if (pctrl == null) {
-                    String posNo = _sp.getString("posnumber", null);
-                    String companyCode = _sp.getString("companycode", null);
-
-                    POS_Control newPostControl = new POS_Control();
-                    newPostControl.LAST_RCP = "0000000";
-                    newPostControl.COMPANY_CODE = companyCode;
-                    newPostControl.OUTLET_CODE = companyCode;
-                    newPostControl.POS_NO = posNo;
-                    newPostControl.BUS_DATE = todaysDateInString;
-                    newPostControl.SHIFT_NUMBER = 0;
-                    newPostControl.REPRINT_COUNT = 0;
-                    newPostControl.DAYEND = false;
-                    mydb.deleteAndInsertPOSControl(db, newPostControl);
-
-                    Shift_Master openShift = mydb.lookForOpenShiftsAtDate(db, todaysDateInString);
-
-                    db.setTransactionSuccessful();
-                    if (openShift != null) {
-                        return "shiftOpen";
-                    } 
-                    else {
-                        return "noOpenShift";
-                    }
+                    return "posControlNull";
                 } 
                 else {
                     if (pctrl.DAYEND) // checks if latest POS_Control already dayend
@@ -372,8 +352,15 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
 
         @Override
         protected void onPostExecute(String result) {
+            buttonsControl(result); 
+        }
+
+        private void buttonsControl(String result) {
             switch(result) 
             {
+                case "posControlNull" : 
+                    onNoPOSControl(); 
+                    break;
                 case "settingsIncomplete" : showMessage("Settings Incomplete", "Please go to settings and complete all required information"); 
                     enableButtons(false, false, false, false, false, false, true, true); 
                     break; 
@@ -389,6 +376,19 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
             }
         }
 
+        private void onNoPOSControl() {
+            String serverConne = _sp.getString("serverconnection", null);
+            String posNum = _sp.getString("posnumber", null); 
+            String outletCod = _sp.getString("outletcode", null);
+
+            POS_Control paramsForDownloadPC = new POS_Control();
+            paramsForDownloadPC.OUTLET_CODE = outletCod;
+            paramsForDownloadPC.POS_NO = posNum;
+
+            DownloadDataService dds = new DownloadDataService(this, serverConne, _ctx.getApplicationContext());
+            dds.DownloadPosControlAsync().execute(paramsForDownloadPC); 
+        }
+
         @Override
         protected void onPreExecute() {
             enableButtons(false, false, false, false, false, false, false, false);
@@ -402,6 +402,78 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
 
             return !(default_price_field == null || posNo == null || companyCode == null || serverConne == null
                     || default_price_field.trim().isEmpty() || posNo.trim().isEmpty() || companyCode.trim().isEmpty() || serverConne.trim().isEmpty());
+        }
+
+        @Override
+        public void Wsdl2CodeStartedRequest() {
+        }
+
+        @Override
+        public void Wsdl2CodeFinished(String methodName, Object Data) {
+            SQLiteDatabase db = mydb.getReadableDatabase();
+
+            db.beginTransaction();
+            try {
+                DownloadDataResult ddr = new DownloadDataResult();
+                if(DownloadDataResult.class.isInstance(Data)) {
+                    ddr = DownloadDataResult.class.cast(Data);
+                }
+
+                if(ddr == null || !ddr.isSuccessful || ddr.posControlsDownloaded <= 0) {
+                    String posNo = _sp.getString("posnumber", null);
+                    String companyCode = _sp.getString("companycode", null);
+
+                    POS_Control newPostControl = new POS_Control();
+                    newPostControl.LAST_RCP = "0000000";
+                    newPostControl.COMPANY_CODE = companyCode;
+                    newPostControl.OUTLET_CODE = companyCode;
+                    newPostControl.POS_NO = posNo;
+                    newPostControl.BUS_DATE = todaysDateInString;
+                    newPostControl.SHIFT_NUMBER = 0;
+                    newPostControl.REPRINT_COUNT = 0;
+                    newPostControl.DAYEND = false;
+                    mydb.deleteAndInsertPOSControl(db, newPostControl);
+                }
+
+                Shift_Master openShift = mydb.lookForOpenShiftsAtDate(db, todaysDateInString);
+
+                db.setTransactionSuccessful();
+                if (openShift != null) {
+                    buttonsControl("shiftOpen");
+                } 
+                else {
+                    buttonsControl("noOpenShift");
+                }
+            } catch (SQLiteException e) {
+                e.printStackTrace();
+            } finally {
+                db.endTransaction();
+                db.close();
+            }
+        }
+
+        @Override
+        public void Wsdl2CodeFinishedWithException(Exception ex) {
+        }
+
+        @Override
+        public void Wsdl2CodeEndedRequest() {
+        }
+
+        @Override
+        public void UploadDataStartedRequest() {
+        }
+
+        @Override
+        public void UploadDataFinished(String methodName, Object Data) {
+        }
+
+        @Override
+        public void UploadDataFinishedWithException(Exception ex) {
+        }
+
+        @Override
+        public void UploadDataEndedRequest() {
         }
     }
 }
