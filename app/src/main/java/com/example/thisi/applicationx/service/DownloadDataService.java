@@ -22,10 +22,10 @@ import java.math.BigDecimal;
 
 public class DownloadDataService extends Service1 {
     DatabaseHelper dataHelper;
+    IDownloadPosControlEvents dpcEventHandler; 
 
     public DownloadDataService(IWsdl2CodeEvents eventHandler, String url, Context context) {
         super(eventHandler, url);
-
         dataHelper = DatabaseHelper.getHelper(context);
     }
 
@@ -70,6 +70,51 @@ public class DownloadDataService extends Service1 {
                 eventHandler.Wsdl2CodeEndedRequest();
                 if (result != null) {
                     eventHandler.Wsdl2CodeFinished("SQLResult", result);
+                }
+            }
+        }.execute();
+    }
+
+    public void DownloadPosControlAsync() throws Exception {
+        new AsyncTask<POS_Control, Void, DownloadDataResult>() {
+            @Override
+            protected void onPreExecute() {
+                dpcEventHandler.StartedRequest();
+            }
+
+            @Override
+            protected DownloadDataResult doInBackground(POS_Control... params) {
+                DownloadDataResult ddr = new DownloadDataResult();
+                SQLiteDatabase db = dataHelper.getReadableDatabase();
+                db.beginTransaction();
+
+                try {
+                    if(params == null || params.length <= 0) {
+                        throw new IllegalArgumentException("Params cannot be null");
+                    }
+
+                    POS_Control pctrl = params[0]; 
+
+                    int posControlsReturned = DownloadPosControl(db, pctrl.POS_NO, pctrl.OUTLET_CODE);
+                    ddr.isSuccessful = true; 
+                    ddr.posControlsDownloaded = posControlsReturned; 
+                    ddr.message = "Successfully downloaded data";
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    ddr.isSuccessful = false;
+                    ddr.message = e.getMessage();
+                } finally {
+                    db.endTransaction();
+                    db.close();
+                    return ddr;
+                }
+            }
+
+            @Override
+            protected void onPostExecute(DownloadDataResult result) {
+                dpcEventHandler.EndedRequest();
+                if (result != null) {
+                    dpcEventHandler.Finished("SQLResult", result);
                 }
             }
         }.execute();
@@ -134,6 +179,37 @@ public class DownloadDataService extends Service1 {
         }
         else {
             return "employeenull";
+        }
+    }
+
+    private int DownloadPosControl(SQLiteDatabase db, String posno, String outcode) {
+        String sb = "SELECT COALESCE(COMPANY_CODE, '') AS COMPANY_CODE, " +
+            "COALESCE(OUTLET_CODE, '') AS OUTLET_CODE, " +
+            "COALESCE(POS_NO, '') AS POS_NO, " +
+            "COALESCE(BUS_DATE, '') AS BUS_DATE, " +
+            "COALESCE(SHIFT_NUMBER, 0) AS SHIFT_NUMBER, " +
+            "COALESCE(EMP_CD, '') AS EMP_CD, " +
+            "COALESCE(LAST_RCP, '') AS LAST_RCP, " +
+            "COALESCE(LAST_SUSPEND_NUMBER, '') AS LAST_SUSPEND_NUMBER, " +
+            "COALESCE(REPRINT_COUNT, 0) AS REPRINT_COUNT,  " +
+            "COALESCE(DAYEND, 0) AS DAYEND " +
+            "FROM POS_Control " +
+            "WHERE POS_NO = '" + posno + "' " +
+            "AND OUTLET_CODE = '" + outcode + "' ";
+		
+        SoapObject returned = super.SQLResultReturn(sb, null);
+
+        if(returned != null) {
+            POS_Control[] pctrls = RetrievePosControlsFromSoap(returned);
+
+            // there should only be one pos control per device
+            if(pctrls.length == 1) {
+                dataHelper.deleteAndInsertPOSControl(db, pctrls[0]); 
+            }
+            return pctrls.length; 
+        }
+        else {
+            return 0; 
         }
     }
 
@@ -364,6 +440,33 @@ public class DownloadDataService extends Service1 {
                 priceGroups[i] = priceGroup;
             }
             return priceGroups;
+        } catch (IndexOutOfBoundsException ex) {
+            throw ex;
+        }
+    }
+
+    public static POS_Control[] RetrievePosControlsFromSoap(SoapObject soap) {
+        try {
+            POS_Control[] posControls = new POS_Control[soap.getPropertyCount()];
+
+            for (int i = 0; i < posControls.length; i++) {
+                SoapObject pii = (SoapObject) soap.getProperty(i);
+                POS_Control posControl = new POS_Control();
+
+                posControl.COMPANY_CODE = pii.getProperty(0).toString(); 
+                posControl.Outlet_Code = pii.getProperty(0).toString(); 
+                posControl.POS_NO = pii.getProperty(0).toString(); 
+                posControl.BUS_DATE = pii.getProperty(0).toString(); 
+                posControl.SHIFT_NUMBER = Integer.parseInt(pii.getProperty(0).toString()); 
+                posControl.EMP_CD = pii.getProperty(0).toString(); 
+                posControl.LAST_RCP = pii.getProperty(0).toString(); 
+                posControl.LAST_SUSPEND_NUMBER = pii.getProperty(0).toString(); 
+                posControl.REPRINT_COUNT = Integer.parseInt(pii.getProperty(0).toString()); 
+                posControl.DAYEND = Boolean.getBoolean(pii.getProperty(0).toString()); 
+
+                posControls[i] = posControl;
+            }
+            return posControls;
         } catch (IndexOutOfBoundsException ex) {
             throw ex;
         }

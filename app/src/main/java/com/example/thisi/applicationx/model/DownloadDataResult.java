@@ -9,5 +9,6 @@ public class DownloadDataResult {
     public int productsDownloaded;
     public int priceGroupsDownloaded;
     public int customersDownloaded;
+    public int posControlsDownloaded; 
     public String message;
 }
