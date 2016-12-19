@@ -37,7 +37,6 @@ public class UploadDataService extends Service1 {
     }
 
     public void UploadDataAsync() throws Exception {
-
         new AsyncTask<Void, Void, Object>() {
             @Override
             protected void onPreExecute() {
