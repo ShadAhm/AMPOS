@@ -11,6 +11,7 @@ import com.example.thisi.applicationx.model.Customer;
 import com.example.thisi.applicationx.model.Employee;
 import com.example.thisi.applicationx.model.Price_Group;
 import com.example.thisi.applicationx.model.Product_Master;
+import com.example.thisi.applicationx.model.POS_Control; 
 
 import org.ksoap2.serialization.SoapObject;
 
