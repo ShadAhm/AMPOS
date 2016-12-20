@@ -216,7 +216,9 @@ public class UploadDataService extends Service1 {
 
                 super.SQLExec(deletef);
                 
-                sb.append("INSERT INTO header (COMPANY_CODE, OUTLET_CODE, EMP_CODE, POS_NO, SHIFT_NO, RCP_NO, TRANS_TYPE, BUS_DATE, TRANS_DATE, TRANS_TIME, SALES_AMOUNT, TOTAL_TAX, CUSTOMER_CODE, REFUND_VOUCHER_AMOUNT, DRAWER_DECLARE_ID, MODIFIED_DATE, MODIFIED_ID, REPRINTCOUNT, PROTRANS_NO) ");
+                sb.append("INSERT INTO pos_control (");
+                
+                sb.append(")")
                 sb.append("VALUES ");
 
                 super.SQLExec(sb.toString());
