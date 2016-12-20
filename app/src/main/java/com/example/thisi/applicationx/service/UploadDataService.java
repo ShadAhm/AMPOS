@@ -11,8 +11,6 @@ import com.example.thisi.applicationx.util.IWsdl2CodeEvents;
 public class UploadDataService extends Service1 {
     DatabaseHelper dataHelper;
 
-    // Edited by Eddie 11/12/2016, add company code, outlet code and pos number, begin
-    // from settings :
     private static String companyCode;
     private static String posNo;
     private static String outletCode;
