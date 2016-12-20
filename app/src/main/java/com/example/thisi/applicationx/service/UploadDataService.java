@@ -210,14 +210,65 @@ public class UploadDataService extends Service1 {
                 // it's easier to just delete and insert rather than to update
                 String deletef = "DELETE FROM POS_CONTROL WHERE COMPANY_CODE = '" + companyCode 
                     + "' AND OUTLET_CODE = '" + outletCode 
-                    + "' AND POS_NO = '" + rcpNoColValue + "'; ";"
+                    + "' AND POS_NO = '" + posNo + "'; ";
 
                 super.SQLExec(deletef);
                 
                 sb.append("INSERT INTO pos_control (");
-                
-                sb.append(")")
+                sb.append("COMPANY_CODE,");
+                sb.append("OUTLET_CODE,");
+                sb.append("POS_NO,");
+                sb.append("BUS_DATE,");
+                sb.append("SHIFT_NO,");
+                sb.append("EMP_CD,");
+                sb.append("LAST_RCP,");
+                sb.append("LAST_SUSPEND_NUMBER,");
+                sb.append("REPRINT_COUNT,");
+                sb.append("DAYEND");
+                sb.append(")");
                 sb.append("VALUES ");
+                sb.append("(");
+
+                String companyCodeColValue = cursor.getString(cursor.getColumnIndex("COMPANY_CODE"));
+                sb.append(appendStringQueryVar(companyCodeColValue));
+                sb.append(",");
+
+                String outletCodeColValue = cursor.getString(cursor.getColumnIndex("OUTLET_CODE"));
+                sb.append(appendStringQueryVar(outletCodeColValue));
+                sb.append(",");
+
+                String posNoColValue = cursor.getString(cursor.getColumnIndex("POS_NO"));
+                sb.append(appendStringQueryVar(posNoColValue));
+                sb.append(",");
+
+                String busDateColValue = cursor.getString(cursor.getColumnIndex("BUS_DATE"));
+                sb.append(appendStringQueryVar(busDateColValue));
+                sb.append(",");
+
+                String shiftNoColValue = cursor.getString(cursor.getColumnIndex("SHIFT_NO"));
+                sb.append(appendStringQueryVar(shiftNoColValue));
+                sb.append(",");
+
+                String empCodeColValue = cursor.getString(cursor.getColumnIndex("EMP_CD"));
+                sb.append(appendStringQueryVar(empCodeColValue));
+                sb.append(",");
+
+                String lastRcpColValue = cursor.getString(cursor.getColumnIndex("LAST_RCP"));
+                sb.append(appendStringQueryVar(lastRcpColValue));
+                sb.append(",");
+
+                String lastSuspendNoColValue = cursor.getString(cursor.getColumnIndex("LAST_SUSPEND_NUMBER"));
+                sb.append(appendStringQueryVar(lastSuspendNoColValue));
+                sb.append(",");
+
+                String reprintCountColValue = cursor.getString(cursor.getColumnIndex("REPRINT_COUNT"));
+                sb.append(appendStringQueryVar(reprintCountColValue));
+                sb.append(",");
+
+                String dayendColValue = cursor.getString(cursor.getColumnIndex("DAYEND"));
+                sb.append(appendStringQueryVar(dayendColValue));
+
+                sb.append(")");
 
                 super.SQLExec(sb.toString());
             }

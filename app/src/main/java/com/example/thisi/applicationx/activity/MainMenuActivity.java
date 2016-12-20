@@ -377,16 +377,21 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
         }
 
         private void onNoPOSControl() {
-            String serverConne = _sp.getString("serverconnection", null);
-            String posNum = _sp.getString("posnumber", null); 
-            String outletCod = _sp.getString("outletcode", null);
+            try {
+                String serverConne = _sp.getString("serverconnection", null);
+                String posNum = _sp.getString("posnumber", null);
+                String outletCod = _sp.getString("outletcode", null);
 
-            POS_Control paramsForDownloadPC = new POS_Control();
-            paramsForDownloadPC.OUTLET_CODE = outletCod;
-            paramsForDownloadPC.POS_NO = posNum;
+                POS_Control paramsForDownloadPC = new POS_Control();
+                paramsForDownloadPC.OUTLET_CODE = outletCod;
+                paramsForDownloadPC.POS_NO = posNum;
 
-            DownloadDataService dds = new DownloadDataService(this, serverConne, _ctx.getApplicationContext());
-            dds.DownloadPosControlAsync().execute(paramsForDownloadPC); 
+                DownloadDataService dds = new DownloadDataService(this, serverConne, _ctx.getApplicationContext());
+                dds.DownloadPosControlAsync(paramsForDownloadPC);
+            }
+            catch(Exception e) {
+                e.printStackTrace();
+            }
         }
 
         @Override
@@ -414,7 +419,10 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
 
             db.beginTransaction();
             try {
+                String todaysDateInString = new SimpleDateFormat("yyyyMMdd").format(new Date());
+
                 DownloadDataResult ddr = new DownloadDataResult();
+
                 if(DownloadDataResult.class.isInstance(Data)) {
                     ddr = DownloadDataResult.class.cast(Data);
                 }

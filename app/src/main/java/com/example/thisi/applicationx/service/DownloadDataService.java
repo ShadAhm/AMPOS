@@ -75,11 +75,11 @@ public class DownloadDataService extends Service1 {
         }.execute();
     }
 
-    public void DownloadPosControlAsync() throws Exception {
+    public void DownloadPosControlAsync(POS_Control pctrl) throws Exception {
         new AsyncTask<POS_Control, Void, DownloadDataResult>() {
             @Override
             protected void onPreExecute() {
-                dpcEventHandler.StartedRequest();
+                eventHandler.Wsdl2CodeStartedRequest();
             }
 
             @Override
@@ -112,12 +112,12 @@ public class DownloadDataService extends Service1 {
 
             @Override
             protected void onPostExecute(DownloadDataResult result) {
-                dpcEventHandler.EndedRequest();
+                eventHandler.Wsdl2CodeEndedRequest();
                 if (result != null) {
-                    dpcEventHandler.Finished("SQLResult", result);
+                    eventHandler.Wsdl2CodeFinished("SQLResult", result);
                 }
             }
-        }.execute();
+        }.execute(pctrl);
     }
 
     public void DownloadEmployeesAsync() throws Exception {
@@ -454,15 +454,15 @@ public class DownloadDataService extends Service1 {
                 POS_Control posControl = new POS_Control();
 
                 posControl.COMPANY_CODE = pii.getProperty(0).toString(); 
-                posControl.Outlet_Code = pii.getProperty(0).toString(); 
-                posControl.POS_NO = pii.getProperty(0).toString(); 
-                posControl.BUS_DATE = pii.getProperty(0).toString(); 
-                posControl.SHIFT_NUMBER = Integer.parseInt(pii.getProperty(0).toString()); 
-                posControl.EMP_CD = pii.getProperty(0).toString(); 
-                posControl.LAST_RCP = pii.getProperty(0).toString(); 
-                posControl.LAST_SUSPEND_NUMBER = pii.getProperty(0).toString(); 
-                posControl.REPRINT_COUNT = Integer.parseInt(pii.getProperty(0).toString()); 
-                posControl.DAYEND = Boolean.getBoolean(pii.getProperty(0).toString()); 
+                posControl.OUTLET_CODE = pii.getProperty(1).toString();
+                posControl.POS_NO = pii.getProperty(2).toString();
+                posControl.BUS_DATE = pii.getProperty(3).toString();
+                posControl.SHIFT_NUMBER = Integer.parseInt(pii.getProperty(4).toString());
+                posControl.EMP_CD = pii.getProperty(5).toString();
+                posControl.LAST_RCP = pii.getProperty(6).toString();
+                posControl.LAST_SUSPEND_NUMBER = pii.getProperty(7).toString();
+                posControl.REPRINT_COUNT = Integer.parseInt(pii.getProperty(8).toString());
+                posControl.DAYEND = Boolean.getBoolean(pii.getProperty(9).toString());
 
                 posControls[i] = posControl;
             }
