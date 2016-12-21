@@ -51,6 +51,9 @@
         <activity android:name=".activity.LoginDialogActivity" android:noHistory="true" android:windowSoftInputMode="stateHidden">
 
         </activity>
+        <activity android:name=".activity.ViewTransactionsActivity" android:windowSoftInputMode="stateHidden">
+
+        </activity>
         <!-- ATTENTION: This was auto-generated to add Google Play services to your project for
      App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
         <meta-data
