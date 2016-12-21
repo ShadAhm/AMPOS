@@ -1,39 +1,54 @@
 package com.example.thisi.applicationx.activity;
 
-import android.content.ContentValues;
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
-import android.database.Cursor;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
-import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Bundle;
+import android.view.KeyEvent;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TableLayout;
+import android.widget.TableRow;
+import android.graphics.Color;
+import android.widget.TextView;
+import android.view.Gravity;
+import android.database.Cursor;
 
-import com.example.thisi.applicationx.model.Customer;
-import com.example.thisi.applicationx.model.Detail;
-import com.example.thisi.applicationx.model.Employee;
-import com.example.thisi.applicationx.model.Header;
-import com.example.thisi.applicationx.model.POS_Control;
-import com.example.thisi.applicationx.model.Payment;
-import com.example.thisi.applicationx.model.Price_Group;
-import com.example.thisi.applicationx.model.Product_Master;
-import com.example.thisi.applicationx.model.Shift_Master;
-import com.example.thisi.applicationx.model.Suspend;
+import com.example.thisi.applicationx.data.DatabaseHelper;
+import com.example.thisi.applicationx.R;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Iterator;
 
-public class MainActivity 
-extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity {
     DatabaseHelper myDb;
+
+    final String headerRowColor = "#00688B";
+    final String evenRowColor = "#E0FFFF";
+    final String oddRowColor = "#00EEEE";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_viewtransactions);
-        myDb = DatabaseHelper.getHelper(this);
 
-        // addTransactionsToView();
+        initializeVariables();
+        addTransactionsToView();
     }
 
-    // private void addTransactionsToView() {
+    private void initializeVariables() {
+        SharedPreferences prefs = this.getSharedPreferences("com.example.thisi.applicationx", Context.MODE_PRIVATE);
+        dataHelper = DatabaseHelper.getHelper(this);
+    }
+
+    private void addTransactionsToView() {
     //     TableLayout tableLayout = (TableLayout) findViewById(R.id.tableTransactions);
     //     // Add header row
     //     // TableRow rowHeader = createHeaderRow();
@@ -44,9 +59,11 @@ extends AppCompatActivity {
     //     db.beginTransaction();
 
     //     try {
+    //         String todaysDateInString = new SimpleDateFormat("yyyyMMdd").format(new Date());
+
     //         String selectQuery = "SELECT * FROM header " +
-    //                 "WHERE customer_code = '" + customer_code + "' " +
-    //                 "AND trans_date = '" + todaysDateInString + "' ORDER BY TRANS_TIME DESC;";
+    //                 "WHERE trans_date = '" + todaysDateInString + 
+    //                 "' ORDER BY TRANS_TIME DESC;";
                     
     //         Cursor cursor = db.rawQuery(selectQuery, null);
 
