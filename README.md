@@ -7,4 +7,4 @@ Uses the Rego printer library.
 
 | Commit        | Date           | Note  |
 | ------------- |:-------------:|:-----|
-| [7c995aa](https://github.com/ShadAhm/AMPOS/commit/7bb634685ea090f31f51fda3983c4c699a744787)      | 23/12/206 | Pretty much all features except reprint receipts |
+| [7c995aa](https://github.com/ShadAhm/AMPOS/commit/7bb634685ea090f31f51fda3983c4c699a744787)      | 23/12/2016 | Pretty much all features except reprint receipts |
