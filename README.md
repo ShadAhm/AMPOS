@@ -3,7 +3,8 @@ Mobile POS designed for the SpeedData KT45Q running on Android 5.1.
 
 Uses the Rego printer library. 
 
-## Milestone Commits 
+## Demoable Versions 
 
-7c995aaf5f19d8cb8e539ab81c8d1298e9ddb5c9 - everything except ViewTransactionsActivity
-23 December 2016
+| Commit        | Date           | Note  |
+| ------------- |:-------------:|:-----|
+| [7c995aa](https://github.com/ShadAhm/AMPOS/commit/7bb634685ea090f31f51fda3983c4c699a744787)      | 23/12/206 | Pretty much all features except reprint receipts |
