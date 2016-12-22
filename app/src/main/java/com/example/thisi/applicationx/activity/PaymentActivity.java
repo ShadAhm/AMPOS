@@ -646,6 +646,7 @@ public class PaymentActivity extends Activity {
                 changeAmountInsertString = changeAmount.toString();
             }
 
+            String rowNumber = String.valueOf(i + 1);
             ssql = "INSERT INTO payment ( " +
                     "COMPANY_CODE, " +
                     "OUTLET_CODE, " +
@@ -687,7 +688,7 @@ public class PaymentActivity extends Activity {
                     "'" + todaysDateInString + "', " + // bus date
                     "'" + todaysDateInString + "', " + // trans dates
                     "'" + todaysTimeInString + "', " + // trans time
-                    "null, " +
+                    rowNumber + ", " +
                     "'" + paymentCode + "', " +
                     "'" + paymentName + "', " +
                     "'" + paymentCode + "', " +
@@ -881,7 +882,7 @@ public class PaymentActivity extends Activity {
                     "null, " +
                     "null, " +
                     "'" + todaysDateInString + "', " + // modified date
-                    "'" + posNo + "', " + // 25
+                    "'" + empCode + "', " + // 25
                     "0, " +
                     "0, " +
                     "null, " +

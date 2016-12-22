@@ -193,6 +193,9 @@ public class UploadDataService extends Service1 {
                 super.SQLExec(sb.toString());
             }
         }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
         finally {
             cursor.close();
         }
@@ -219,7 +222,7 @@ public class UploadDataService extends Service1 {
                 sb.append("OUTLET_CODE,");
                 sb.append("POS_NO,");
                 sb.append("BUS_DATE,");
-                sb.append("SHIFT_NO,");
+                sb.append("SHIFT_NUMBER,");
                 sb.append("EMP_CD,");
                 sb.append("LAST_RCP,");
                 sb.append("LAST_SUSPEND_NUMBER,");
@@ -245,7 +248,7 @@ public class UploadDataService extends Service1 {
                 sb.append(appendStringQueryVar(busDateColValue));
                 sb.append(",");
 
-                String shiftNoColValue = cursor.getString(cursor.getColumnIndex("SHIFT_NO"));
+                String shiftNoColValue = cursor.getString(cursor.getColumnIndex("SHIFT_NUMBER"));
                 sb.append(appendStringQueryVar(shiftNoColValue));
                 sb.append(",");
 
@@ -319,7 +322,6 @@ public class UploadDataService extends Service1 {
                         ") ");
                 sb.append("VALUES ");
 
-                int rownumIn = 1;
                 while (cursor.moveToNext()) {
                     sb.append("(");
 
@@ -364,7 +366,7 @@ public class UploadDataService extends Service1 {
                     sb.append(",");
 
                     int rowNumberColValue = cursor.getInt(cursor.getColumnIndex("ROW_NUMBER"));
-                    sb.append(Integer.toString(rownumIn));
+                    sb.append(Integer.toString(rowNumberColValue));
                     sb.append(",");
 
                     String prodCodeColValue = cursor.getString(cursor.getColumnIndex("PROD_CODE"));
@@ -436,8 +438,6 @@ public class UploadDataService extends Service1 {
 
                     sb.append(")");
 
-                    rownumIn++;
-
                     if(!cursor.isLast()) {
                         sb.append(",");
                     }
@@ -464,7 +464,6 @@ public class UploadDataService extends Service1 {
                 sb.append("INSERT INTO payment(COMPANY_CODE,OUTLET_CODE,EMP_CODE,POS_NO,SHIFT_NO,RCP_NO,TRANS_TYPE,BUS_DATE,TRANS_DATE,TRANS_TIME,ROW_NUMBER,PAYMENT_CODE,PAYMENT_NAME,PAYMENT_TYPE,FOREX_CODE,PAYMENT_AMOUNT,CHANGE_AMOUNT,TENDER_AMOUNT,DRAWER_DECLARE_ID,MODIFIED_DATE,MODIFIED_ID) ");
                 sb.append("VALUES ");
 
-                int rownumIn = 1;
                 while (cursor.moveToNext()) {
                     sb.append("(");
 
@@ -508,7 +507,8 @@ public class UploadDataService extends Service1 {
                     sb.append(appendStringQueryVar(transTimeColValue));
                     sb.append(",");
 
-                    sb.append(Integer.toString(rownumIn));
+                    int rowNumberColValue = cursor.getInt(cursor.getColumnIndex("ROW_NUMBER"));
+                    sb.append(Integer.toString(rowNumberColValue));
                     sb.append(",");
 
                     String paymentcode = cursor.getString(cursor.getColumnIndex("PAYMENT_CODE"));
@@ -542,8 +542,6 @@ public class UploadDataService extends Service1 {
                     sb.append(appendStringQueryVar(modifiedid));
 
                     sb.append(")");
-
-                    rownumIn++;
 
                     if(!cursor.isLast()) {
                         sb.append(",");

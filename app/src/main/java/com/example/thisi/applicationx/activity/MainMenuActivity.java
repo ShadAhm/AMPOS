@@ -430,11 +430,12 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
                 if(ddr == null || !ddr.isSuccessful || ddr.posControlsDownloaded <= 0) {
                     String posNo = _sp.getString("posnumber", null);
                     String companyCode = _sp.getString("companycode", null);
+                    String outletCode = _sp.getString("outletcode", null);
 
                     POS_Control newPostControl = new POS_Control();
                     newPostControl.LAST_RCP = "0000000";
                     newPostControl.COMPANY_CODE = companyCode;
-                    newPostControl.OUTLET_CODE = companyCode;
+                    newPostControl.OUTLET_CODE = outletCode;
                     newPostControl.POS_NO = posNo;
                     newPostControl.BUS_DATE = todaysDateInString;
                     newPostControl.SHIFT_NUMBER = 0;

@@ -30,7 +30,7 @@ public class Service1 {
 
     public String NAMESPACE ="http://tempuri.org/";
     public String url="";
-    public int timeOut = 10000;
+    public int timeOut = 30000;
     public IWsdl2CodeEvents eventHandler;
     public WS_Enums.SoapProtocolVersion soapVersion;
 
@@ -183,8 +183,6 @@ public class Service1 {
                 httpTransport.call("http://tempuri.org/IService1/SQLExec", soapEnvelope);
             }
         }catch (Exception e) {
-            if (eventHandler != null)
-                eventHandler.Wsdl2CodeFinishedWithException(e);
             e.printStackTrace();
         }
     }

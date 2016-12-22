@@ -99,6 +99,8 @@ public class DownloadDataService extends Service1 {
                     ddr.isSuccessful = true; 
                     ddr.posControlsDownloaded = posControlsReturned; 
                     ddr.message = "Successfully downloaded data";
+
+                    db.setTransactionSuccessful();
                 } catch (Exception e) {
                     e.printStackTrace();
                     ddr.isSuccessful = false;
