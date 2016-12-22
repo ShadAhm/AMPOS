@@ -27,7 +27,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class MainActivity extends AppCompatActivity {
+public class ViewTransactionsActivity extends Activity {
     DatabaseHelper myDb;
 
     final String headerRowColor = "#00688B";
@@ -45,88 +45,89 @@ public class MainActivity extends AppCompatActivity {
 
     private void initializeVariables() {
         SharedPreferences prefs = this.getSharedPreferences("com.example.thisi.applicationx", Context.MODE_PRIVATE);
-        dataHelper = DatabaseHelper.getHelper(this);
+        myDb = DatabaseHelper.getHelper(this);
     }
 
     private void addTransactionsToView() {
-    //     TableLayout tableLayout = (TableLayout) findViewById(R.id.tableTransactions);
-    //     // Add header row
-    //     // TableRow rowHeader = createHeaderRow();
-    //     // tableLayout.addView(rowHeader);
+        //     TableLayout tableLayout = (TableLayout) findViewById(R.id.tableTransactions);
+        //     // Add header row
+        //     // TableRow rowHeader = createHeaderRow();
+        //     // tableLayout.addView(rowHeader);
 
-    //     SQLiteDatabase db = dataHelper.getReadableDatabase();
-    //     // Start the transaction.
-    //     db.beginTransaction();
+        //     SQLiteDatabase db = dataHelper.getReadableDatabase();
+        //     // Start the transaction.
+        //     db.beginTransaction();
 
-    //     try {
-    //         String todaysDateInString = new SimpleDateFormat("yyyyMMdd").format(new Date());
+        //     try {
+        //         String todaysDateInString = new SimpleDateFormat("yyyyMMdd").format(new Date());
 
-    //         String selectQuery = "SELECT * FROM header " +
-    //                 "WHERE trans_date = '" + todaysDateInString + // get today's transactions only
-    //                 "' ORDER BY TRANS_TIME DESC;";
-                    
-    //         Cursor cursor = db.rawQuery(selectQuery, null);
+        //         String selectQuery = "SELECT * FROM header " +
+        //                 "WHERE trans_date = '" + todaysDateInString + // get today's transactions only
+        //                 "' ORDER BY TRANS_TIME DESC;";
 
-    //         int rowCount = cursor.getCount();
+        //         Cursor cursor = db.rawQuery(selectQuery, null);
 
-    //         if (rowCount > 0) {
-    //             int i = 0;
+        //         int rowCount = cursor.getCount();
 
-    //             while (cursor.moveToNext()) {
-    //                 i++;
+        //         if (rowCount > 0) {
+        //             int i = 0;
 
-    //                 // Read columns data
-    //                 int outlet_id = i;
-    //                 String customerCode = cursor.getString(cursor.getColumnIndex("CUSTOMER_CODE"));
-    //                 String transTime = cursor.getString(cursor.getColumnIndex("TRANS_TIME"));
-    //                 String rcpNo = cursor.getString(cursor.getColumnIndex("RCP_NO"));
-                    
-    //                 // dara rows
-    //                 TableRow row = new TableRow(this);
+        //             while (cursor.moveToNext()) {
+        //                 i++;
 
-    //                 if (i % 2 == 0) {
-    //                     row.setBackgroundColor(Color.parseColor(evenRowColor));
-    //                 } else {
-    //                     row.setBackgroundColor(Color.parseColor(oddRowColor));
-    //                 }
+        //                 // Read columns data
+        //                 int outlet_id = i;
+        //                 String customerCode = cursor.getString(cursor.getColumnIndex("CUSTOMER_CODE"));
+        //                 String transTime = cursor.getString(cursor.getColumnIndex("TRANS_TIME"));
+        //                 String rcpNo = cursor.getString(cursor.getColumnIndex("RCP_NO"));
 
-    //                 row.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT,
-    //                         TableLayout.LayoutParams.WRAP_CONTENT));
+        //                 // dara rows
+        //                 TableRow row = new TableRow(this);
 
-    //                 String[] colText = { transTime, customerCode, rcpNo, "Reprint"};
+        //                 if (i % 2 == 0) {
+        //                     row.setBackgroundColor(Color.parseColor(evenRowColor));
+        //                 } else {
+        //                     row.setBackgroundColor(Color.parseColor(oddRowColor));
+        //                 }
 
-    //                 int j = 0; 
-    //                 for (String text : colText) {
-    //                     if(text != "Reprint") {
-    //                         TextView tv = new TextView(this);
-    //                         tv.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT,
-    //                                 TableRow.LayoutParams.WRAP_CONTENT));
+        //                 row.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT,
+        //                         TableLayout.LayoutParams.WRAP_CONTENT));
 
-    //                         tv.setTextSize(11);
-    //                         tv.setPadding(5, 5, 5, 5);
-    //                         tv.setText(text);
-    //                         row.addView(tv);
-    //                     }
-    //                     else {
-    //                         Button btnReprint = new Button(this); 
-    //                         btnReprint.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-    //                         btnReprint.setText("RP");
-    //                         btnReprint.setId("btnReprint" + String.valueOf(j));
-    //                         row.addView(btnReprint); 
-    //                     }
-    //                     j++; 
-    //                 }
-    //                 tableLayout.addView(row);
-    //             }
-    //             cursor.close();
-    //         }
-    //         db.setTransactionSuccessful();
+        //                 String[] colText = { transTime, customerCode, rcpNo, "Reprint"};
 
-    //     } catch (SQLiteException e) {
-    //         e.printStackTrace();
-    //     } finally {
-    //         db.endTransaction();
-    //         db.close();
-    //     }
-    // }
-}
+        //                 int j = 0;
+        //                 for (String text : colText) {
+        //                     if(text != "Reprint") {
+        //                         TextView tv = new TextView(this);
+        //                         tv.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT,
+        //                                 TableRow.LayoutParams.WRAP_CONTENT));
+
+        //                         tv.setTextSize(11);
+        //                         tv.setPadding(5, 5, 5, 5);
+        //                         tv.setText(text);
+        //                         row.addView(tv);
+        //                     }
+        //                     else {
+        //                         Button btnReprint = new Button(this);
+        //                         btnReprint.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+        //                         btnReprint.setText("RP");
+        //                         btnReprint.setId("btnReprint" + String.valueOf(j));
+        //                         row.addView(btnReprint);
+        //                     }
+        //                     j++;
+        //                 }
+        //                 tableLayout.addView(row);
+        //             }
+        //             cursor.close();
+        //         }
+        //         db.setTransactionSuccessful();
+
+        //     } catch (SQLiteException e) {
+        //         e.printStackTrace();
+        //     } finally {
+        //         db.endTransaction();
+        //         db.close();
+        //     }
+        // }
+    }
+    }
