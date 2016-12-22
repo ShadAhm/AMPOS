@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
                     row.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT,
                             TableLayout.LayoutParams.WRAP_CONTENT));
 
-                    String[] colText = { transTime, customerCode, rcpNo, " "};
+                    String[] colText = { transTime, customerCode, rcpNo, "Reprint"};
 
                     for (String text : colText) {
                         TextView tv = new TextView(this);
@@ -109,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 cursor.close();
 
-                
+
             }
             db.setTransactionSuccessful();
 
