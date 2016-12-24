@@ -232,8 +232,8 @@ public class ViewTransactionsActivity extends Activity {
             Cursor res2 = db.rawQuery("SELECT SUM(PAYMENT_AMOUNT) AS CASH, SUM(CHANGE_AMOUNT) AS CHANGE FROM PAYMENT WHERE RCP_NO = '" + thisRcpId + "'", null);
             res2.moveToFirst();
 
-            String cashhh = res.getString(res.getColumnIndex("CASH"));
-            String changeee = res.getString(res.getColumnIndex("CHANGE"));
+            String cashhh = res2.getString(res.getColumnIndex("CASH"));
+            String changeee = res2.getString(res.getColumnIndex("CHANGE"));
 
             BigDecimal bdGrandTotalll = new BigDecimal(grandtotalll).setScale(2, RoundingMode.HALF_UP);
             BigDecimal bdTaxx = new BigDecimal(taxx).setScale(2, RoundingMode.HALF_UP);
