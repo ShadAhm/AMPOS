@@ -124,4 +124,3 @@ public class ViewTransactionsActivity extends Activity {
              }
          }
     }
-}
