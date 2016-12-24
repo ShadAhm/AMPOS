@@ -65,6 +65,8 @@ public class ViewTransactionsActivity extends Activity {
     private void initializeVariables() {
         context = (ApplicationContext) getApplicationContext();
 
+        dataHelper = DatabaseHelper.getHelper(this);
+
         SharedPreferences prefs = this.getSharedPreferences("com.example.thisi.applicationx", Context.MODE_PRIVATE);
         posNo = prefs.getString("posnumber", null);
         myDb = DatabaseHelper.getHelper(this);
