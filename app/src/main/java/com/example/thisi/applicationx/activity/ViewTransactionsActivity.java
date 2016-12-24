@@ -18,11 +18,17 @@ import android.graphics.Color;
 import android.widget.TextView;
 import android.view.Gravity;
 import android.database.Cursor;
+import android.widget.Toast;
 
 import com.example.thisi.applicationx.data.DatabaseHelper;
 import com.example.thisi.applicationx.R;
+import com.example.thisi.applicationx.printutil.ApplicationContext;
+import com.example.thisi.applicationx.printutil.DeviceControl;
+import com.example.thisi.applicationx.printutil.preDefiniation;
 
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -36,6 +42,16 @@ public class ViewTransactionsActivity extends Activity {
     final String evenRowColor = "#E0FFFF";
     final String oddRowColor = "#00EEEE";
 
+    // printer stuff
+    public ApplicationContext context;
+    public int state;
+    public boolean mBconnect = false;
+    DatabaseHelper dataHelper;
+    private DeviceControl DevCtrl;
+
+    // from settings :
+    private static String posNo;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,6 +63,7 @@ public class ViewTransactionsActivity extends Activity {
 
     private void initializeVariables() {
         SharedPreferences prefs = this.getSharedPreferences("com.example.thisi.applicationx", Context.MODE_PRIVATE);
+        posNo = prefs.getString("posnumber", null);
         myDb = DatabaseHelper.getHelper(this);
     }
 
@@ -97,6 +114,8 @@ public class ViewTransactionsActivity extends Activity {
 
                          String[] colText = { transTime, customerCode, rcpNo };
 
+                         final String rcpnofinal = rcpNo;
+
                          int j = 0;
                          for (String text : colText) {
                              TextView tv = new TextView(this);
@@ -113,6 +132,15 @@ public class ViewTransactionsActivity extends Activity {
                              tv.setPadding(5, 5, 5, 5);
                              tv.setText(text);
                              row.addView(tv);
+
+                             if (text == "X") {
+                                 tv.setOnClickListener(new View.OnClickListener() {
+                                     @Override
+                                     public void onClick(View v) {
+                                         reprintReceipt(rcpnofinal);
+                                     }
+                                 });
+                             }
 
                              j++;
                          }
@@ -159,5 +187,222 @@ public class ViewTransactionsActivity extends Activity {
             i++;
         }
         return rowHeader;
+    }
+
+    private void reprintReceipt(String rcpNo) {
+        connect();
+        context.getObject().CON_PageStart(context.getState(),false,0,0);
+
+        printReceiptPart1();
+        printReceiptPart2(rcpNo);
+
+        SQLiteDatabase db = dataHelper.getReadableDatabase();
+        db.beginTransaction();
+        try {
+            printReceiptItems(db, rcpNo);
+            printReceiptTotal(db, rcpNo);
+            db.setTransactionSuccessful();
+        } catch (SQLiteException e) {
+            e.printStackTrace();
+        } finally {
+            db.endTransaction();
+            db.close();
+        }
+
+        context.getObject().ASCII_CtrlReset(context.getState());
+        context.getObject().ASCII_CtrlCutPaper(context.getState(), 66, 0);
+        context.getObject().CON_PageEnd(context.getState(),context.getPrintway());
+    }
+
+    private void printReceiptTotal(SQLiteDatabase db, String thisRcpId) {
+        Cursor res = db.rawQuery("SELECT * FROM header WHERE RCP_NO = '" + thisRcpId + "';", null);
+
+        if (res.getCount() > 0) {
+            res.moveToFirst();
+
+            String grandtotalll = res.getString(res.getColumnIndex("SALES_AMOUNT"));
+            String taxx = res.getString(res.getColumnIndex("TOTAL_TAX"));
+
+            res.close();
+
+            BigDecimal bdGrandTotalll = new BigDecimal(grandtotalll).setScale(2, RoundingMode.HALF_UP);
+            BigDecimal bdTaxx = new BigDecimal(taxx).setScale(2, RoundingMode.HALF_UP);
+            BigDecimal bdTotalll = bdGrandTotalll.subtract(bdTaxx).setScale(2, RoundingMode.HALF_UP);
+
+            context.getObject().ASCII_CtrlAlignType(context.getState(),
+                    preDefiniation.AlignType.AT_LEFT.getValue());
+            context.getObject().ASCII_PrintString(context.getState(),0,
+                    0 ,0, 0, 0, "Total:  " + bdTotalll.toString(), "gb2312");
+            context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
+
+            context.getObject().ASCII_CtrlAlignType(context.getState(),
+                    preDefiniation.AlignType.AT_LEFT.getValue());
+            context.getObject().ASCII_PrintString(context.getState(),0,
+                    0 ,0, 0, 0, "GST:  " + bdTaxx.toString(), "gb2312");
+            context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
+
+            context.getObject().ASCII_CtrlAlignType(context.getState(),
+                    preDefiniation.AlignType.AT_LEFT.getValue());
+            context.getObject().ASCII_PrintString(context.getState(),0,
+                    0, 0, 0, 0, "--------------------------------",
+                    "gb2312");
+            context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
+
+            context.getObject().ASCII_CtrlAlignType(context.getState(),
+                    preDefiniation.AlignType.AT_LEFT.getValue());
+            context.getObject().ASCII_PrintString(context.getState(),0,
+                    0 ,0, 0, 0, "GRAND TOTAL:  " + bdGrandTotalll.toString(), "gb2312");
+            context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
+        }
+    }
+
+    private void printReceiptItems(SQLiteDatabase db, String thisRcpId) {
+        Cursor res = db.rawQuery("SELECT * FROM detail WHERE RCP_NO = '" + thisRcpId + "';", null);
+
+        while(res.moveToNext()) {
+            String quantity = res.getString(res.getColumnIndex("QUANTITY"));
+            String prodname = res.getString(res.getColumnIndex("PROD_NAME"));
+            String pricet = res.getString(res.getColumnIndex("TOTAL_PRICE"));
+
+            BigDecimal bdPricet = new BigDecimal(pricet).setScale(2, RoundingMode.HALF_UP);
+
+            context.getObject().ASCII_CtrlAlignType(context.getState(),
+                    preDefiniation.AlignType.AT_LEFT.getValue());
+            context.getObject().ASCII_PrintString(context.getState(),0,
+                    0 ,0, 0, 0, quantity + "x  " + prodname, "gb2312");
+            context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
+
+            context.getObject().ASCII_CtrlAlignType(context.getState(),
+                    preDefiniation.AlignType.AT_RIGHT.getValue());
+            context.getObject().ASCII_PrintString(context.getState(),0,
+                    0 ,0, 0, 0, bdPricet.toString(), "gb2312");
+            context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
+        }
+
+        res.close();
+
+        context.getObject().ASCII_CtrlAlignType(context.getState(),
+                preDefiniation.AlignType.AT_LEFT.getValue());
+        context.getObject().ASCII_PrintString(context.getState(),0,
+                0, 0, 0, 0, "--------------------------------",
+                "gb2312");
+        context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
+    }
+
+    private void printReceiptPart1() {
+        context.getObject().ASCII_CtrlAlignType(context.getState(),
+                preDefiniation.AlignType.AT_CENTER.getValue());
+        context.getObject().ASCII_PrintString(context.getState(),0,
+                0 ,0, 0, 0, "DIAMOND PUBLIC", "gb2312");
+        context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
+        context.getObject().ASCII_PrintString(context.getState(),0,
+                0 ,0, 0, 0, "TUBE ICE TRADING", "gb2312");
+        context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
+        context.getObject().ASCII_PrintString(context.getState(),0,
+                0, 0, 0, 0, "(001500992-V)", "gb2312");
+        context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
+        context.getObject().ASCII_PrintString(context.getState(),0,
+                0, 0, 0, 0, "(GST No. 001022943232)", "gb2312");
+        context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
+        context.getObject().ASCII_PrintString(context.getState(),0,
+                0, 0, 0, 0, "38, Jalan Kati Fu 9/F", "gb2312");
+        context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
+        context.getObject().ASCII_PrintString(context.getState(),0,
+                0, 0, 0, 0, "Taman Medan Mas", "gb2312");
+        context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
+
+        context.getObject().ASCII_PrintString(context.getState(),0,
+                0, 0, 0, 0, "Kg.Baru Seri Sg. Buloh", "gb2312");
+        context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
+
+        context.getObject().ASCII_PrintString(context.getState(),0,
+                0, 0, 0, 0, "4060 Shah Alam, Selangor", "gb2312");
+        context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
+
+        context.getObject().ASCII_PrintString(context.getState(),0,
+                0, 0, 0, 0, "Tel:012-2126307, 014-3376307", "gb2312");
+        context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
+
+        context.getObject().ASCII_PrintString(context.getState(),0,
+                0, 0, 0, 0, "--------------------------------",
+                "gb2312");
+        context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
+    }
+
+    private void printReceiptPart2(String thisRcpId) {
+        context.getObject().ASCII_CtrlAlignType(context.getState(),
+                preDefiniation.AlignType.AT_CENTER.getValue());
+        context.getObject().ASCII_PrintString(context.getState(),0,
+                0 ,0, 0, 0, "TAX INVOICE", "gb2312");
+        context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
+
+        SimpleDateFormat sdfDate = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");//dd/MM/yyyy
+        Date now = new Date();
+        String strDate = sdfDate.format(now);
+
+        context.getObject().ASCII_CtrlAlignType(context.getState(),
+                preDefiniation.AlignType.AT_LEFT.getValue());
+        context.getObject().ASCII_PrintString(context.getState(),0,
+                0 ,0, 0, 0, "Date:  " + strDate, "gb2312");
+        context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
+
+        context.getObject().ASCII_CtrlAlignType(context.getState(),
+                preDefiniation.AlignType.AT_LEFT.getValue());
+        context.getObject().ASCII_PrintString(context.getState(),0,
+                0 ,0, 0, 0, "Emp:  " + "Not correct", "gb2312");
+        context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
+
+        context.getObject().ASCII_CtrlAlignType(context.getState(),
+                preDefiniation.AlignType.AT_LEFT.getValue());
+        context.getObject().ASCII_PrintString(context.getState(),0,
+                0 ,0, 0, 0, "POS:  " + posNo, "gb2312");
+        context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
+
+        context.getObject().ASCII_CtrlAlignType(context.getState(),
+                preDefiniation.AlignType.AT_LEFT.getValue());
+        context.getObject().ASCII_PrintString(context.getState(),0,
+                0 ,0, 0, 0, "RCP No:  " + thisRcpId, "gb2312");
+        context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
+
+        context.getObject().ASCII_PrintString(context.getState(),0,
+                0, 0, 0, 0, "--------------------------------",
+                "gb2312");
+        context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
+    }
+
+    public void connect() {
+        // /dev/ttyMT1:115200 //kt45
+        // /dev/ttyG1:115200 //tt43
+        modelJudgmen();
+        if (mBconnect) {
+            context.getObject().CON_CloseDevices(context.getState());
+            mBconnect = false;
+        } else {
+            if (state > 0) {
+                mBconnect = true;
+                context.setState(state);
+                context.setName("RG-E48");
+
+            } else {
+                Toast.makeText(this, R.string.mes_confail,
+                        Toast.LENGTH_SHORT).show();
+                mBconnect = false;
+            }
+        }
+    }
+
+    private void modelJudgmen() {
+        state = context.getObject().CON_ConnectDevices("RG-E487", "/dev/ttyMT1:115200", 200);
+
+        if (android.os.Build.VERSION.RELEASE.equals("5.1")) {
+            DevCtrl = new DeviceControl(DeviceControl.powerPathKT);
+            DevCtrl.setGpio(94);
+
+            try {
+                DevCtrl.PowerOnMTDevice();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
