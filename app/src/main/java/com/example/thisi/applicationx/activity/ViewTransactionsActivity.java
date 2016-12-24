@@ -193,12 +193,19 @@ public class ViewTransactionsActivity extends Activity {
         connect();
         context.getObject().CON_PageStart(context.getState(),false,0,0);
 
-        printReceiptPart1();
-        printReceiptPart2(rcpNo);
-
         SQLiteDatabase db = dataHelper.getReadableDatabase();
         db.beginTransaction();
         try {
+            Cursor res = db.rawQuery("SELECT * FROM header WHERE RCP_NO = '" + rcpNo + "';", null);
+
+            String empCode = "unknown";
+            if (res.moveToFirst()) {
+                empCode = res.getString(res.getColumnIndex("EMP_CODE"));
+            }
+
+            printReceiptPart1();
+            printReceiptPart2(rcpNo, empCode);
+
             printReceiptItems(db, rcpNo);
             printReceiptTotal(db, rcpNo);
             db.setTransactionSuccessful();
@@ -336,7 +343,7 @@ public class ViewTransactionsActivity extends Activity {
         context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
     }
 
-    private void printReceiptPart2(String thisRcpId) {
+    private void printReceiptPart2(String thisRcpId, String empCode) {
         context.getObject().ASCII_CtrlAlignType(context.getState(),
                 preDefiniation.AlignType.AT_CENTER.getValue());
         context.getObject().ASCII_PrintString(context.getState(),0,
@@ -356,7 +363,7 @@ public class ViewTransactionsActivity extends Activity {
         context.getObject().ASCII_CtrlAlignType(context.getState(),
                 preDefiniation.AlignType.AT_LEFT.getValue());
         context.getObject().ASCII_PrintString(context.getState(),0,
-                0 ,0, 0, 0, "Emp:  " + "Not correct", "gb2312");
+                0 ,0, 0, 0, "Emp:  " + empCode, "gb2312");
         context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
 
         context.getObject().ASCII_CtrlAlignType(context.getState(),
