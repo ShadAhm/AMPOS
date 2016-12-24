@@ -193,7 +193,7 @@ public class ViewTransactionsActivity extends Activity {
 
             if (res.moveToFirst()) {
                 String empCode = res.getString(res.getColumnIndex("EMP_CODE"));
-                dataHelper.getEmployeeByEmployeeCode(db, empCode);
+                emp = dataHelper.getEmployeeByEmployeeCode(db, empCode);
             }
 
             printReceiptPart1();
