@@ -76,6 +76,11 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
         startActivity(intent);
     }
 
+    public void onReprintReceiptClick(View view) {
+        Intent intent = new Intent(this, ViewTransactionsActivity.class);
+        startActivity(intent);
+    }
+
     public void onSettingsClick(View view) {
         Intent intent = new Intent(this, SettingsActivity.class);
         startActivity(intent);
