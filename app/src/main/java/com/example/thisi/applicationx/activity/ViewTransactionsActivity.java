@@ -48,6 +48,7 @@ public class ViewTransactionsActivity extends Activity {
     public boolean mBconnect = false;
     DatabaseHelper dataHelper;
     private DeviceControl DevCtrl;
+    private boolean isTT43 = false;
 
     // from settings :
     private static String posNo;
@@ -177,10 +178,6 @@ public class ViewTransactionsActivity extends Activity {
 
     private void reprintReceipt(String rcpNo) {
         connect();
-        if(!mBconnect) {
-            connect(); // retry
-        }
-
         context.getObject().CON_PageStart(context.getState(),false,0,0);
 
         SQLiteDatabase db = dataHelper.getReadableDatabase();
@@ -405,7 +402,7 @@ public class ViewTransactionsActivity extends Activity {
         if (android.os.Build.VERSION.RELEASE.equals("5.1")) {
             DevCtrl = new DeviceControl(DeviceControl.powerPathKT);
             DevCtrl.setGpio(94);
-
+            isTT43 = false;
             try {
                 DevCtrl.PowerOnMTDevice();
             } catch (IOException e) {
