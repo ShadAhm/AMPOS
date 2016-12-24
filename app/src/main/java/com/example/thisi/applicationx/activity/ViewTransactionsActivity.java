@@ -122,25 +122,17 @@ public class ViewTransactionsActivity extends Activity {
                              tv.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT,
                                      TableRow.LayoutParams.WRAP_CONTENT));
 
-                             if (j == 0) { // Time column align right
-                                 tv.setGravity(Gravity.RIGHT);
-                             } else {
-                                 tv.setGravity(Gravity.LEFT);
-                             }
-
                              tv.setTextSize(13);
-                             tv.setPadding(5, 5, 5, 5);
+                             tv.setPadding(5, 10, 5, 10);
                              tv.setText(text);
                              row.addView(tv);
 
-                             if (text == "X") {
-                                 tv.setOnClickListener(new View.OnClickListener() {
-                                     @Override
-                                     public void onClick(View v) {
-                                         reprintReceipt(rcpnofinal);
-                                     }
-                                 });
-                             }
+                             tv.setOnClickListener(new View.OnClickListener() {
+                                 @Override
+                                 public void onClick(View v) {
+                                     reprintReceipt(rcpnofinal);
+                                 }
+                             });
 
                              j++;
                          }
@@ -171,12 +163,6 @@ public class ViewTransactionsActivity extends Activity {
             TextView tv = new TextView(this);
             tv.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT,
                     TableRow.LayoutParams.WRAP_CONTENT));
-
-            if (i == 0) { // Time column align right
-                tv.setGravity(Gravity.RIGHT);
-            } else {
-                tv.setGravity(Gravity.LEFT);
-            }
 
             tv.setTextSize(13);
             tv.setPadding(5, 5, 5, 5);
