@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import com.example.thisi.applicationx.data.DatabaseHelper;
 import com.example.thisi.applicationx.R;
+import com.example.thisi.applicationx.model.Employee;
 import com.example.thisi.applicationx.printutil.ApplicationContext;
 import com.example.thisi.applicationx.printutil.DeviceControl;
 import com.example.thisi.applicationx.printutil.preDefiniation;
@@ -187,13 +188,16 @@ public class ViewTransactionsActivity extends Activity {
         try {
             Cursor res = db.rawQuery("SELECT * FROM header WHERE RCP_NO = '" + rcpNo + "';", null);
 
-            String empCode = "unknown";
+            Employee emp = new Employee();
+            emp.EMP_NAME = "unknown";
+
             if (res.moveToFirst()) {
-                empCode = res.getString(res.getColumnIndex("EMP_CODE"));
+                String empCode = res.getString(res.getColumnIndex("EMP_CODE"));
+                dataHelper.getEmployeeByEmployeeCode(db, empCode);
             }
 
             printReceiptPart1();
-            printReceiptPart2(rcpNo, empCode);
+            printReceiptPart2(rcpNo, emp.EMP_NAME);
 
             printReceiptItems(db, rcpNo);
             printReceiptTotal(db, rcpNo);

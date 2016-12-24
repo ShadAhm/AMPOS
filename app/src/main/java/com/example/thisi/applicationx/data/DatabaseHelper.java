@@ -922,8 +922,33 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return rowNum;
     }
 
-    public void updateHeaderReprintCount(SQLiteDatabase db) {
+    public Employee getEmployeeByEmployeeCode(SQLiteDatabase db, String employeeCode) {
+        String qry = "SELECT * FROM employee WHERE EMP_CODE = '" + employeeCode + "'";
 
+        Cursor res = db.rawQuery(qry, null);
+
+        if (res.moveToFirst()) {
+            Employee emp = new Employee();
+            emp.EMP_NAME = res.getString(res.getColumnIndex("EMP_NAME"));
+            res.close();
+            return emp;
+        } else {
+            return null;
+        }
+    }
+
+    public void updateHeaderReprintCount(SQLiteDatabase db, String rcpNo) {
+        int reprintCount = 0;
+        String qry = "SELECT REPRINTCOUNT FROM HEADER WHERE RCP_NO = '" + rcpNo + "';";
+        Cursor res = db.rawQuery(qry, null);
+        if (res.moveToFirst()) {
+            reprintCount = res.getInt(res.getColumnIndex("REPRINTCOUNT"));
+            res.close();
+        }
+
+        reprintCount++;
+        String qry1 = "UPDATE HEADER SET REPRINTCOUNT = " + String.valueOf(reprintCount) + ";";
+        db.execSQL(qry1);
     }
 
     public Shift_Master lookForOpenShiftsAtDate(SQLiteDatabase db, String todaysDate) {
