@@ -53,8 +53,8 @@ public class ViewTransactionsActivity extends Activity {
     private void addTransactionsToView() {
              TableLayout tableLayout = (TableLayout) findViewById(R.id.tableTransactions);
              // Add header row
-             // TableRow rowHeader = createHeaderRow();
-             // tableLayout.addView(rowHeader);
+            TableRow rowHeader = createHeaderRow();
+             tableLayout.addView(rowHeader);
 
              SQLiteDatabase db = myDb.getReadableDatabase();
              // Start the transaction.
@@ -95,7 +95,7 @@ public class ViewTransactionsActivity extends Activity {
                          row.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT,
                                  TableLayout.LayoutParams.WRAP_CONTENT));
 
-                         String[] colText = { transTime, customerCode, rcpNo, "Reprint"};
+                         String[] colText = { transTime, customerCode, rcpNo };
 
                          int j = 0;
                          for (String text : colText) {
@@ -103,7 +103,7 @@ public class ViewTransactionsActivity extends Activity {
                              tv.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT,
                                      TableRow.LayoutParams.WRAP_CONTENT));
 
-                             tv.setTextSize(11);
+                             tv.setTextSize(13);
                              tv.setPadding(5, 5, 5, 5);
                              tv.setText(text);
                              row.addView(tv);
@@ -123,4 +123,35 @@ public class ViewTransactionsActivity extends Activity {
                  db.close();
              }
          }
+
+    private TableRow createHeaderRow() {
+        TableRow rowHeader = new TableRow(this);
+        rowHeader.setBackgroundColor(Color.parseColor(headerRowColor));
+
+        rowHeader.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT,
+                TableLayout.LayoutParams.WRAP_CONTENT));
+        String[] headerText = {"Time", "Customer Code", "Receipt No" };
+
+        int i = 0;
+        for (String c : headerText) {
+            TextView tv = new TextView(this);
+            tv.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT,
+                    TableRow.LayoutParams.WRAP_CONTENT));
+
+            if (i == 2) { // RM column align right
+                tv.setGravity(Gravity.RIGHT);
+            } else {
+                tv.setGravity(Gravity.LEFT);
+            }
+
+            tv.setTextSize(13);
+            tv.setPadding(5, 5, 5, 5);
+            tv.setTextColor(Color.WHITE);
+            tv.setText(c);
+            rowHeader.addView(tv);
+
+            i++;
+        }
+        return rowHeader;
     }
+}

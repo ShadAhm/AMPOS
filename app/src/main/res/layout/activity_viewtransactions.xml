@@ -12,10 +12,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" >
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/mainRelativeLayout">
                 <TextView
                     android:text="Last 10 Transactions:"
                     android:layout_width="match_parent"
@@ -29,7 +25,6 @@
                     android:layout_below="@id/textProductCode"
                     android:padding="5dp"
                     android:stretchColumns="*"></TableLayout>
-            </RelativeLayout>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>
