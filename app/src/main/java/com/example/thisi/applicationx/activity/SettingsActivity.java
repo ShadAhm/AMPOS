@@ -15,7 +15,7 @@ import android.widget.Toast;
 import com.example.thisi.applicationx.R;
 
 /**
- * Created by thisi on 10/28/2016.
+ * Edited by Eddie on 10/28/2016.
  */
 
 public class SettingsActivity extends Activity implements AdapterView.OnItemSelectedListener {
