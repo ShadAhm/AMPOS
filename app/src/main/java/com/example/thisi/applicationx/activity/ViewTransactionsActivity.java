@@ -103,6 +103,12 @@ public class ViewTransactionsActivity extends Activity {
                              tv.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT,
                                      TableRow.LayoutParams.WRAP_CONTENT));
 
+                             if (j == 0) { // Time column align right
+                                 tv.setGravity(Gravity.RIGHT);
+                             } else {
+                                 tv.setGravity(Gravity.LEFT);
+                             }
+
                              tv.setTextSize(13);
                              tv.setPadding(5, 5, 5, 5);
                              tv.setText(text);
@@ -138,7 +144,7 @@ public class ViewTransactionsActivity extends Activity {
             tv.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT,
                     TableRow.LayoutParams.WRAP_CONTENT));
 
-            if (i == 2) { // RM column align right
+            if (i == 0) { // Time column align right
                 tv.setGravity(Gravity.RIGHT);
             } else {
                 tv.setGravity(Gravity.LEFT);
