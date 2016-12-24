@@ -24,7 +24,9 @@ import com.example.thisi.applicationx.R;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 
 public class ViewTransactionsActivity extends Activity {
@@ -49,85 +51,77 @@ public class ViewTransactionsActivity extends Activity {
     }
 
     private void addTransactionsToView() {
-        //     TableLayout tableLayout = (TableLayout) findViewById(R.id.tableTransactions);
-        //     // Add header row
-        //     // TableRow rowHeader = createHeaderRow();
-        //     // tableLayout.addView(rowHeader);
+             TableLayout tableLayout = (TableLayout) findViewById(R.id.tableTransactions);
+             // Add header row
+             // TableRow rowHeader = createHeaderRow();
+             // tableLayout.addView(rowHeader);
 
-        //     SQLiteDatabase db = dataHelper.getReadableDatabase();
-        //     // Start the transaction.
-        //     db.beginTransaction();
+             SQLiteDatabase db = myDb.getReadableDatabase();
+             // Start the transaction.
+             db.beginTransaction();
 
-        //     try {
-        //         String todaysDateInString = new SimpleDateFormat("yyyyMMdd").format(new Date());
+             try {
+                 String todaysDateInString = new SimpleDateFormat("yyyyMMdd").format(new Date());
 
-        //         String selectQuery = "SELECT * FROM header " +
-        //                 "WHERE trans_date = '" + todaysDateInString + // get today's transactions only
-        //                 "' ORDER BY TRANS_TIME DESC;";
+                 String selectQuery = "SELECT * FROM header " +
+                         "WHERE trans_date = '" + todaysDateInString + // get today's transactions only
+                         "' ORDER BY TRANS_TIME DESC;";
 
-        //         Cursor cursor = db.rawQuery(selectQuery, null);
+                 Cursor cursor = db.rawQuery(selectQuery, null);
 
-        //         int rowCount = cursor.getCount();
+                 int rowCount = cursor.getCount();
 
-        //         if (rowCount > 0) {
-        //             int i = 0;
+                 if (rowCount > 0) {
+                     int i = 0;
 
-        //             while (cursor.moveToNext()) {
-        //                 i++;
+                     while (cursor.moveToNext()) {
+                         i++;
 
-        //                 // Read columns data
-        //                 int outlet_id = i;
-        //                 String customerCode = cursor.getString(cursor.getColumnIndex("CUSTOMER_CODE"));
-        //                 String transTime = cursor.getString(cursor.getColumnIndex("TRANS_TIME"));
-        //                 String rcpNo = cursor.getString(cursor.getColumnIndex("RCP_NO"));
+                         // Read columns data
+                         int outlet_id = i;
+                         String customerCode = cursor.getString(cursor.getColumnIndex("CUSTOMER_CODE"));
+                         String transTime = cursor.getString(cursor.getColumnIndex("TRANS_TIME"));
+                         String rcpNo = cursor.getString(cursor.getColumnIndex("RCP_NO"));
 
-        //                 // dara rows
-        //                 TableRow row = new TableRow(this);
+                         // dara rows
+                         TableRow row = new TableRow(this);
 
-        //                 if (i % 2 == 0) {
-        //                     row.setBackgroundColor(Color.parseColor(evenRowColor));
-        //                 } else {
-        //                     row.setBackgroundColor(Color.parseColor(oddRowColor));
-        //                 }
+                         if (i % 2 == 0) {
+                             row.setBackgroundColor(Color.parseColor(evenRowColor));
+                         } else {
+                             row.setBackgroundColor(Color.parseColor(oddRowColor));
+                         }
 
-        //                 row.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT,
-        //                         TableLayout.LayoutParams.WRAP_CONTENT));
+                         row.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT,
+                                 TableLayout.LayoutParams.WRAP_CONTENT));
 
-        //                 String[] colText = { transTime, customerCode, rcpNo, "Reprint"};
+                         String[] colText = { transTime, customerCode, rcpNo, "Reprint"};
 
-        //                 int j = 0;
-        //                 for (String text : colText) {
-        //                     if(text != "Reprint") {
-        //                         TextView tv = new TextView(this);
-        //                         tv.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT,
-        //                                 TableRow.LayoutParams.WRAP_CONTENT));
+                         int j = 0;
+                         for (String text : colText) {
+                             TextView tv = new TextView(this);
+                             tv.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT,
+                                     TableRow.LayoutParams.WRAP_CONTENT));
 
-        //                         tv.setTextSize(11);
-        //                         tv.setPadding(5, 5, 5, 5);
-        //                         tv.setText(text);
-        //                         row.addView(tv);
-        //                     }
-        //                     else {
-        //                         Button btnReprint = new Button(this);
-        //                         btnReprint.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-        //                         btnReprint.setText("RP");
-        //                         btnReprint.setId("btnReprint" + String.valueOf(j));
-        //                         row.addView(btnReprint);
-        //                     }
-        //                     j++;
-        //                 }
-        //                 tableLayout.addView(row);
-        //             }
-        //             cursor.close();
-        //         }
-        //         db.setTransactionSuccessful();
+                             tv.setTextSize(11);
+                             tv.setPadding(5, 5, 5, 5);
+                             tv.setText(text);
+                             row.addView(tv);
 
-        //     } catch (SQLiteException e) {
-        //         e.printStackTrace();
-        //     } finally {
-        //         db.endTransaction();
-        //         db.close();
-        //     }
-        // }
+                             j++;
+                         }
+                         tableLayout.addView(row);
+                     }
+                     cursor.close();
+                 }
+                 db.setTransactionSuccessful();
+
+             } catch (SQLiteException e) {
+                 e.printStackTrace();
+             } finally {
+                 db.endTransaction();
+                 db.close();
+             }
+         }
     }
-    }
+}
