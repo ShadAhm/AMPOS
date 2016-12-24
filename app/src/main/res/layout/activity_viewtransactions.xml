@@ -17,11 +17,11 @@
                 android:layout_height="match_parent"
                 android:id="@+id/mainRelativeLayout">
                 <EditText
-                    android:id="@+id/textProductCode"
+                    android:id="@+id/textCustomerCode"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
-                    android:hint="Product Code"
+                    android:hint="Customer Code"
                     android:inputType="textPersonName" />
 
                 <TableLayout
