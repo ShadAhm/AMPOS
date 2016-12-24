@@ -962,11 +962,12 @@ public class PaymentActivity extends Activity {
 
             res.close();
 
-            Cursor res2 = db.rawQuery("SELECT SUM(PAYMENT_AMOUNT) AS CASH, SUM(CHANGE_AMOUNT) AS CHANGE FROM PAYMENT WHERE RCP_NO = '" + thisRcpId + "'", null);
+            String res2Query = "SELECT SUM(PAYMENT_AMOUNT) AS CASH, SUM(CHANGE_AMOUNT) AS CHANGE FROM PAYMENT WHERE RCP_NO = '" + thisRcpId + "'";
+            Cursor res2 = db.rawQuery(res2Query, null);
             res2.moveToFirst();
 
-            String cashhh = res2.getString(res.getColumnIndex("CASH"));
-            String changeee = res2.getString(res.getColumnIndex("CHANGE"));
+            String cashhh = res2.getString(res2.getColumnIndex("CASH"));
+            String changeee = res2.getString(res2.getColumnIndex("CHANGE"));
 
             res2.close();
 
