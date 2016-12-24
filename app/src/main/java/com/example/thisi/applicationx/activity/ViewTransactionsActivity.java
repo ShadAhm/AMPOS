@@ -293,6 +293,13 @@ public class ViewTransactionsActivity extends Activity {
         context.getObject().ASCII_CtrlAlignType(context.getState(),
                 preDefiniation.AlignType.AT_CENTER.getValue());
         context.getObject().ASCII_PrintString(context.getState(),0,
+                0 ,0, 0, 0, "************REPRINT************", "gb2312");
+        context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
+        context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
+
+        context.getObject().ASCII_CtrlAlignType(context.getState(),
+                preDefiniation.AlignType.AT_CENTER.getValue());
+        context.getObject().ASCII_PrintString(context.getState(),0,
                 0 ,0, 0, 0, "DIAMOND PUBLIC", "gb2312");
         context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
         context.getObject().ASCII_PrintString(context.getState(),0,
