@@ -177,6 +177,10 @@ public class ViewTransactionsActivity extends Activity {
 
     private void reprintReceipt(String rcpNo) {
         connect();
+        if(!mBconnect) {
+            connect(); // retry
+        }
+
         context.getObject().CON_PageStart(context.getState(),false,0,0);
 
         SQLiteDatabase db = dataHelper.getReadableDatabase();
@@ -187,7 +191,6 @@ public class ViewTransactionsActivity extends Activity {
             String empCode = "unknown";
             if (res.moveToFirst()) {
                 empCode = res.getString(res.getColumnIndex("EMP_CODE"));
-                int reprintCount = res.getInt(res.getColumnIndex("REPRINT_COUNT"));
             }
 
             printReceiptPart1();
@@ -195,7 +198,11 @@ public class ViewTransactionsActivity extends Activity {
 
             printReceiptItems(db, rcpNo);
             printReceiptTotal(db, rcpNo);
+
+            dataHelper.updateHeaderReprintCount(db);
+
             db.setTransactionSuccessful();
+
         } catch (SQLiteException e) {
             e.printStackTrace();
         } finally {

@@ -922,6 +922,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return rowNum;
     }
 
+    public void updateHeaderReprintCount(SQLiteDatabase db) {
+
+    }
+
     public Shift_Master lookForOpenShiftsAtDate(SQLiteDatabase db, String todaysDate) {
         String qry = "SELECT * FROM " + SHIFT_MASTER_TABLE_NAME + " " +
                 "WHERE BUS_DATE = '" + todaysDate + "' AND " +
