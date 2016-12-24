@@ -62,6 +62,8 @@ public class ViewTransactionsActivity extends Activity {
     }
 
     private void initializeVariables() {
+        context = (ApplicationContext) getApplicationContext();
+
         SharedPreferences prefs = this.getSharedPreferences("com.example.thisi.applicationx", Context.MODE_PRIVATE);
         posNo = prefs.getString("posnumber", null);
         myDb = DatabaseHelper.getHelper(this);
@@ -94,8 +96,6 @@ public class ViewTransactionsActivity extends Activity {
                      while (cursor.moveToNext()) {
                          i++;
 
-                         // Read columns data
-                         int outlet_id = i;
                          String customerCode = cursor.getString(cursor.getColumnIndex("CUSTOMER_CODE"));
                          String transTime = cursor.getString(cursor.getColumnIndex("TRANS_TIME"));
                          String rcpNo = cursor.getString(cursor.getColumnIndex("RCP_NO"));
@@ -187,6 +187,7 @@ public class ViewTransactionsActivity extends Activity {
             String empCode = "unknown";
             if (res.moveToFirst()) {
                 empCode = res.getString(res.getColumnIndex("EMP_CODE"));
+                int reprintCount = res.getInt(res.getColumnIndex("REPRINT_COUNT"));
             }
 
             printReceiptPart1();
