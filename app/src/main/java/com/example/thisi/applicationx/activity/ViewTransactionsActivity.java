@@ -3,6 +3,7 @@ package com.example.thisi.applicationx.activity;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
@@ -134,7 +135,7 @@ public class ViewTransactionsActivity extends Activity {
                              tv.setOnClickListener(new View.OnClickListener() {
                                  @Override
                                  public void onClick(View v) {
-                                     reprintReceipt(rcpnofinal);
+                                     askToReprint(rcpnofinal);
                                  }
                              });
 
@@ -177,6 +178,39 @@ public class ViewTransactionsActivity extends Activity {
             i++;
         }
         return rowHeader;
+    }
+
+    private void askToReprint(final String rcpNo) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setCancelable(false);
+        builder.setTitle("Reprint Receipt");
+        builder.setMessage("Are you sure you would like to reprint the receipt?");
+        builder.setPositiveButton("Print",
+            new DialogInterface.OnClickListener()
+
+            {
+                @Override
+                public void onClick(DialogInterface dialog,
+                                    int which) {
+                    dialog.dismiss();
+                    reprintReceipt(rcpNo);
+                }
+            }
+        );
+        builder.setNegativeButton("Cancel",
+            new DialogInterface.OnClickListener()
+
+            {
+                @Override
+                public void onClick(DialogInterface dialog,
+                                    int which) {
+                    dialog.dismiss();
+                }
+            }
+        );
+
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 
     private void reprintReceipt(String rcpNo) {
