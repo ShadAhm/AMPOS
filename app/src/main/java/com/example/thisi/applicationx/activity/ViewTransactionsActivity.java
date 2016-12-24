@@ -229,18 +229,27 @@ public class ViewTransactionsActivity extends Activity {
 
             res.close();
 
+            Cursor res2 = db.rawQuery("SELECT SUM(PAYMENT_AMOUNT) AS CASH, SUM(CHANGE_AMOUNT) AS CHANGE FROM PAYMENT WHERE RCP_NO = '" + thisRcpId + "'", null);
+            res2.moveToFirst();
+
+            String cashhh = res.getString(res.getColumnIndex("CASH"));
+            String changeee = res.getString(res.getColumnIndex("CHANGE"));
+
             BigDecimal bdGrandTotalll = new BigDecimal(grandtotalll).setScale(2, RoundingMode.HALF_UP);
             BigDecimal bdTaxx = new BigDecimal(taxx).setScale(2, RoundingMode.HALF_UP);
             BigDecimal bdTotalll = bdGrandTotalll.subtract(bdTaxx).setScale(2, RoundingMode.HALF_UP);
 
+            BigDecimal bdCashhh = new BigDecimal(cashhh).setScale(2, RoundingMode.HALF_UP);
+            BigDecimal bdChangeee = new BigDecimal(changeee).setScale(2, RoundingMode.HALF_UP);
+
             context.getObject().ASCII_CtrlAlignType(context.getState(),
-                    preDefiniation.AlignType.AT_LEFT.getValue());
+                    preDefiniation.AlignType.AT_RIGHT.getValue());
             context.getObject().ASCII_PrintString(context.getState(),0,
                     0 ,0, 0, 0, "Total:  " + bdTotalll.toString(), "gb2312");
             context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
 
             context.getObject().ASCII_CtrlAlignType(context.getState(),
-                    preDefiniation.AlignType.AT_LEFT.getValue());
+                    preDefiniation.AlignType.AT_RIGHT.getValue());
             context.getObject().ASCII_PrintString(context.getState(),0,
                     0 ,0, 0, 0, "GST:  " + bdTaxx.toString(), "gb2312");
             context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
@@ -253,9 +262,21 @@ public class ViewTransactionsActivity extends Activity {
             context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
 
             context.getObject().ASCII_CtrlAlignType(context.getState(),
-                    preDefiniation.AlignType.AT_LEFT.getValue());
+                    preDefiniation.AlignType.AT_RIGHT.getValue());
             context.getObject().ASCII_PrintString(context.getState(),0,
                     0 ,0, 0, 0, "GRAND TOTAL:  " + bdGrandTotalll.toString(), "gb2312");
+            context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
+
+            context.getObject().ASCII_CtrlAlignType(context.getState(),
+                    preDefiniation.AlignType.AT_RIGHT.getValue());
+            context.getObject().ASCII_PrintString(context.getState(),0,
+                    0 ,0, 0, 0, "Cash:  " + bdCashhh.toString(), "gb2312");
+            context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
+
+            context.getObject().ASCII_CtrlAlignType(context.getState(),
+                    preDefiniation.AlignType.AT_RIGHT.getValue());
+            context.getObject().ASCII_PrintString(context.getState(),0,
+                    0 ,0, 0, 0, "Change:  " + bdChangeee.toString(), "gb2312");
             context.getObject().ASCII_CtrlPrintCRLF(context.getState(),1);
         }
     }
