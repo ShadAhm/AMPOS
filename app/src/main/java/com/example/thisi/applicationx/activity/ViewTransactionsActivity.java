@@ -202,7 +202,7 @@ public class ViewTransactionsActivity extends Activity {
             printReceiptItems(db, rcpNo);
             printReceiptTotal(db, rcpNo);
 
-            dataHelper.updateHeaderReprintCount(db);
+            dataHelper.updateHeaderReprintCount(db, rcpNo);
 
             db.setTransactionSuccessful();
 
