@@ -235,6 +235,8 @@ public class ViewTransactionsActivity extends Activity {
             String cashhh = res2.getString(res.getColumnIndex("CASH"));
             String changeee = res2.getString(res.getColumnIndex("CHANGE"));
 
+            res2.close();
+
             BigDecimal bdGrandTotalll = new BigDecimal(grandtotalll).setScale(2, RoundingMode.HALF_UP);
             BigDecimal bdTaxx = new BigDecimal(taxx).setScale(2, RoundingMode.HALF_UP);
             BigDecimal bdTotalll = bdGrandTotalll.subtract(bdTaxx).setScale(2, RoundingMode.HALF_UP);
