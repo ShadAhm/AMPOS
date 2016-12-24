@@ -16,13 +16,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/mainRelativeLayout">
-                <EditText
-                    android:id="@+id/textCustomerCode"
+                <TextView
+                    android:text="Last 10 Transactions:"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:ems="10"
-                    android:hint="Customer Code"
-                    android:inputType="textPersonName" />
+                    android:id="@+id/textView2" />
 
                 <TableLayout
                     android:id="@+id/tableTransactions"

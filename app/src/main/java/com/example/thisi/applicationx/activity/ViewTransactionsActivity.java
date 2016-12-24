@@ -65,7 +65,7 @@ public class ViewTransactionsActivity extends Activity {
 
                  String selectQuery = "SELECT * FROM header " +
                          "WHERE trans_date = '" + todaysDateInString + // get today's transactions only
-                         "' ORDER BY TRANS_TIME DESC;";
+                         "' ORDER BY TRANS_TIME DESC LIMIT 10;";
 
                  Cursor cursor = db.rawQuery(selectQuery, null);
 
