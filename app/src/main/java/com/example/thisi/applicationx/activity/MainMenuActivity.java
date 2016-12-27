@@ -41,13 +41,16 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
 
         mydb = DatabaseHelper.getHelper(this);
 
-        enableButtons(false, false, false, false, false, false, false, false);
+        enableButtons(false, false, false, false, false, false, false, false, false);
         checkShiftsLongOperation();
     }
 
-    private void enableButtons(boolean enableOrder, boolean enableDayend, boolean enableStartShift, boolean enableEndShift, boolean enableDownload, boolean enableUpload, boolean enableLogout, boolean enableSettings) {
+    private void enableButtons(boolean enableOrder, boolean enableReprintReceipt, boolean enableDayend, boolean enableStartShift, boolean enableEndShift, boolean enableDownload, boolean enableUpload, boolean enableLogout, boolean enableSettings) {
         Button btnOrder = (Button) findViewById(R.id.buttonOrder);
         btnOrder.setEnabled(enableOrder);
+
+        Button buttonReprintReceipt = (Button) findViewById(R.id.buttonReprintReceipt);
+        buttonReprintReceipt.setEnabled(enableReprintReceipt);
 
         Button buttonDayend = (Button) findViewById(R.id.buttonDayend);
         buttonDayend.setEnabled(enableDayend);
@@ -193,6 +196,7 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
                 false,
                 false,
                 false,
+                false,
                 false
         );
 
@@ -242,6 +246,7 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
     @Override
     public void UploadDataStartedRequest() {
         enableButtons(
+                false,
                 false,
                 false,
                 false,
@@ -367,16 +372,16 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
                     onNoPOSControl(); 
                     break;
                 case "settingsIncomplete" : showMessage("Settings Incomplete", "Please go to settings and complete all required information"); 
-                    enableButtons(false, false, false, false, false, false, true, true); 
+                    enableButtons(false, false, false, false, false, false, false, true, true);
                     break; 
-                case "shiftOpen" : enableButtons(true, false, false, true, true, false, true, true);
+                case "shiftOpen" : enableButtons(true, true, false, false, true, true, false, true, true);
                     break;
                 case "alreadyDayend" :
                     showMessage("Day Ended", "Dayend has already been performed for today.");
-                    enableButtons(false, false, false, false, true, true, true, true);
+                    enableButtons(false, false, false, false, false, true, true, true, true);
                     break; 
                 case "noOpenShift" :
-                    enableButtons(false, true, true, false, true, false, true, true);
+                    enableButtons(false, false, true, true, false, true, false, true, true);
                     break;
             }
         }
@@ -401,7 +406,7 @@ public class MainMenuActivity extends Activity implements IWsdl2CodeEvents {
 
         @Override
         protected void onPreExecute() {
-            enableButtons(false, false, false, false, false, false, false, false);
+            enableButtons(false, false, false, false, false, false, false, false, false);
         }
 
         protected boolean isSettingsComplete() {
