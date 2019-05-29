@@ -51,9 +51,6 @@ public class ConnectAvtivity extends Activity {
             mBconnect = false;
         } else {
             if (state > 0) {
-//                Toast.makeText(ConnectAvtivity.this, R.string.mes_consuccess,
-//                        Toast.LENGTH_SHORT).show();
-
                 mBconnect = true;
 
                 Intent intent = new Intent(ConnectAvtivity.this,
@@ -74,11 +71,6 @@ public class ConnectAvtivity extends Activity {
 
     private void modelJudgmen() {
         state = context.getObject().CON_ConnectDevices("RG-E487", "/dev/ttyMT1:115200", 200);
-//        Toast.makeText(
-//                this,
-//                "" + android.os.Build.MODEL + " release:"
-//                        + android.os.Build.VERSION.RELEASE, Toast.LENGTH_LONG)
-//                .show();
 
         if (android.os.Build.VERSION.RELEASE.equals("5.1")) {
             DevCtrl = new DeviceControl(DeviceControl.powerPathKT);
